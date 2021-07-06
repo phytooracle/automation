@@ -155,9 +155,8 @@ def main():
                         subprocess.call(cmd1, shell=True)
 
                 cmd2 = f'./run.sh {scan}'
-                print(cmd2)
-                # subprocess.call(cmd2, shell=True)
-                # print(f'Season {args.season} {sensor_path} processing complete.')
+                subprocess.call(cmd2, shell=True)
+                print(f'Season {args.season} {sensor_path} processing complete.')
 
 
 # --------------------------------------------------
