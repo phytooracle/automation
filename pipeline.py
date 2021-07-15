@@ -128,10 +128,10 @@ def main():
 
     level_0_list, level_1_list = [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {level_0}').readlines()][1:]] \
                                 , [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {level_1}').readlines()][1:]]
-
+    
     level_0_dates, level_1_dates = return_date_list(level_0_list) \
                                 , return_date_list(level_1_list)
-
+    
     process_list = list(np.setdiff1d(level_0_dates, level_1_dates))
 
     matching = [os.path.splitext(os.path.basename(s))[0].replace(f'{args.sensor}-', '') for s in level_0_list if any(xs in s for xs in process_list)]
@@ -141,7 +141,7 @@ def main():
 
     for item in process_list:
 
-        for date in level_0_list:
+        for date in level_0_dates:
 
             if item in date and 'none' not in date: 
 
@@ -155,8 +155,9 @@ def main():
                         subprocess.call(cmd1, shell=True)
 
                 cmd2 = f'./run.sh {scan}'
-                subprocess.call(cmd2, shell=True)
-                print(f'Season {args.season} {sensor_path} processing complete.')
+                print(cmd2)
+                # subprocess.call(cmd2, shell=True)
+                # print(f'Season {args.season} {sensor_path} processing complete.')
 
 
 # --------------------------------------------------
