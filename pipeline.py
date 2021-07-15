@@ -141,12 +141,11 @@ def main():
 
     for item in process_list:
 
-        for date in level_0_dates:
+        for date in level_0_list:
 
             if item in date and 'none' not in date: 
 
                 scan = os.path.splitext(os.path.basename(date))[0]
-
                 if args.ortho:
                     orthomosaic_path = get_rgb_ortho(season_path, 'stereoTop', date)
 
