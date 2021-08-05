@@ -41,6 +41,11 @@ def get_args():
                         help='Reverse the order of processing list.',
                         action='store_true')
 
+    parser.add_argument('-c',
+                        '--crop',
+                        help='Crop to process.',
+                        choices=['sunflower', 'bean', 'sorghum'])
+
     parser.add_argument('-sen',
                         '--sensor',
                         help='Sensor to query.\
@@ -153,9 +158,15 @@ def main():
                         cmd1 = f'iget -N 0 -PVT {orthomosaic_path}'
                         subprocess.call(cmd1, shell=True)
 
-                cmd2 = f'./run.sh {scan}'
-                subprocess.call(cmd2, shell=True)
-                print(f'INFO: {scan} processing complete.')
+                if args.crop:
+                    if args.crop in scan:
+                        cmd2 = f'./run.sh {scan}'
+                        subprocess.call(cmd2, shell=True)
+                        print(f'INFO: {scan} processing complete.')
+                else:
+                    cmd2 = f'./run.sh {scan}'
+                    subprocess.call(cmd2, shell=True)
+                    print(f'INFO: {scan} processing complete.')
 
 
 # --------------------------------------------------
