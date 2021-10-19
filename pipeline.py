@@ -13,6 +13,9 @@ import subprocess
 import re
 import pandas as pd
 from datetime import datetime
+import subprocess as sp
+import shutil
+from prepare_pipeline import *
 
 # --------------------------------------------------
 def get_args():
@@ -54,6 +57,14 @@ def get_args():
                         type=str,
                         required=True,
                         choices=['EnvironmentLogger', 'flirIrCamera', 'ps2Top', 'scanner3DTop', 'stereoTop', 'VNIR', 'SWIR', 'PikaVNIR'])
+
+    
+    parser.add_argument('-b',
+                        '--bundle_size',
+                        help='Processing bundle size (number of data processed by a single worker).',
+                        metavar='int',
+                        type=int,
+                        default=1)
 
     return parser.parse_args()
 
@@ -141,49 +152,198 @@ def download_ortho(season_path, date):
         pass
     return None
 
+
+# --------------------------------------------------
+def create_dict(directory):
+    dir_list = []
+    dir_dict = {}
+    cnt = 0
+
+    for root, dirs, files in os.walk(directory):
+        match = re.search(r'\d{4}-\d{2}-\d{2}', root)
+        date = datetime.strptime(match.group(), '%Y-%m-%d').date()
+    
+        for f in files:
+       
+            if '.json' in f:
+                match = re.search(r'\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', f)
+       
+                file_dict = {
+                    "DATE": os.path.join(str(date), ''),
+                    "RAW_DATA_PATH": os.path.join(root, ''),
+                    "SUBDIR": os.path.basename(root),
+                    "UUID": match.group()
+                }
+
+                dir_list.append(file_dict)
+
+    dir_dict["DATA_FILE_LIST"] = dir_list
+
+    return dir_dict
+
+
+# --------------------------------------------------
+def bundle_data(file_list, data_per_bundle):
+    data_sets = []
+    bundle_list = []
+    for index, file in enumerate(file_list):
+        if index % data_per_bundle == 0 and index != 0:
+            bundle = {}
+            bundle["DATA_SETS"] = data_sets
+            bundle["ID"] = len(bundle_list)
+            bundle_list.append(bundle)
+            data_sets = []
+        data_sets.append(file)
+    bundle = {}
+    bundle["DATA_SETS"] = data_sets
+    bundle["ID"] = len(bundle_list)
+    bundle_list.append(bundle)
+    
+    return bundle_list
+
+
+# --------------------------------------------------
+def write_to_file(out_filename, bundle_list):
+    json_obj = {}
+    json_obj["BUNDLE_LIST"] = bundle_list
+    with open(out_filename, "w") as outfile:
+        dump_str = json.dumps(json_obj, indent=2, sort_keys=True)
+        outfile.write(dump_str)
+
+
+# --------------------------------------------------
+def gen_json_for_all_bundle(bundle_list):
+    for i in range(len(bundle_list)):
+        outfilename = "bundle_{0}.json".format(i)
+        with open(os.path.join('bundle', outfilename), "w") as outfile:
+            dump_str = json.dumps(bundle_list[i], indent=2, sort_keys=True)
+            outfile.write(dump_str)
+
+
+# --------------------------------------------------
+def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os = 'centos7'):
+
+    cwd = os.getcwd()
+    home = os.path.expanduser('~')
+    
+    cctools_file = '-'.join(['cctools', cctools_version, architecture, sys_os])
+    
+    if not os.path.isdir(os.path.join(home, cctools_file)):
+        print(f'Downloading {cctools_file}.')
+        cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
+        cmd1 = f'cd {home} && wget {cctools_url}.tar.gz && tar -xzvf {cctools_file}.tar.gz'
+        sp.call(cmd1, shell=True)
+        sp.call(f'cd {cwd}')
+        print(f'Download complete. CCTools version {cctools_version} is ready!')
+
+    else:
+        print('Required CCTools version already exists.')
+
+
+# --------------------------------------------------
+def download_raw_data(irods_path):
+
+    file_name = os.path.basename(irods_path)
+    cmd1 = f'iget -fKPVT {irods_path}'
+
+    if '.gz' in file_name: 
+        cmd2 = f'tar -xzvf {file_name}'
+        cmd3 = f'rm {file_name}'
+
+    else: 
+        cmd2 = f'tar -xvf {file_name}'
+        cmd3 = f'rm {file_name}'
+
+    sp.call(cmd1, shell=True)
+    sp.call(cmd2, shell=True)
+    sp.call(cmd3, shell=True)
+
+
+# --------------------------------------------------
+def move_directory(sensor, scan_date):
+    dir_move = os.path.join(sensor, scan_date)
+    cwd = os.getcwd()
+    shutil.move(dir_move, cwd)
+    shutil.rmtree(sensor)
+
+
+
+def pipeline_prep(scan_date, bundle_size=1):
+    download_cctools()
+
+    # Create data list
+    file_dict = create_dict(scan_date)["DATA_FILE_LIST"]
+    bundle_list = bundle_data(file_list=file_dict, data_per_bundle=bundle_size)
+
+    # Write data list
+    write_to_file(out_filename='bundle_list.json', bundle_list=bundle_list) 
+
+    # Split data into bundles
+    if not os.path.isdir('bundle'):
+        os.makedirs('bundle')
+        
+    gen_json_for_all_bundle(bundle_list=bundle_list)
+
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
     args = get_args()
+
+    # Get iRODS season path
     season_path, sensor_path = get_paths(args.season, args.sensor)
 
+    # Find unprocessed data
     level_0 = os.path.join(season_path, 'level_0', sensor_path)
     level_1 = os.path.join(season_path, 'level_1', sensor_path)
-
-    level_0_list, level_1_list = [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {level_0}').readlines()][1:]] \
-                                , [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {level_1}').readlines()][1:]]
+    
+    level_0_list, level_1_list = [item.lstrip() for item in [line.rstrip() for line in os.popen(f'ils {level_0}').readlines()][1:]] \
+                                , [item.lstrip() for item in [line.rstrip() for line in os.popen(f'ils {level_1}').readlines()][1:]]
     
     level_0_dates, level_1_dates = return_date_list(level_0_list) \
                                 , return_date_list(level_1_list)
     
     process_list = list(np.setdiff1d(level_0_dates, level_1_dates))
 
-    matching = [os.path.splitext(os.path.basename(s))[0].replace(f'{args.sensor}-', '') for s in level_0_list if any(xs in s for xs in process_list)]
+    matching = [os.path.splitext(os.path.basename(s))[0].replace(f'{args.sensor}-', '').replace('.tar', '') for s in level_0_list if any(xs in s for xs in process_list)]
     
     if args.reverse:
         matching.reverse()
     
-    for item in matching:
+    # Download pipeline requirements
+    download_cctools()
 
-        for date in level_0_list:
+    # Download, extract, and process raw data
+    for scan_date in matching[:1]:
 
-            if item in date and 'none' not in date: 
-                scan = item
-                #scan = os.path.splitext(os.path.basename(date))[0]
+        for tarball in level_0_list:
 
-                if args.crop:
-                    if args.crop in scan:
+            if scan_date in tarball and 'none' not in tarball: 
+                
+                irods_data_path = os.path.join(level_0, tarball)
+                download_raw_data(irods_data_path)
 
-                        cmd1 = f'./run.sh {scan}'
-                        subprocess.call(cmd1, shell=True)
-                        print(f'INFO: {scan} processing complete.')
+                if args.season == '10':
+                    move_directory(args.sensor, scan_date)
+
+                pipeline_prep(scan_date, bundle_size=args.bundle_size)
+
+                # if args.crop:
+                #     if args.crop in scan_date:
+                #         print(tarball)
+                #         print(scan_date)
                         
-                else:
-
-                    cmd1 = f'./run.sh {scan}'
-                    subprocess.call(cmd1, shell=True)
-                    print(f'INFO: {scan} processing complete.')
+                #         # cmd1 = f'./run.sh {scan}'
+                #         # subprocess.call(cmd1, shell=True)
+                #         # print(f'INFO: {scan} processing complete.')
+                        
+                # else:
+                #     print(level_0)
+                #     print(tarball)
+                #     print(scan_date)
+                #     # cmd1 = f'./run.sh {scan}'
+                #     # subprocess.call(cmd1, shell=True)
+                #     # print(f'INFO: {scan} processing complete.')
 
 
 # --------------------------------------------------

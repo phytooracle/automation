@@ -14,27 +14,6 @@ import json
 import subprocess as sp
 
 # --------------------------------------------------
-def get_args():
-    """Get command-line arguments"""
-
-    parser = argparse.ArgumentParser(
-        description='Raw Data Dictionary Generator',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('directory',
-                        metavar='str',
-                        help='Directory containing raw data.')
-
-    parser.add_argument('-b',
-                        '--bundle_size',
-                        help='Processing bundle size (number of data processed by a single worker).',
-                        metavar='int',
-                        type=int,
-                        default=1)
-
-    return parser.parse_args()
-
-# --------------------------------------------------
 def create_dict(directory):
     dir_list = []
     dir_dict = {}
@@ -119,29 +98,3 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 
     else:
         print('Required CCTools version already exists.')
-
-
-# --------------------------------------------------
-def main():
-    """Make a jazz noise here"""
-
-    args = get_args()
-    
-    download_cctools()
-    # Create data list
-    file_dict = create_dict(args.directory)["DATA_FILE_LIST"]
-    bundle_list = bundle_data(file_list=file_dict, data_per_bundle=args.bundle_size)
-
-    # Write data list
-    write_to_file(out_filename='bundle_list.json', bundle_list=bundle_list) 
-
-    # Split data into bundles
-    if not os.path.isdir('bundle'):
-        os.makedirs('bundle')
-        
-    gen_json_for_all_bundle(bundle_list=bundle_list)
-
-
-# --------------------------------------------------
-if __name__ == '__main__':
-    main()
