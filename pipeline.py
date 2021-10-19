@@ -246,6 +246,7 @@ def download_raw_data(irods_path):
 
     file_name = os.path.basename(irods_path)
     cmd1 = f'iget -fKPVT {irods_path}'
+    cwd = os.getcwd()
 
     if '.gz' in file_name: 
         cmd2 = f'tar -xzvf {file_name}'
@@ -254,11 +255,11 @@ def download_raw_data(irods_path):
     else: 
         cmd2 = f'tar -xvf {file_name}'
         cmd3 = f'rm {file_name}'
-    sp.call('ssh filexfer')
-    sp.call(cmd1, shell=True)
-    sp.call(cmd2, shell=True)
-    sp.call(cmd3, shell=True)
-    sp.call('exit')
+    sp.call(f'ssh filexfer cd {cwd} && {cmd1} && {cmd2} && {cmd3} && exit', shell=True)
+    #sp.call(cmd1, shell=True)
+    #sp.call(cmd2, shell=True)
+    #sp.call(cmd3, shell=True)
+    #sp.call('exit', shell=True)
 
 
 # --------------------------------------------------
