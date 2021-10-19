@@ -87,39 +87,59 @@ def get_paths(season, sensor):
 def get_rgb_ortho(season_path, sensor_path, date):
 
     date_string = datetime.strptime(re.search(r'\d{4}-\d{2}-\d{2}', date).group(), '%Y-%m-%d').date()
+    time_string = '12:00:00'
 
     date_list = [str(os.path.splitext(os.path.basename(line.strip().replace('C- ', '')))[0]) for line in os.popen(f'ils {os.path.join(season_path, "level_1", sensor_path)}').readlines()][1:]
     cyverse_paths = [line.strip().replace('C- ', '') for line in os.popen(f'ils {os.path.join(season_path, "level_1", sensor_path)}').readlines()][1:]
-    
     date_list_cleaned = []
     cyverse_paths_cleaned = []
 
-    for date, path in zip(date_list, cyverse_paths):
+    for date_path, path in zip(date_list, cyverse_paths):
         try:
-            dt = datetime.strptime(re.search(r'\d{4}-\d{2}-\d{2}', date).group(), '%Y-%m-%d').date()
-            dt = pd.to_datetime(dt)
-            date_list_cleaned.append(dt.date())
+            dt = datetime.strptime(re.search(r'\d{4}-\d{2}-\d{2}', date_path).group(), '%Y-%m-%d').date()
+            dt_time = ':'.join(re.search(r'\d{2}-\d{2}-\d{2}-\d{3}', date_path).group().replace('-', ':').split(':')[:-1])
+            dt = pd.to_datetime(f'{dt} {dt_time}')
+            date_list_cleaned.append(dt)
             cyverse_paths_cleaned.append(path)
         except:
             pass
 
     df = pd.DataFrame()
-
     df['datetime'] = date_list_cleaned
-    df['datetime'] = pd.to_datetime(df['datetime'])
+    # df['datetime'] = pd.to_datetime(df['datetime'])
     df['cyverse_path'] = cyverse_paths_cleaned
+  
     df = df.set_index('datetime')
-    
-    matching_date = df.iloc[df.index.get_loc(pd.to_datetime(date_string), method='nearest')]
+    df = df.between_time('11:00', '15:00')
+    matching_date = df.iloc[df.index.get_loc(pd.to_datetime(f'{date_string} {time_string}'), method='nearest')]
     query_path = matching_date['cyverse_path']
-
     ortho = [item.strip() for item in os.popen(f'ils {query_path}').readlines()[1:] if '.tif' in item]
+    if ortho: 
+        orthomosaic_path = os.path.join(query_path, ortho[0])
 
-    if ortho:
+    else:
+        drop_path = df.iloc[df.index.get_loc(pd.to_datetime(f'{date_string} {time_string}'), method='nearest')]['cyverse_path']
+        df = df[~df['cyverse_path'].isin([drop_path])]
+        matching_date = df.iloc[df.index.get_loc(pd.to_datetime(f'{date_string} {time_string}'), method='nearest')]
+        query_path = matching_date['cyverse_path']
+        ortho = [item.strip() for item in os.popen(f'ils {query_path}').readlines()[1:] if '.tif' in item]
         orthomosaic_path = os.path.join(query_path, ortho[0])
     
     return orthomosaic_path
 
+
+def download_ortho(season_path, date):
+
+    ortho_path = get_rgb_ortho(season_path, 'stereoTop', date)
+    if ortho_path:
+
+        if not os.path.isfile(os.path.basename(ortho_path)):
+            cmd1 = f'iget -N 0 -PVT {ortho_path}'
+            print(cmd1)
+            subprocess.call(cmd1, shell=True)
+    else: 
+        pass
+    return None
 
 # --------------------------------------------------
 def main():
@@ -151,19 +171,16 @@ def main():
             if item in date and 'none' not in date: 
                 scan = item
                 #scan = os.path.splitext(os.path.basename(date))[0]
-                if args.ortho:
-                    orthomosaic_path = get_rgb_ortho(season_path, 'stereoTop', date)
-
-                    if not os.path.isfile(os.path.basename(orthomosaic_path)):
-                        cmd1 = f'iget -N 0 -PVT {orthomosaic_path}'
-                        subprocess.call(cmd1, shell=True)
 
                 if args.crop:
                     if args.crop in scan:
+
                         cmd2 = f'./run.sh {scan}'
                         subprocess.call(cmd2, shell=True)
                         print(f'INFO: {scan} processing complete.')
+                        
                 else:
+
                     cmd2 = f'./run.sh {scan}'
                     subprocess.call(cmd2, shell=True)
                     print(f'INFO: {scan} processing complete.')
