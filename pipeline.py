@@ -139,6 +139,7 @@ def get_rgb_ortho(season_path, sensor_path, date):
     return orthomosaic_path
 
 
+# --------------------------------------------------
 def download_ortho(season_path, date):
 
     ortho_path = get_rgb_ortho(season_path, 'stereoTop', date)
@@ -267,7 +268,7 @@ def move_directory(sensor, scan_date):
     shutil.rmtree(sensor)
 
 
-
+# --------------------------------------------------
 def pipeline_prep(scan_date, bundle_size=1):
     download_cctools()
 
@@ -283,6 +284,7 @@ def pipeline_prep(scan_date, bundle_size=1):
         os.makedirs('bundle')
         
     gen_json_for_all_bundle(bundle_list=bundle_list)
+
 
 # --------------------------------------------------
 def main():
