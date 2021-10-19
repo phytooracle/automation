@@ -175,14 +175,14 @@ def main():
                 if args.crop:
                     if args.crop in scan:
 
-                        cmd2 = f'./run.sh {scan}'
-                        subprocess.call(cmd2, shell=True)
+                        cmd1 = f'./run.sh {scan}'
+                        subprocess.call(cmd1, shell=True)
                         print(f'INFO: {scan} processing complete.')
                         
                 else:
 
-                    cmd2 = f'./run.sh {scan}'
-                    subprocess.call(cmd2, shell=True)
+                    cmd1 = f'./run.sh {scan}'
+                    subprocess.call(cmd1, shell=True)
                     print(f'INFO: {scan} processing complete.')
 
 
