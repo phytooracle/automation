@@ -49,6 +49,11 @@ def get_args():
                         help='Crop to process.',
                         choices=['sunflower', 'bean', 'sorghum'])
 
+    parser.add_argument('-hpc',
+                        '--hpc',
+                        help='Add flag if running on an HPC system.',
+                        action='store_true')
+
     parser.add_argument('-sen',
                         '--sensor',
                         help='Sensor to query.\
@@ -243,7 +248,7 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 
 # --------------------------------------------------
 def download_raw_data(irods_path):
-
+    args = get_args()
     file_name = os.path.basename(irods_path)
     cmd1 = f'iget -fKPVT {irods_path}'
     cwd = os.getcwd()
@@ -255,11 +260,13 @@ def download_raw_data(irods_path):
     else: 
         cmd2 = f'tar -xvf {file_name}'
         cmd3 = f'rm {file_name}'
-    sp.call(f'ssh filexfer cd {cwd} && {cmd1} && {cmd2} && {cmd3} && exit', shell=True)
-    #sp.call(cmd1, shell=True)
-    #sp.call(cmd2, shell=True)
-    #sp.call(cmd3, shell=True)
-    #sp.call('exit', shell=True)
+    
+    if args.hpc: 
+        sp.call(f'ssh filexfer cd {cwd} && {cmd1} && {cmd2} && {cmd3} && exit', shell=True)
+    else: 
+        sp.call(cmd1, shell=True)
+        sp.call(cmd2, shell=True)
+        sp.call(cmd3, shell=True)
 
 
 # --------------------------------------------------
