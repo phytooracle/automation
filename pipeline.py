@@ -254,10 +254,11 @@ def download_raw_data(irods_path):
     else: 
         cmd2 = f'tar -xvf {file_name}'
         cmd3 = f'rm {file_name}'
-
+    sp.call('ssh filexfer')
     sp.call(cmd1, shell=True)
     sp.call(cmd2, shell=True)
     sp.call(cmd3, shell=True)
+    sp.call('exit')
 
 
 # --------------------------------------------------
