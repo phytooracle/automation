@@ -312,26 +312,10 @@ def update_process_one(replacement):
                 replace_file_two(replacing, f'"{replacement}"\n')
 
 
+# --------------------------------------------------
 def send_slack_update(message, channel='gantry_test'):
 
     sp.call(f'singularity run gantry_notifications.simg -m "{message}" -c "{channel}"', shell=True)
-
-# # --------------------------------------------------
-# def update_entry_point(entry, replacement):
- 
-#     with open(entry, 'r') as f:
-#         lines = f.readlines()[2]
-#         line2replace = lines.split()[2]
-
-#     f = open(entry, 'r')
-#     fdata = f.read()
-#     f.close()
-#     nline = fdata.replace(line2replace, replacement)
-#     #print("Writing: " + nline)
-#     f = open(entry, 'w')
-#     f.write(nline)
-#     f.close()
-#     #print("Change complete")
 
 
 # --------------------------------------------------

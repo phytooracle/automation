@@ -103,9 +103,12 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 # --------------------------------------------------
 def run_workflow_1(season, sensor, season_dict):
 
-    sp.call('sbatch worker_scripts/po_work_puma_slurm.sh', shell=True)
+    # sp.call('sbatch worker_scripts/po_work_puma_slurm.sh', shell=True)
+    sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
     
     for item in season_dict[season][sensor]['workflow_1']:
-        sp.call(item, shell=True)
+        # sp.call(item, shell=True)
+        sp.run(item.split(' '))
 
-    sp.call('scancel --name=po_worker')
+    # sp.call('scancel --name=po_worker')
+    sp.run(["scancel", "--name=po_worker"])
