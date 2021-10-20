@@ -314,7 +314,7 @@ def update_process_one(replacement):
 
 def send_slack_update(message, channel='gantry_test'):
 
-    sp.call(f'singularity run gantry_notifications.simg -m {message} -c {channel}', shell=True)
+    sp.call(f'singularity run gantry_notifications.simg -m "{message}" -c "{channel}"', shell=True)
 
 # # --------------------------------------------------
 # def update_entry_point(entry, replacement):
