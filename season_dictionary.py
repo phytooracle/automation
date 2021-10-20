@@ -1,3 +1,5 @@
+import os 
+import subprocess as sp
 # --------------------------------------------------
 def season_dictionary():
     
