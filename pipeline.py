@@ -350,6 +350,9 @@ def main():
     build_containers(args.season, args.sensor, season_dict)
 
     # Download, extract, and process raw data
+    if args.crop: 
+        matching = [scan_date for scan_date in matching if args.crop in scan_date]
+        
     for scan_date in matching[:1]:
 
         for tarball in level_0_list:
