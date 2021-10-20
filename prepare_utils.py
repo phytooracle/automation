@@ -103,19 +103,19 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 # --------------------------------------------------
 def run_workflow_1(season, sensor, season_dict):
 
-    # sp.call('sbatch worker_scripts/po_work_puma_slurm.sh', shell=True)
-    # home = os.path.expandvars("$HOME")
     home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
     sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    os.environ["CCTOOLS_HOME"] = "${HOME}/cctools-7.1.12-x86_64-centos7"
-    os.environ["PATH"] = "${CCTOOLS_HOME}/bin:$PATH"
-    # sp.run(['export', 'CCTOOLS_HOME=${HOME}/cctools-7.1.12-x86_64-centos7'])
-    # sp.run(['export', 'PATH=${CCTOOLS_HOME}/bin:$PATH'])
     
     for item in season_dict[season][sensor]['workflow_1']:
         # sp.call(item, shell=True)
         # sp.run(item.split(' '))
         sp.call(home+item, shell=True)
 
-    # sp.call('scancel --name=po_worker')
+    sp.call('scancel --name=po_worker')
     # sp.run(["scancel", "--name=po_worker"])
+
+
+def run_intermediate(season, sensor, season_dict):
+    for item in season_dict[season][sensor]['intermediate']:
+
+        sp.call(item, shell=True)
