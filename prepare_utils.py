@@ -105,7 +105,7 @@ def run_workflow_1(season, sensor, season_dict):
 
     # sp.call('sbatch worker_scripts/po_work_puma_slurm.sh', shell=True)
     # home = os.path.expandvars("$HOME")
-    home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7/')
+    home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
     sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
     os.environ["CCTOOLS_HOME"] = "${HOME}/cctools-7.1.12-x86_64-centos7"
     os.environ["PATH"] = "${CCTOOLS_HOME}/bin:$PATH"
