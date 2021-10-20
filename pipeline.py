@@ -17,6 +17,7 @@ import subprocess as sp
 import shutil
 from prepare_utils import *
 from replace_utils import *
+from season_dictionary import *
 
 # --------------------------------------------------
 def get_args():
@@ -381,6 +382,8 @@ def main():
                 pipeline_prep(scan_date, bundle_size=args.bundle_size)
                 # update_entry_point(args.entry, scan_date)
                 update_process_one(os.getcwd())
+                season_dict = season_dict()
+                build_containers('10', 'scanner3DTop')
                 send_slack_update(f'Processing {scan_date}', channel='gantry_test')
                 sp.call('./entrypoint_p1.sh')
 
