@@ -15,7 +15,8 @@ import pandas as pd
 from datetime import datetime
 import subprocess as sp
 import shutil
-from prepare_pipeline import *
+from prepare_utils import *
+from replace_utils import *
 
 # --------------------------------------------------
 def get_args():
@@ -296,6 +297,39 @@ def pipeline_prep(scan_date, bundle_size=1):
 
 
 # --------------------------------------------------
+def update_process_one(replacement):
+
+    with open('process_one_set.sh', 'r') as f:
+        line_list = f.readlines()
+
+        for line in line_list:
+
+            if 'HPC_PATH=' in line:
+                replacing = line.split('=')[-1]
+
+                replace_file_one(replacing, f'"{replacement}"\n')
+                replace_file_two(replacing, f'"{replacement}"\n')
+
+
+# # --------------------------------------------------
+# def update_entry_point(entry, replacement):
+ 
+#     with open(entry, 'r') as f:
+#         lines = f.readlines()[2]
+#         line2replace = lines.split()[2]
+
+#     f = open(entry, 'r')
+#     fdata = f.read()
+#     f.close()
+#     nline = fdata.replace(line2replace, replacement)
+#     #print("Writing: " + nline)
+#     f = open(entry, 'w')
+#     f.write(nline)
+#     f.close()
+#     #print("Change complete")
+
+
+# --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
@@ -338,6 +372,9 @@ def main():
                     move_directory(args.sensor, scan_date)
 
                 pipeline_prep(scan_date, bundle_size=args.bundle_size)
+                # update_entry_point(args.entry, scan_date)
+                update_process_one(os.getcwd())
+                sp.call('./entrypoint_p1.sh')
 
                 # if args.crop:
                 #     if args.crop in scan_date:
