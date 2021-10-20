@@ -369,6 +369,7 @@ def main():
                 update_process_one(os.getcwd()+'/')
 
                 # run_workflow_1(args.season, args.sensor, season_dict)
+                sp.run(["scancel", "--name=po_worker"])
                 run_intermediate(args.season, args.sensor, season_dict)
 
 
