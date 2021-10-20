@@ -374,24 +374,7 @@ def main():
                 # run_workflow_1(args.season, args.sensor, season_dict)
                 sp.run(["scancel", "--name=po_worker"])
                 run_intermediate(args.season, args.sensor, season_dict)
-
-
-                # if args.crop:
-                #     if args.crop in scan_date:
-                #         print(tarball)
-                #         print(scan_date)
-                        
-                #         # cmd1 = f'./run.sh {scan}'
-                #         # subprocess.call(cmd1, shell=True)
-                #         # print(f'INFO: {scan} processing complete.')
-                        
-                # else:
-                #     print(level_0)
-                #     print(tarball)
-                #     print(scan_date)
-                #     # cmd1 = f'./run.sh {scan}'
-                #     # subprocess.call(cmd1, shell=True)
-                #     # print(f'INFO: {scan} processing complete.')
+                
 
 
 # --------------------------------------------------
