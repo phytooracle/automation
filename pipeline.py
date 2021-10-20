@@ -367,7 +367,7 @@ def main():
 
                 pipeline_prep(scan_date, bundle_size=args.bundle_size)
                 # update_entry_point(args.entry, scan_date)
-                update_process_one(os.getcwd())
+                update_process_one(os.getcwd()+'/')
 
                 # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
                 # sp.call('./entrypoint_p1.sh')
