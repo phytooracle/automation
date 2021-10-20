@@ -105,6 +105,8 @@ def run_workflow_1(season, sensor, season_dict):
 
     # sp.call('sbatch worker_scripts/po_work_puma_slurm.sh', shell=True)
     sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
+    sp.run(['export', 'CCTOOLS_HOME=${HOME}/cctools-7.1.12-x86_64-centos7'])
+    sp.run(['export', 'PATH=${CCTOOLS_HOME}/bin:$PATH'])
     
     for item in season_dict[season][sensor]['workflow_1']:
         # sp.call(item, shell=True)
