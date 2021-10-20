@@ -356,7 +356,7 @@ def main():
 
             if scan_date in tarball and 'none' not in tarball: 
                 
-                send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
+                # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
                 irods_data_path = os.path.join(level_0, tarball)
                 
                 if not os.path.isdir(scan_date):
@@ -369,7 +369,7 @@ def main():
                 # update_entry_point(args.entry, scan_date)
                 update_process_one(os.getcwd())
 
-                send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
+                # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
                 # sp.call('./entrypoint_p1.sh')
                 run_workflow_1(args.season, args.sensor, season_dict)
 
