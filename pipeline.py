@@ -368,7 +368,7 @@ def main():
                 pipeline_prep(scan_date, bundle_size=args.bundle_size)
                 update_process_one(os.getcwd()+'/')
 
-                run_workflow_1(args.season, args.sensor, season_dict)
+                # run_workflow_1(args.season, args.sensor, season_dict)
                 run_intermediate(args.season, args.sensor, season_dict)
 
 

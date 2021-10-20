@@ -111,8 +111,8 @@ def run_workflow_1(season, sensor, season_dict):
         # sp.run(item.split(' '))
         sp.call(home+item, shell=True)
 
-    sp.call('scancel --name=po_worker')
-    # sp.run(["scancel", "--name=po_worker"])
+    # sp.call('scancel --name=po_worker')
+    sp.run(["scancel", "--name=po_worker"])
 
 
 def run_intermediate(season, sensor, season_dict):
