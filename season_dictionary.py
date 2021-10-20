@@ -1,5 +1,5 @@
 # --------------------------------------------------
-def season_dict():
+def season_dictionary():
     
     season_dict = {
         '10': {
@@ -34,7 +34,7 @@ def season_dict():
 
 
 # --------------------------------------------------
-def build_containers(season, sensor):
+def build_containers(season, sensor, season_dict):
 
     for k, v in season_dict[season][sensor]['containers'].items():
         if not os.path.isfile(v["simg"]):

@@ -362,8 +362,8 @@ def main():
     
     # Download pipeline requirements
     download_cctools()
-    season_dict = season_dict()
-    build_containers('10', 'scanner3DTop')
+    season_dict = season_dictionary()
+    build_containers('10', 'scanner3DTop', season_dict)
 
     # Download, extract, and process raw data
     for scan_date in matching[:1]:
