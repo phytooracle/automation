@@ -311,6 +311,10 @@ def update_process_one(replacement):
                 replace_file_two(replacing, f'"{replacement}"\n')
 
 
+def send_slack_update(message, channel='gantry_test'):
+
+    sp.call(f'singularity run gantry_notifications.simg -m {message} -c {channel}', shell=True)
+
 # # --------------------------------------------------
 # def update_entry_point(entry, replacement):
  
@@ -365,15 +369,19 @@ def main():
 
             if scan_date in tarball and 'none' not in tarball: 
                 
+                send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
                 irods_data_path = os.path.join(level_0, tarball)
-                download_raw_data(irods_data_path)
+                
+                if not os.path.isdir(scan_date):
+                    download_raw_data(irods_data_path)
 
-                if args.season == '10':
-                    move_directory(args.sensor, scan_date)
+                    if args.season == '10':
+                        move_directory(args.sensor, scan_date)
 
                 pipeline_prep(scan_date, bundle_size=args.bundle_size)
                 # update_entry_point(args.entry, scan_date)
                 update_process_one(os.getcwd())
+                send_slack_update(f'Processing {scan_date}', channel='gantry_test')
                 sp.call('./entrypoint_p1.sh')
 
                 # if args.crop:
