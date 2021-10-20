@@ -98,3 +98,14 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 
     else:
         print('Required CCTools version already exists.')
+
+
+# --------------------------------------------------
+def run_workflow_1(season, sensor, season_dict):
+
+    sp.call('sbatch worker_scripts/po_work_puma_slurm.sh', shell=True)
+    
+    for item in season_dict[season][sensor]['workflow_1']:
+        sp.call(item, shell=True)
+
+    sp.call('scancel --name=po_worker')
