@@ -49,7 +49,7 @@ def create_pipeline_logs(scan_date):
         os.makedirs(os.path.join(cwd, scan_date, 'logs'))
 
     if os.path.isdir('sequential_alignment_out'):
-        shutil.move(os.path.join(cwd, 'sequential_alignment_out/log.json'), os.path.join(cwd, scan_date, 'logs', 'log.json'))
+        shutil.move('sequential_alignment_out/log.json', os.path.join(cwd, scan_date, 'logs/'))
 
     for item in glob.glob('./*.json*'):
         shutil.move(item, os.path.join(cwd, scan_date, 'logs', item))
