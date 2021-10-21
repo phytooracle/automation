@@ -34,4 +34,4 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
             
             for item in os.listdir(os.path.join(cwd, dir_path, d_type)):
                 print(os.path.join(cwd, dir_path, d_type, item))
-                tar.add(item)
+                tar.add(item, recursive=True)
