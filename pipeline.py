@@ -283,7 +283,7 @@ def move_directory(sensor, scan_date):
 
 # --------------------------------------------------
 def pipeline_prep(scan_date, bundle_size=1):
-    download_cctools()
+    # download_cctools()
 
     # Create data list
     file_dict = create_dict(scan_date)["DATA_FILE_LIST"]
