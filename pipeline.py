@@ -58,6 +58,13 @@ def get_args():
                         help='Add flag if running on an HPC system.',
                         action='store_true')
 
+    parser.add_argument('-scan',
+                        '--scan_date',
+                        help='Scan date to process.',
+                        metavar='scan_date',
+                        type=str,
+                        required=False)
+
     parser.add_argument('-sen',
                         '--sensor',
                         help='Sensor to query.\
@@ -67,7 +74,6 @@ def get_args():
                         required=True,
                         choices=['EnvironmentLogger', 'flirIrCamera', 'ps2Top', 'scanner3DTop', 'stereoTop', 'VNIR', 'SWIR', 'PikaVNIR'])
 
-    
     parser.add_argument('-b',
                         '--bundle_size',
                         help='Processing bundle size (number of data processed by a single worker).',
@@ -355,6 +361,9 @@ def main():
     if args.crop: 
         matching = [scan_date for scan_date in matching if args.crop in scan_date]
         
+    if args.scan_date: 
+        matching - [args.scan_date]
+
     for scan_date in matching[:1]:
 
         for tarball in level_0_list:
