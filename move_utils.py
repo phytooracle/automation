@@ -3,6 +3,7 @@ import sys
 import shutil
 import tarfile
 import glob
+import subprocess as sp
 
 # --------------------------------------------------
 def move_scan_date(scan_date):
@@ -55,4 +56,18 @@ def create_pipeline_logs(scan_date):
 
     for item in glob.glob('./*.json*'):
         shutil.move(item, os.path.join(cwd, scan_date, 'logs', item))
+
+
+# --------------------------------------------------
+def clean_directory(scan_date):
+
+    if os.path.isdir(scan_date):
+        shutil.rmtree(scan_date)
+
+    if os.path.isdir(os.path.join('processed_scans', scan_date)):
+        shutil.rmtree(os.path.join('processed_scans', scan_date))
+
+    if os.path.isfile('clean.sh'):
+        sp.call('./clean.sh', shell=True)
+
     

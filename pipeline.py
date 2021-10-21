@@ -376,15 +376,16 @@ def main():
                 # run_workflow_1(args.season, args.sensor, season_dict)
                 # sp.run(["scancel", "--name=po_worker"])
                 # run_intermediate(args.season, args.sensor, season_dict)
-                move_scan_date(scan_date)
+                # move_scan_date(scan_date)
 
-                for item in ['workflow_1', 'intermediate', 'workflow_2']:
+                # for item in ['workflow_1', 'intermediate', 'workflow_2']:
 
-                    pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
-                    tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
+                #     pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
+                #     tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
-                create_pipeline_logs(scan_date)
-                sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True)                                             
+                # create_pipeline_logs(scan_date)
+                # sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True)   
+                clean_directory(scan_date)                                          
 
 
 # --------------------------------------------------
