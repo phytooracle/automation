@@ -384,7 +384,7 @@ def main():
                 #     tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
                 create_pipeline_logs('2020-01-22')
-                sp.call(f'ssh filexfer cd {cwd} && ./upload {scan_date} {cwd} && exit', shell=True)                                             
+                sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True)                                             
 
 
 # --------------------------------------------------
