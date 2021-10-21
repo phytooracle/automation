@@ -30,8 +30,11 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
                 os.makedirs(os.path.join(cwd, scan_date, outdir))
 
             file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{d_type}_{tag}.tar') 
-            tar = tarfile.open(file_path, 'w')
+            # tar = tarfile.open(file_path, 'w')
             
-            for item in os.listdir(os.path.join(cwd, dir_path, d_type)):
-                print(os.path.join(cwd, dir_path, d_type, item))
-                tar.add(item, recursive=True)
+            # for item in os.listdir(os.path.join(cwd, dir_path, d_type)):
+            #     print(os.path.join(cwd, dir_path, d_type, item))
+            #     tar.add(item, recursive=True)
+
+            with tarfile.open(file_path, 'w') as tar:
+                tar.add(os.path.join(dir_path, d_type), recursive=True)
