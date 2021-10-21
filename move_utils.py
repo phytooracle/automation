@@ -24,8 +24,9 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
     # os.chdir(dir_path)
 
     for d_type in data_type:
-
+        
         if os.path.isdir(os.path.join(cwd, dir_path, d_type)):
+            os.chdir(cwd, dir_path, outdir)
 
             if not os.path.isdir(os.path.join(cwd, scan_date, outdir)):
                 os.makedirs(os.path.join(cwd, scan_date, outdir))
@@ -38,7 +39,8 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
             #     tar.add(item, recursive=True)
 
             with tarfile.open(file_path, 'w') as tar:
-                tar.add(os.path.join(dir_path, d_type), recursive=True)
+                tar.add(d_type, recursive=True)
+    os.chdir(cwd)
 
 
 # --------------------------------------------------
