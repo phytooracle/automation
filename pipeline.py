@@ -375,7 +375,7 @@ def main():
                 # run_workflow_1(args.season, args.sensor, season_dict)
                 # sp.run(["scancel", "--name=po_worker"])
                 # run_intermediate(args.season, args.sensor, season_dict)
-                # move_scan_date(scan_date)
+                move_scan_date(scan_date)
 
                 for item in ['workflow_1', 'intermediate', 'workflow_2']:
 
