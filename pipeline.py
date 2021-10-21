@@ -364,7 +364,7 @@ def main():
     if args.scan_date: 
         matching = [args.scan_date]
 
-    for scan_date in matching[:1]:
+    for scan_date in matching:
 
         for tarball in level_0_list:
 
