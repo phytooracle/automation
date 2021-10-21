@@ -383,7 +383,7 @@ def main():
                 #     pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
                 #     tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
-                create_pipeline_logs('2020-01-22')
+                create_pipeline_logs(scan_date)
                 sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True)                                             
 
 
