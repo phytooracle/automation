@@ -26,7 +26,7 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
     for d_type in data_type:
         
         if os.path.isdir(os.path.join(cwd, dir_path, d_type)):
-            os.chdir(cwd, dir_path, outdir)
+            os.chdir(cwd, dir_path)
 
             if not os.path.isdir(os.path.join(cwd, scan_date, outdir)):
                 os.makedirs(os.path.join(cwd, scan_date, outdir))
