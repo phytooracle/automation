@@ -15,6 +15,7 @@ import pandas as pd
 from datetime import datetime
 import subprocess as sp
 import shutil
+import glob
 from prepare_utils import *
 from replace_utils import *
 from season_dictionary import *
@@ -359,7 +360,7 @@ def main():
         for tarball in level_0_list:
 
             if scan_date in tarball and 'none' not in tarball: 
-                
+                cwd = os.getcwd()
                 # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
                 irods_data_path = os.path.join(level_0, tarball)
                 
@@ -382,8 +383,8 @@ def main():
                     pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
                     tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
-
-                
+                create_pipeline_logs('2020-01-22')
+                sp.call(f'ssh filexfer cd {cwd} && ./upload {scan_date} {cwd} && exit', shell=True)                                             
 
 
 # --------------------------------------------------

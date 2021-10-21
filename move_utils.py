@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import tarfile
+import glob
 
 # --------------------------------------------------
 def move_scan_date(scan_date):
@@ -38,3 +39,18 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
 
             with tarfile.open(file_path, 'w') as tar:
                 tar.add(os.path.join(dir_path, d_type), recursive=True)
+
+
+# --------------------------------------------------
+def create_pipeline_logs(scan_date):
+    cwd = os.getcwd()
+
+    if not os.path.isdir(os.path.join(cwd, scan_date, 'logs')):
+        os.makedirs(os.path.join(cwd, scan_date, 'logs'))
+
+    if os.path.isdir('sequential_alignment_out'):
+        shutil.move(os.path.join(cwd, 'sequential_alignment_out/log.json'), os.path.join(cwd, scan_date, 'logs', 'log.json'))
+
+    for item in glob.glob('./*.json*'):
+        shutil.move(item, os.path.join(cwd, scan_date, 'logs', item))
+    
