@@ -21,17 +21,37 @@ def season_dictionary():
                     }
                 },
                 'workflow_1': {
+                    'commands': {
                     'jx2json main_workflow_phase1.jx -a bundle_list.json > main_workflow_phase1.json', 
                     'makeflow -T wq --json main_workflow_phase1.json -a -N phytooracle_3d -M phytooracle_3d -r 3 -p 0 -dall -o dall.log $@'
+                    },
+                    'outputs': {
+                        'pipeline_out': 'preprocessing_out',
+                        'tag': 'preprocessed',
+                        'outdir': 'preprocessing'
+                    }
                 },
                 'intermediate': {
-                    'singularity run 3d_sequential_align.simg -i preprocessing_out/ -o sequential_alignment_out/                                                                                       '
+                    'commands': {
+                    'singularity run 3d_sequential_align.simg -i preprocessing_out/ -o sequential_alignment_out/'
+                    },
+                    'outputs': {
+                        'pipeline_out': 'sequential_alignment_out',
+                        'tag': 'aligned',
+                        'outdir': 'alignment'
+                    }
                 },
                 'workflow_2': {
-                    'jx2json main_workflow_phase-2.jx -a bundle_list.json > main_workflow_phase2.json', 
-                    'makeflow -T wq --json main_workflow_phase2.json -a -r 2 -M phytooracle_3d -N phytooracle_3d -p 60221 -dall -o dall.log --disable-cache $@'
+                    'commands': {
+                        'jx2json main_workflow_phase-2.jx -a bundle_list.json > main_workflow_phase2.json', 
+                        'makeflow -T wq --json main_workflow_phase2.json -a -r 2 -M phytooracle_3d -N phytooracle_3d -p 60221 -dall -o dall.log --disable-cache $@'
+                    },
+                    'outputs': {
+                        'pipeline_out': '',
+                        'tag': '',
+                        'outdir': ''
+                    }
                 }
-
             }
         }
     }

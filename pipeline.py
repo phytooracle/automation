@@ -18,6 +18,7 @@ import shutil
 from prepare_utils import *
 from replace_utils import *
 from season_dictionary import *
+from move_utils import *
 
 # --------------------------------------------------
 def get_args():
@@ -372,8 +373,16 @@ def main():
                 update_process_one(os.getcwd()+'/')
 
                 # run_workflow_1(args.season, args.sensor, season_dict)
-                sp.run(["scancel", "--name=po_worker"])
-                run_intermediate(args.season, args.sensor, season_dict)
+                # sp.run(["scancel", "--name=po_worker"])
+                # run_intermediate(args.season, args.sensor, season_dict)
+                # move_scan_date(scan_date)
+
+                for item in ['workflow_1', 'intermediate', 'workflow_2']:
+
+                    pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
+                    tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
+
+
                 
 
 

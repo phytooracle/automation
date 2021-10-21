@@ -106,7 +106,7 @@ def run_workflow_1(season, sensor, season_dict):
     home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
     sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
     
-    for item in season_dict[season][sensor]['workflow_1']:
+    for item in season_dict[season][sensor]['workflow_1']['commands']:
         # sp.call(item, shell=True)
         # sp.run(item.split(' '))
         sp.call(home+item, shell=True)
@@ -116,6 +116,16 @@ def run_workflow_1(season, sensor, season_dict):
 
 
 def run_intermediate(season, sensor, season_dict):
-    for item in season_dict[season][sensor]['intermediate']:
+    for item in season_dict[season][sensor]['intermediate']['commands']:
 
         sp.call(item, shell=True)
+
+
+def get_tags(season_dict, season, sensor, wf):
+
+    pipeline_out = season_dict[season][sensor][wf]['outputs']['pipeline_out']
+    pipeline_tag = season_dict[season][sensor][wf]['outputs']['tag']
+    processed_outdir = season_dict[season][sensor][wf]['outputs']['outdir']
+   
+    return pipeline_out, pipeline_tag, processed_outdir
+
