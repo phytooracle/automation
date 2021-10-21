@@ -360,9 +360,9 @@ def main():
     # Download, extract, and process raw data
     if args.crop: 
         matching = [scan_date for scan_date in matching if args.crop in scan_date]
-        
+
     if args.scan_date: 
-        matching - [args.scan_date]
+        matching = [args.scan_date]
 
     for scan_date in matching[:1]:
 
