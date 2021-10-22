@@ -118,16 +118,16 @@ def run_workflow_1(season, sensor, season_dict):
             raise ValueError('Did not create Makeflow JSON file.')
 
     sp.run(["scancel", "--name=po_worker"])
-    # sp.call('scancel --name=po_worker')
+
     
-
-
+# --------------------------------------------------
 def run_intermediate(season, sensor, season_dict):
     for item in season_dict[season][sensor]['intermediate']['commands']:
 
         sp.call(item, shell=True)
 
 
+# --------------------------------------------------
 def get_tags(season_dict, season, sensor, wf):
 
     pipeline_out = season_dict[season][sensor][wf]['outputs']['pipeline_out']

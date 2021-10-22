@@ -23,7 +23,6 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
     
     cwd = os.getcwd()
     data_type = ['west', 'west_downsampled', 'east', 'east_downsampled', 'merged', 'merged_downsampled', 'metadata']
-    # os.chdir(dir_path)
 
     for d_type in data_type:
         
@@ -34,11 +33,6 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
                 os.makedirs(os.path.join(cwd, scan_date, outdir))
 
             file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{d_type}_{tag}.tar') 
-            # tar = tarfile.open(file_path, 'w')
-            
-            # for item in os.listdir(os.path.join(cwd, dir_path, d_type)):
-            #     print(os.path.join(cwd, dir_path, d_type, item))
-            #     tar.add(item, recursive=True)
 
             with tarfile.open(file_path, 'w') as tar:
                 tar.add(d_type, recursive=True)
@@ -73,5 +67,3 @@ def clean_directory(scan_date):
 
     if os.path.isfile('clean.sh'):
         sp.call('./clean.sh', shell=True)
-
-    
