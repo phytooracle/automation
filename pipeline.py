@@ -182,13 +182,13 @@ def create_dict(directory):
         for f in files:
        
             if '.json' in f:
-                match = re.search(r'\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', f)
+                match2 = re.search(r'\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', f)
        
                 file_dict = {
                     "DATE": os.path.join(str(date), ''),
                     "RAW_DATA_PATH": os.path.join(root, ''),
                     "SUBDIR": os.path.basename(root),
-                    "UUID": match.group()
+                    "UUID": match2.group()
                 }
 
                 dir_list.append(file_dict)
@@ -220,9 +220,11 @@ def bundle_data(file_list, data_per_bundle):
 
 # --------------------------------------------------
 def write_to_file(out_filename, bundle_list):
+    cwd = os.getcwd()
     json_obj = {}
     json_obj["BUNDLE_LIST"] = bundle_list
-    with open(out_filename, "w") as outfile:
+
+    with open(os.path.join(cwd, out_filename), "w") as outfile:
         dump_str = json.dumps(json_obj, indent=2, sort_keys=True)
         outfile.write(dump_str)
 
@@ -370,7 +372,7 @@ def main():
 
             if scan_date in tarball and 'none' not in tarball: 
                 cwd = os.getcwd()
-                send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
+                # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
                 irods_data_path = os.path.join(level_0, tarball)
                 
                 if not os.path.isdir(scan_date):
@@ -382,13 +384,13 @@ def main():
                 pipeline_prep(scan_date, bundle_size=args.bundle_size)
                 update_process_one(os.getcwd()+'/')
 
-                send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
+                # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
                 run_workflow_1(args.season, args.sensor, season_dict)
                 sp.run(["scancel", "--name=po_worker"])
                 run_intermediate(args.season, args.sensor, season_dict)
                 move_scan_date(scan_date)
 
-                send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
+                # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                 for item in ['workflow_1', 'intermediate', 'workflow_2']:
 
                     pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
@@ -396,10 +398,10 @@ def main():
 
                 create_pipeline_logs(scan_date)
 
-                send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
+                # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
                 sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
 
-                send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
+                # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
                 clean_directory(scan_date)                                          
 
 
