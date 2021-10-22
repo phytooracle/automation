@@ -101,15 +101,16 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 
 
 # --------------------------------------------------
-def run_workflow_1(season, sensor, season_dict):
+def run_workflow_1(season, sensor, season_dict, cwd):
 
     home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
     sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    
+    os.chdir(cwd)
+
     for item in season_dict[season][sensor]['workflow_1']['commands']:
         cmd = ''.join([home, item])
         print(os.getcwd())
-        print(cmd)
+
         sp.call(cmd, shell=True)
         # sp.run(['chmod', '755', 'main_workflow_phase1.json'])
         # sp.run(item.split(' '))

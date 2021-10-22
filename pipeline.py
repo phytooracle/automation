@@ -386,7 +386,7 @@ def main():
                 update_process_one(os.getcwd()+'/')
 
                 # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
-                run_workflow_1(args.season, args.sensor, season_dict)
+                run_workflow_1(args.season, args.sensor, season_dict, os.getcwd())
                 
                 run_intermediate(args.season, args.sensor, season_dict)
                 move_scan_date(scan_date)
