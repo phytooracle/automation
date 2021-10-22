@@ -184,7 +184,7 @@ def create_dict(directory):
        
             if '.json' in f:
                 match2 = re.search(r'\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', f)
-       
+                print(match2)
                 file_dict = {
                     "DATE": os.path.join(str(date), ''),
                     "RAW_DATA_PATH": os.path.join(root, ''),
