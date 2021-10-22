@@ -1,3 +1,4 @@
+from genericpath import isdir
 import os
 import sys
 import shutil
@@ -56,6 +57,9 @@ def create_pipeline_logs(scan_date):
 
     for item in glob.glob('./*.json*'):
         shutil.move(item, os.path.join(cwd, scan_date, 'logs', item))
+
+    if os.path.isdir('bundle'):
+        shutil.move('bundle', os.path.join(cwd, scan_date, 'logs'))
 
 
 # --------------------------------------------------

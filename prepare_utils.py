@@ -93,7 +93,7 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
         cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
         cmd1 = f'cd {home} && wget {cctools_url}.tar.gz && tar -xzvf {cctools_file}.tar.gz'
         sp.call(cmd1, shell=True)
-        sp.call("export CCTOOLS_HOME=${HOME}/cctools-7.1.12-x86_64-centos7 && export PATH=${CCTOOLS_HOME}/bin:$PATH", shell=True)
+        # sp.call("export CCTOOLS_HOME=${HOME}/cctools-7.1.12-x86_64-centos7 && export PATH=${CCTOOLS_HOME}/bin:$PATH", shell=True)
         print(f'Download complete. CCTools version {cctools_version} is ready!')
 
     else:
