@@ -111,8 +111,8 @@ def run_workflow_1(season, sensor, season_dict):
 
         # sp.call(cmd, shell=True)
         result = sp.run(cmd, stdout=sp.PIPE, shell=True)
-        
-        if result.returncode==1:
+
+        if result.returncode==0:
             continue
         else:
             raise ValueError('Did not create Makeflow JSON file.')
