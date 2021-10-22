@@ -178,7 +178,7 @@ def create_dict(directory):
     for root, dirs, files in os.walk(directory):
         match = re.search(r'\d{4}-\d{2}-\d{2}', root)
         date = datetime.strptime(match.group(), '%Y-%m-%d').date()
-        print(date)
+        print(root)
     
         for f in files:
        
