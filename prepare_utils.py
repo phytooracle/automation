@@ -111,6 +111,7 @@ def run_workflow_1(season, sensor, season_dict):
         print(os.getcwd())
         print(cmd)
         # sp.call(item, shell=True)
+        sp.run(['chmod', '755', 'main_workflow_phase1.json'])
         sp.run(item.split(' '))
 
     # sp.call('scancel --name=po_worker')
