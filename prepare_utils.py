@@ -110,9 +110,9 @@ def run_workflow_1(season, sensor, season_dict):
         cmd = ''.join([home, item])
         print(os.getcwd())
 
-        # sp.call(cmd, shell=True)
+        sp.call(cmd, shell=True)
         # sp.run(['chmod', '755', 'main_workflow_phase1.json'])
-        sp.run(cmd.split(' '))
+        # sp.run(cmd.split(' '))
     sp.run(["scancel", "--name=po_worker"])
     # sp.call('scancel --name=po_worker')
     
