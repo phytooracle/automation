@@ -387,7 +387,7 @@ def main():
 
                 # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
                 run_workflow_1(args.season, args.sensor, season_dict)
-                sp.run(["scancel", "--name=po_worker"])
+                
                 # run_intermediate(args.season, args.sensor, season_dict)
                 # move_scan_date(scan_date)
 
