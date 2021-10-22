@@ -274,6 +274,7 @@ def download_raw_data(irods_path):
         cmd3 = f'rm {file_name}'
     
     if args.hpc: 
+        print('>>>>>>Using data transfer node.')
         sp.call(f'ssh filexfer cd {cwd} && {cmd1} && {cmd2} && {cmd3} && exit', shell=True)
     else: 
         sp.call(cmd1, shell=True)
