@@ -178,13 +178,12 @@ def create_dict(directory):
     for root, dirs, files in os.walk(directory):
         match = re.search(r'\d{4}-\d{2}-\d{2}', root)
         date = datetime.strptime(match.group(), '%Y-%m-%d').date()
-        print(root)
     
         for f in files:
        
             if '.json' in f:
                 match2 = re.search(r'\w{8}-\w{4}-\w{4}-\w{4}-\w{12}', f)
-                print(match2)
+
                 file_dict = {
                     "DATE": os.path.join(str(date), ''),
                     "RAW_DATA_PATH": os.path.join(root, ''),
