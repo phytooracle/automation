@@ -299,7 +299,8 @@ def pipeline_prep(scan_date, bundle_size=1):
     bundle_list = bundle_data(file_list=file_dict, data_per_bundle=bundle_size)
 
     # Write data list
-    write_to_file(out_filename='bundle_list.json', bundle_list=bundle_list) 
+    write_to_file(out_filename='bundle_list.json', bundle_list=bundle_list)
+    sp.run(['chmod', '755', 'bundle_list.json']) 
 
     # Split data into bundles
     if not os.path.isdir('bundle'):
@@ -386,7 +387,7 @@ def main():
                 update_process_one(os.getcwd()+'/')
 
                 # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
-                run_workflow_1(args.season, args.sensor, season_dict, os.getcwd())
+                run_workflow_1(args.season, args.sensor, season_dict)
                 
                 run_intermediate(args.season, args.sensor, season_dict)
                 move_scan_date(scan_date)
