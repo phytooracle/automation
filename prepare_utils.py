@@ -111,7 +111,12 @@ def run_workflow_1(season, sensor, season_dict):
 
         # sp.call(cmd, shell=True)
         result = sp.run(cmd, stdout=sp.PIPE, shell=True)
-        print(result)
+        
+        if result.returncode==1:
+            continue
+        else:
+            raise ValueError('Did not create Makeflow JSON file.')
+
     sp.run(["scancel", "--name=po_worker"])
     # sp.call('scancel --name=po_worker')
     
