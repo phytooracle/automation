@@ -385,25 +385,25 @@ def main():
                 pipeline_prep(scan_date, bundle_size=args.bundle_size)
                 update_process_one(os.getcwd()+'/')
 
-                # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
-                run_workflow_1(args.season, args.sensor, season_dict)
-                sp.run(["scancel", "--name=po_worker"])
-                run_intermediate(args.season, args.sensor, season_dict)
-                move_scan_date(scan_date)
+                # # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
+                # run_workflow_1(args.season, args.sensor, season_dict)
+                # sp.run(["scancel", "--name=po_worker"])
+                # run_intermediate(args.season, args.sensor, season_dict)
+                # move_scan_date(scan_date)
 
-                # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
-                for item in ['workflow_1', 'intermediate', 'workflow_2']:
+                # # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
+                # for item in ['workflow_1', 'intermediate', 'workflow_2']:
 
-                    pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
-                    tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
+                #     pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
+                #     tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
-                create_pipeline_logs(scan_date)
+                # create_pipeline_logs(scan_date)
 
-                # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
-                sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
+                # # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
+                # sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
 
-                # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
-                clean_directory(scan_date)                                          
+                # # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
+                # clean_directory(scan_date)                                          
 
 
 # --------------------------------------------------
