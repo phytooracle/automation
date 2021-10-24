@@ -1,5 +1,5 @@
 # PhytoOracle Pipeline Automation
-This project was developed to search the ```phytooracle``` CyVerse Data Store for unprocessed data and recursively process them. The data are downloaded, processed, and uploaded automatically. Processing occurs using a Makeflow/Workqueue distributed computing framework. The data are uploaded to the respective sensor directory within the ```phytooracle``` level_1 CyVerse data store.
+This project was developed to search the ```phytooracle``` CyVerse Data Store for unprocessed data and recursively process them. The data are downloaded, processed, and uploaded automatically. Processing occurs using a Makeflow/Workqueue distributed computing framework. The data are uploaded to the respective sensor directory within the ```phytooracle/.../level_1``` CyVerse data store.
 
 ## Running the script
 ### Flags 
