@@ -328,10 +328,15 @@ def get_transformation_file(irods_path):
 def get_bundle_dir(irods_path):
 
     cmd1 = f'iget -rKPVT {os.path.join(irods_path, "logs", "bundle")}'
-    cmd2 = f'iget -KPVT {os.path.join(irods_path, "logs", "bundle_list.json")}'
 
     sp.call(cmd1, shell=True)
-    sp.call(cmd2, shell=True)
+
+# --------------------------------------------------
+def get_bundle_json(irods_path):
+
+    cmd1 = f'iget -KPVT {os.path.join(irods_path, "logs", "bundle_list.json")}'
+
+    sp.call(cmd1, shell=True)
 
 
 # --------------------------------------------------
@@ -457,7 +462,8 @@ def main():
                             get_transformation_file(os.path.join(level_1, scan_date))
 
                         if not os.path.isdir('bundle'):
-                            get_bundle_dir(os.path.join(level_1, scan_date))
+                            # get_bundle_dir(os.path.join(level_1, scan_date))
+                            get_bundle_json(os.path.join(level_1, scan_date))
 
                     run_workflow_2(args.season, args.sensor, season_dict)
 
