@@ -434,6 +434,7 @@ def main():
                         print(irods_data_path.split('/')[-1])
                         download_level_1_data(irods_data_path)
 
+
                 # # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                 # for item in ['workflow_1', 'intermediate', 'workflow_2']:
 
