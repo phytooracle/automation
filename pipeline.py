@@ -416,7 +416,7 @@ def main():
     # Download pipeline requirements
     download_cctools()
     season_dict = season_dictionary()
-    # build_containers(args.season, args.sensor, season_dict)
+    build_containers(args.season, args.sensor, season_dict)
 
     # Download, extract, and process raw data
     if args.crop: 
