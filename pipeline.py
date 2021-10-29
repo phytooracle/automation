@@ -294,6 +294,7 @@ def download_raw_data(irods_path):
 def download_level_1_data(irods_path):
     args = get_args()
     file_name = os.path.basename(irods_path)
+    direc = irods_path.split('/')[-1]
     print(file_name)
     cmd1 = f'iget -rfKPVT {irods_path}'
     cwd = os.getcwd()
@@ -308,10 +309,11 @@ def download_level_1_data(irods_path):
     
     if args.hpc: 
         print('>>>>>>Using data transfer node.')
-        sp.call(f'ssh filexfer cd {cwd} && {cmd1} && {cmd2} && cd {file_name} && {cmd3} && exit', shell=True)
+        sp.call(f'ssh filexfer cd {cwd} && {cmd1} && {cmd2} && cd {direc} && {cmd3} && exit', shell=True)
     else: 
         sp.call(cmd1, shell=True)
         sp.call(cmd2, shell=True)
+        sp.call(f"cd {direc}")
         sp.call(cmd3, shell=True)
 # --------------------------------------------------
 def move_directory(sensor, scan_date):
