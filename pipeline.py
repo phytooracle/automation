@@ -445,6 +445,7 @@ def main():
 
                         if not os.path.isfile('transfromation.json'):
                             get_transformation_file(os.path.join(level_1, scan_date))
+                    run_workflow_2(args.season, args.sensor, season_dict)
 
 
 
