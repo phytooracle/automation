@@ -318,6 +318,13 @@ def download_level_1_data(irods_path):
 
 
 # --------------------------------------------------
+def get_transformation_file(irods_path):
+
+    cmd1 = f'iget -KPVT {os.path.join(irods_path, "preprocessing", "transfromation.json")}'
+    sp.call(cmd1, shell=True)
+
+
+# --------------------------------------------------
 def move_directory(sensor, scan_date):
     dir_move = os.path.join(sensor, scan_date)
     cwd = os.getcwd()
@@ -430,9 +437,15 @@ def main():
 
                 if set(['3']).issubset(args.workflow): 
                     irods_data_path = os.path.join(level_1, scan_date, 'alignment')
-                    if not os.path.isdir('alignment'):
-                        print(irods_data_path.split('/')[-1])
-                        download_level_1_data(irods_data_path)
+
+                    if args.sensor=='scanner3DTop':
+                        if not os.path.isdir('alignment'):
+                            print(irods_data_path.split('/')[-1])
+                            download_level_1_data(irods_data_path)
+
+                        if not os.path.isfile('transfromation.json'):
+                            get_transformation_file(os.path.join(level_1, scan_date))
+
 
 
                 # # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
