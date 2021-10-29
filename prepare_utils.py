@@ -134,6 +134,7 @@ def run_workflow_2(season, sensor, season_dict):
     sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
 
     for item in season_dict[season][sensor]['workflow_2']['commands']:
+        
         cmd = ''.join([home, item])
         
         result = sp.run(cmd, stdout=sp.PIPE, shell=True)
