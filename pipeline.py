@@ -315,6 +315,8 @@ def download_level_1_data(irods_path):
         sp.call(f"cd {direc}")
         sp.call(cmd2, shell=True)
         sp.call(cmd3, shell=True)
+
+
 # --------------------------------------------------
 def move_directory(sensor, scan_date):
     dir_move = os.path.join(sensor, scan_date)
@@ -429,21 +431,23 @@ def main():
                 if set(['3']).issubset(args.workflow): 
                     irods_data_path = os.path.join(level_1, scan_date, 'alignment')
                     if not os.path.isdir('alignment'):
+                        print(irods_data_path.split('/')[-1])
                         download_level_1_data(irods_data_path)
 
-                # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
-                for item in ['workflow_1', 'intermediate', 'workflow_2']:
 
-                    pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
-                    tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
+                # # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
+                # for item in ['workflow_1', 'intermediate', 'workflow_2']:
 
-                create_pipeline_logs(scan_date)
+                #     pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
+                #     tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
-                # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
-                # sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
+                # create_pipeline_logs(scan_date)
 
-                # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
-                clean_directory(scan_date)                                          
+                # # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
+                # # sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
+
+                # # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
+                # clean_directory(scan_date)                                          
 
 
 # --------------------------------------------------
