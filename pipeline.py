@@ -296,7 +296,7 @@ def download_level_1_data(irods_path):
     file_name = os.path.basename(irods_path)
     direc = irods_path.split('/')[-1]
     print(file_name)
-    cmd1 = f'iget -rfKPVT {irods_path}'
+    cmd1 = f'iget -rfPVT {irods_path}'
     cwd = os.getcwd()
 
     if '.gz' in file_name: 
