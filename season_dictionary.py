@@ -18,6 +18,14 @@ def season_dictionary():
                     'sequential_alignment': {
                         'simg': '3d_sequential_align.simg',
                         'dockerhub_path': 'docker://phytooracle/3d_sequential_align:latest'
+                    },
+                    'postprocessing': {
+                        'simg': '3d_postprocessing.simg',
+                        'dockerhub_path': 'docker://phytooracle/3d_postprocessing:latest'
+                    },
+                    'plantcrop': {
+                        'simg': '3d_crop_individual_plants.simg',
+                        'dockerhub_path': 'docker://phytooracle/3d_crop_individual_plants:latest'
                     }
                 },
                 'workflow_1': {
