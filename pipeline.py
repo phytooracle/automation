@@ -300,19 +300,19 @@ def download_level_1_data(irods_path):
     cwd = os.getcwd()
 
     if '.gz' in file_name: 
-        cmd2 = 'ls *.tar | xargs -I {} tar -xzvf {}'
-        cmd3 = f'rm {file_name}'
+        cmd2 = 'ls *.tar.gz | xargs -I {} tar -xzvf {}'
+        cmd3 = f'rm *.tar.gz'
 
     else: 
         cmd2 = 'ls *.tar | xargs -I {} tar -xvf {}'
-        cmd3 = f'rm {file_name}'
+        cmd3 = f'rm *.tar'
     
     if args.hpc: 
         print('>>>>>>Using data transfer node.')
         sp.call(f'ssh filexfer cd {cwd} && {cmd1} && cd {os.path.join(cwd, direc)} && {cmd2} && {cmd3} && exit', shell=True)
     else: 
         sp.call(cmd1, shell=True)
-        sp.call(f"cd {direc}")
+        sp.call(f"cd {os.path.join(cwd, direc)}")
         sp.call(cmd2, shell=True)
         sp.call(cmd3, shell=True)
 
