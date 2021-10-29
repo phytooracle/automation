@@ -328,7 +328,10 @@ def get_transformation_file(irods_path):
 def get_bundle_dir(irods_path):
 
     cmd1 = f'iget -rKPVT {os.path.join(irods_path, "logs", "bundle")}'
+    cmd2 = f'iget -KPVT {os.path.join(irods_path, "logs", "bundle_list.json")}'
+
     sp.call(cmd1, shell=True)
+    sp.call(cmd2, shell=True)
 
 
 # --------------------------------------------------
