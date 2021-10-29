@@ -81,6 +81,13 @@ def get_args():
                         type=int,
                         default=1)
 
+    parser.add_argument('-w',
+                        '--workflow',
+                        help='Workflow to run. Options are [1, 2, 3]',
+                        metavar='workflow',
+                        type=str,
+                        nargs='+')
+
     return parser.parse_args()
 
 
@@ -251,7 +258,8 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
         cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
         cmd1 = f'cd {home} && wget {cctools_url}.tar.gz && tar -xzvf {cctools_file}.tar.gz'
         sp.call(cmd1, shell=True)
-        sp.call(f'cd {cwd}')
+        print(os.getcwd())
+        #sp.call(f'cd {cwd}')
         print(f'Download complete. CCTools version {cctools_version} is ready!')
 
     else:
@@ -282,6 +290,29 @@ def download_raw_data(irods_path):
         sp.call(cmd3, shell=True)
 
 
+# --------------------------------------------------
+def download_level_1_data(irods_path):
+    args = get_args()
+    file_name = os.path.basename(irods_path)
+    print(file_name)
+    cmd1 = f'iget -rfKPVT {irods_path}'
+    cwd = os.getcwd()
+
+    if '.gz' in file_name: 
+        cmd2 = 'ls *.tar | xargs -I {} tar -xzvf {}'
+        cmd3 = f'rm {file_name}'
+
+    else: 
+        cmd2 = 'ls *.tar | xargs -I {} tar -xvf {}'
+        cmd3 = f'rm {file_name}'
+    
+    if args.hpc: 
+        print('>>>>>>Using data transfer node.')
+        sp.call(f'ssh filexfer cd {cwd} && {cmd1} && {cmd2} && cd {file_name} && {cmd3} && exit', shell=True)
+    else: 
+        sp.call(cmd1, shell=True)
+        sp.call(cmd2, shell=True)
+        sp.call(cmd3, shell=True)
 # --------------------------------------------------
 def move_directory(sensor, scan_date):
     dir_move = os.path.join(sensor, scan_date)
@@ -359,7 +390,7 @@ def main():
     # Download pipeline requirements
     download_cctools()
     season_dict = season_dictionary()
-    build_containers(args.season, args.sensor, season_dict)
+    # build_containers(args.season, args.sensor, season_dict)
 
     # Download, extract, and process raw data
     if args.crop: 
@@ -374,23 +405,29 @@ def main():
 
             if scan_date in tarball and 'none' not in tarball: 
                 cwd = os.getcwd()
-                # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
-                irods_data_path = os.path.join(level_0, tarball)
-                
-                if not os.path.isdir(scan_date):
-                    download_raw_data(irods_data_path)
 
-                    if args.season == '10':
-                        move_directory(args.sensor, scan_date)
+                if set(['1','2']).issubset(args.list):
+                    # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
+                    irods_data_path = os.path.join(level_0, tarball)
+                    
+                    if not os.path.isdir(scan_date):
+                        download_raw_data(irods_data_path)
 
-                pipeline_prep(scan_date, bundle_size=args.bundle_size)
-                update_process_one(os.getcwd()+'/')
+                        if args.season == '10':
+                            move_directory(args.sensor, scan_date)
 
-                # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
-                run_workflow_1(args.season, args.sensor, season_dict)
-                
-                run_intermediate(args.season, args.sensor, season_dict)
-                move_scan_date(scan_date)
+                    pipeline_prep(scan_date, bundle_size=args.bundle_size)
+                    update_process_one(os.getcwd()+'/')
+
+                    # send_slack_update(f'Processing {scan_date}.', channel='gantry_test')
+                    run_workflow_1(args.season, args.sensor, season_dict)
+                    run_intermediate(args.season, args.sensor, season_dict)
+                    move_scan_date(scan_date)
+
+                if set(['3']).issubset(args.list): 
+                    irods_data_path = os.path.join(level_1, scan_date, 'alignment')
+                    if not os.path.isdir('alignment'):
+                        download_level_1_data(irods_data_path)
 
                 # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                 for item in ['workflow_1', 'intermediate', 'workflow_2']:
