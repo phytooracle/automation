@@ -406,7 +406,7 @@ def main():
             if scan_date in tarball and 'none' not in tarball: 
                 cwd = os.getcwd()
 
-                if set(['1','2']).issubset(args.list):
+                if set(['1','2']).issubset(args.workflow):
                     # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
                     irods_data_path = os.path.join(level_0, tarball)
                     
@@ -424,7 +424,7 @@ def main():
                     run_intermediate(args.season, args.sensor, season_dict)
                     move_scan_date(scan_date)
 
-                if set(['3']).issubset(args.list): 
+                if set(['3']).issubset(args.workflow): 
                     irods_data_path = os.path.join(level_1, scan_date, 'alignment')
                     if not os.path.isdir('alignment'):
                         download_level_1_data(irods_data_path)
