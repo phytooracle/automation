@@ -33,6 +33,7 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
                 os.makedirs(os.path.join(cwd, scan_date, outdir))
 
             file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{d_type}_{tag}.tar') 
+            print(f'Creating {file_path}.')
             if not os.path.isfile(file_path):
                 with tarfile.open(file_path, 'w') as tar:
                     tar.add(d_type, recursive=True)
