@@ -451,6 +451,7 @@ def main():
                     move_scan_date(scan_date)
 
                 if set(['3']).issubset(args.workflow): 
+                    update_process_one(os.getcwd()+'/')
                     irods_data_path = os.path.join(level_1, scan_date, 'alignment')
 
                     if args.sensor=='scanner3DTop':
