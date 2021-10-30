@@ -470,8 +470,6 @@ def main():
 
                     run_workflow_2(args.season, args.sensor, season_dict)
 
-
-
                 # # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                 # for item in ['workflow_1', 'intermediate', 'workflow_2']:
 
