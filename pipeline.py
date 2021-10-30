@@ -490,8 +490,8 @@ def main():
 
                             get_bundle_json(os.path.join(level_1, scan_date))
                     
-                    if not all([os.path.isfile(f) for f in season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']]):
-
+                    #if not all([os.path.isfile(f) for f in season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']]):
+                    if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out'][0]):
                         run_workflow_2(args.season, args.sensor, season_dict)
                         
                     
@@ -507,7 +507,7 @@ def main():
                                 tar_outputs(scan_date, p1, p2, p3)
                         else:
                             tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
-                            
+
                     uncompress_plants()
                     create_pipeline_logs(scan_date)
 
