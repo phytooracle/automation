@@ -387,10 +387,12 @@ def send_slack_update(message, channel='gantry_test'):
 
     sp.call(f'singularity run gantry_notifications.simg -m "{message}" -c "{channel}"', shell=True)
 
-def uncompress_plants():
+def uncompress_plants(cwd, scan_date):
     print('Uncompressing plants.')
     sp.call('ls *_individual_plants.tar | xargs -I {} tar -xvf {}', shell=True)
     sp.call('rm *_individual_plants.tar', shell=True)
+    if os.path.isdir('individual_plants_out'):
+        shutil.move('individual_plants_out', os.path.join(cwd, scan_date, 'individual_plants_out'))
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
@@ -508,8 +510,11 @@ def main():
                         else:
                             tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
-                    uncompress_plants()
-                    create_pipeline_logs(scan_date)
+                    if not os.path.isdir('individual_plants_out'):
+                        uncompress_plants(cwd, scan_date)
+                    
+                    if not os.path.isdir(os.path.join(scan_date, 'logs')):
+                        create_pipeline_logs(scan_date)
 
                     # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
                     sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
