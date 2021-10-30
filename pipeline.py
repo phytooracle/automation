@@ -387,7 +387,10 @@ def send_slack_update(message, channel='gantry_test'):
 
     sp.call(f'singularity run gantry_notifications.simg -m "{message}" -c "{channel}"', shell=True)
 
-
+def uncompress_plants():
+    print('Uncompressing plants.')
+    sp.call('ls *_individual_plants.tar | xargs -I {} tar -xvf {}', shell=True)
+    sp.call('rm *_individual_plants.tar', shell=True)
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
@@ -490,6 +493,7 @@ def main():
                     if not all([os.path.isfile(f) for f in season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']]):
 
                         run_workflow_2(args.season, args.sensor, season_dict)
+                        
                     
                     for item in ['workflow_2']:
 
@@ -503,7 +507,8 @@ def main():
                                 tar_outputs(scan_date, p1, p2, p3)
                         else:
                             tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
-
+                            
+                    uncompress_plants()
                     create_pipeline_logs(scan_date)
 
                     # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
