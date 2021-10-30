@@ -387,15 +387,14 @@ def send_slack_update(message, channel='gantry_test'):
 
     sp.call(f'singularity run gantry_notifications.simg -m "{message}" -c "{channel}"', shell=True)
 
+
+# --------------------------------------------------
 def uncompress_plants():
     print('Uncompressing plants.')
     sp.call('ls *_individual_plants.tar | xargs -I {} tar -xvf {}', shell=True)
     sp.call('rm *_individual_plants.tar', shell=True)
     
 
-def move_individual_plants(cwd, scan_date):
-    if os.path.isdir('individual_plants_out'):
-        shutil.move('individual_plants_out', os.path.join(cwd, scan_date, 'individual_plants_out'))
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
@@ -498,7 +497,9 @@ def main():
                     #if not all([os.path.isfile(f) for f in season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']]):
                     if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out'][0]):
                         run_workflow_2(args.season, args.sensor, season_dict)
-                        
+                    
+                    if not os.path.isdir('individual_plants_out'):
+                        uncompress_plants()
                     
                     for item in ['workflow_2']:
 
@@ -513,11 +514,6 @@ def main():
                         else:
                             tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
-                    if not os.path.isdir('individual_plants_out'):
-                        uncompress_plants()
-                    
-                    move_individual_plants(cwd, scan_date)
-                    
                     if not os.path.isdir(os.path.join(scan_date, 'logs')):
                         create_pipeline_logs(scan_date)
 
