@@ -473,7 +473,6 @@ def main():
 
                     if args.sensor=='scanner3DTop':
                         if not os.path.isdir('alignment'):
-                            print(irods_data_path.split('/')[-1])
                             download_level_1_data(irods_data_path)
 
                         if not os.path.isfile('transfromation.json'):
@@ -487,8 +486,31 @@ def main():
                         if not os.path.isfile('bundle_list.json'):
 
                             get_bundle_json(os.path.join(level_1, scan_date))
+                    
+                    if not all([os.path.isfile(f) for f in season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']]):
 
-                    run_workflow_2(args.season, args.sensor, season_dict)
+                        run_workflow_2(args.season, args.sensor, season_dict)
+                    
+                    for item in ['workflow_2']:
+
+                        pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
+
+                        if type(pipeline_out) == list:
+                            for i in range(0, len(pipeline_out)):
+                                p1 = pipeline_out[i]
+                                p2 = pipeline_tag[i]
+                                p3 = processed_outdir[i]
+                                tar_outputs(scan_date, p1, p2, p3)
+                        else:
+                            tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
+
+                    create_pipeline_logs(scan_date)
+
+                    # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
+                    sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
+
+                    # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
+                    clean_directory(scan_date)
 
                 # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                                                        
