@@ -596,7 +596,7 @@ def main():
                         download_level_1_data(irods_data_path)
 
                     update_process_one(os.getcwd()+'/')
-                    pipeline_prep(scan_date, bundle_size=args.bundle_size, plant=True)
+                    pipeline_prep('plantcrop', bundle_size=args.bundle_size, plant=True)
 
                 # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                                                        
