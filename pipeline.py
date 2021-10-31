@@ -598,6 +598,9 @@ def main():
                     update_process_one(os.getcwd()+'/')
                     pipeline_prep('plantcrop', bundle_size=args.bundle_size, plant=True)
 
+                    if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'][0]):
+                        run_workflow_3(args.season, args.sensor, season_dict)
+
                 # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                                                        
 
