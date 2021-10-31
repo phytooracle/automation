@@ -254,7 +254,6 @@ def create_dict_plant(directory):
     files_list = np.unique(files_list).tolist()
     
     for item in files_list:
-        print(item)
 
         file_dict = {
             "PLANT_NAME": os.path.basename(item),
