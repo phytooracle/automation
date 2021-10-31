@@ -205,6 +205,68 @@ def create_dict(directory):
     return dir_dict
 
 
+# # --------------------------------------------------
+# def create_dict_plant(directory):
+#     dir_list = []
+#     dir_dict = {}
+#     cnt = 0
+
+#     for root, dirs, files in os.walk(directory):
+#         # print(files)
+    
+#         for f in files:
+       
+#             if '.ply' in f:
+
+#                 raw, plant_name = os.path.split(root)
+#                 uuid, _ = os.path.splitext(os.path.basename(f))
+                
+#                 file_dict = {
+#                     "RAW_DATA_PATH": os.path.join(raw, ''),
+#                     "PLANT_NAME": os.path.basename(plant_name),
+#                     "UUID": uuid
+#                 }
+
+#                 dir_list.append(file_dict)
+
+#     dir_dict["DATA_FILE_LIST"] = dir_list
+
+#     return dir_dict
+
+
+
+def create_dict_plant(directory):
+    dir_list = []
+    dir_dict = {}
+    cnt = 0
+    files_list = []
+
+
+    for root, dirs, files in os.walk(directory):
+    
+        for f in files:
+       
+            if '.ply' in f:
+
+                raw, plant_name = os.path.split(root)
+                files_list.append(plant_name)
+    
+    files_list = np.unique(files_list).tolist()
+    
+    for item in files_list:
+        print(item)
+
+        file_dict = {
+            "PLANT_NAME": os.path.basename(item),
+        }
+
+        dir_list.append(file_dict)
+
+    dir_dict["DATA_FILE_LIST"] = dir_list
+
+    return dir_dict
+
+
 # --------------------------------------------------
 def bundle_data(file_list, data_per_bundle):
     data_sets = []
@@ -349,11 +411,15 @@ def move_directory(sensor, scan_date):
 
 
 # --------------------------------------------------
-def pipeline_prep(scan_date, bundle_size=1):
+def pipeline_prep(scan_date, bundle_size=1, plant=False):
     # download_cctools()
 
     # Create data list
-    file_dict = create_dict(scan_date)["DATA_FILE_LIST"]
+    if plant:
+        file_dict = create_dict_plant(scan_date)["DATA_FILE_LIST"]
+    else:
+        file_dict = create_dict(scan_date)["DATA_FILE_LIST"]
+
     bundle_list = bundle_data(file_list=file_dict, data_per_bundle=bundle_size)
 
     # Write data list
@@ -380,6 +446,7 @@ def update_process_one(replacement):
 
                 replace_file_one(replacing, f'"{replacement}"\n')
                 replace_file_two(replacing, f'"{replacement}"\n')
+                replace_file_three(replacing, f'"{replacement}"\n')
 
 
 # --------------------------------------------------
@@ -522,6 +589,13 @@ def main():
 
                     # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
                     # clean_directory(scan_date)
+                
+                if set([4]).issubset(args.workflow):
+                    irods_data_path = os.path.join(level_1, scan_date, 'plantcrop')
+                    download_level_1_data(irods_data_path)
+                    
+                    update_process_one(os.getcwd()+'/')
+                    pipeline_prep(scan_date, bundle_size=args.bundle_size, plant=True)
 
                 # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                                                        
