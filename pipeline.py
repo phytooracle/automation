@@ -590,10 +590,12 @@ def main():
                     # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
                     # clean_directory(scan_date)
                 
-                if set([4]).issubset(args.workflow):
+                if set(['4']).issubset(args.workflow): 
+
                     irods_data_path = os.path.join(level_1, scan_date, 'plantcrop')
-                    download_level_1_data(irods_data_path)
-                    
+                    if not os.path.isdir('plantcrop'):
+                        download_level_1_data(irods_data_path)
+
                     update_process_one(os.getcwd()+'/')
                     pipeline_prep(scan_date, bundle_size=args.bundle_size, plant=True)
 
