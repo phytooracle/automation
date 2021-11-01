@@ -344,7 +344,7 @@ def download_raw_data(irods_path):
     
     if args.hpc: 
         print('>>>>>>Using data transfer node.')
-        sp.call(f'ssh filexfer cd {cwd} && {cmd1} && {cmd2} && {cmd3} && exit', shell=True)
+        sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd1}' '&& {cmd2}' '&& {cmd3}' '&& exit'", shell=True)
     else: 
         sp.call(cmd1, shell=True)
         sp.call(cmd2, shell=True)
@@ -535,7 +535,7 @@ def main():
                     create_pipeline_logs(scan_date)
 
                     # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
-                    sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
+                    sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True) 
 
                     # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
                     clean_directory(scan_date)   
@@ -584,10 +584,8 @@ def main():
                         create_pipeline_logs(scan_date)
 
                     # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
-                    sp.call(f'ssh filexfer cd {cwd} && ./upload.sh {scan_date} {cwd} && exit', shell=True) 
-
-                    # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
-                    # clean_directory(scan_date)
+                    sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True)  
+                    
                 
                 if set(['4']).issubset(args.workflow): 
 
@@ -602,6 +600,7 @@ def main():
                         run_workflow_3(args.season, args.sensor, season_dict)
 
                 # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
+                # clean_directory(scan_date)
                                                        
 
 
