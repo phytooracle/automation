@@ -371,7 +371,7 @@ def download_level_1_data(irods_path):
     
     if args.hpc: 
         print('>>>>>>Using data transfer node.')
-        sp.call(f'ssh filexfer cd {cwd} && {cmd1} && cd {os.path.join(cwd, direc)} && {cmd2} && {cmd3} && exit', shell=True)
+        sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd1}' '&& cd {os.path.join(cwd, direc)}' '&& {cmd2}' '&& {cmd3}' '&& exit'", shell=True)
     else: 
         sp.call(cmd1, shell=True)
         sp.call(f"cd {os.path.join(cwd, direc)}")
