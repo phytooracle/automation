@@ -587,7 +587,7 @@ def main():
                     sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True)
 
                     send_slack_update(f'{scan_date}: Upload complete...', channel='gantry_test') 
-                    clean_directory(scan_date)                       
+                    # clean_directory(scan_date)                       
 
 
 # --------------------------------------------------
