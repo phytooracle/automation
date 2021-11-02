@@ -542,7 +542,7 @@ def main():
                     # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
                     clean_directory(scan_date)   
 
-                if set(['3']).issubset(args.workflow): 
+                if set(['3', '4']).issubset(args.workflow): 
                     update_process_one(os.getcwd()+'/')
                     irods_data_path = os.path.join(level_1, scan_date, 'alignment')
 
@@ -563,43 +563,28 @@ def main():
                             get_bundle_json(os.path.join(level_1, scan_date))
                     
                     #if not all([os.path.isfile(f) for f in season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']]):
-                    if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out'][0]):
+                    if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']):
                         run_workflow_2(args.season, args.sensor, season_dict)
                     
                     if not os.path.isdir('individual_plants_out'):
                         uncompress_plants()
-                    
-                    for item in ['workflow_2']:
+
+                    update_process_one(os.getcwd()+'/')
+                    pipeline_prep('individual_plants_out', bundle_size=args.bundle_size, plant=True)
+
+                    if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out']):
+                        run_workflow_3(args.season, args.sensor, season_dict)
+
+                    for item in ['workflow_2', 'workflow_3']:
 
                         pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
-
-                        if type(pipeline_out) == list:
-                            for i in range(0, len(pipeline_out)):
-                                p1 = pipeline_out[i]
-                                p2 = pipeline_tag[i]
-                                p3 = processed_outdir[i]
-                                tar_outputs(scan_date, p1, p2, p3)
-                        else:
-                            tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
+                        tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
                     if not os.path.isdir(os.path.join(scan_date, 'logs')):
                         create_pipeline_logs(scan_date)
 
                     # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
-                    sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True)  
-                    
-                
-                if set(['4']).issubset(args.workflow): 
-
-                    irods_data_path = os.path.join(level_1, scan_date, 'plantcrop')
-                    if not os.path.isdir('plantcrop'):
-                        download_level_1_data(irods_data_path)
-
-                    update_process_one(os.getcwd()+'/')
-                    pipeline_prep('plantcrop', bundle_size=args.bundle_size, plant=True)
-
-                    if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'][0]):
-                        run_workflow_3(args.season, args.sensor, season_dict)
+                    sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True) 
 
                 # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
                 # clean_directory(scan_date)

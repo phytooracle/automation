@@ -22,7 +22,7 @@ def move_scan_date(scan_date):
 def tar_outputs(scan_date, dir_path, tag, outdir):
     
     cwd = os.getcwd()
-    data_type = ['west', 'west_downsampled', 'east', 'east_downsampled', 'merged', 'merged_downsampled', 'metadata']
+    data_type = ['west', 'west_downsampled', 'east', 'east_downsampled', 'merged', 'merged_downsampled', 'metadata', 'combined_pointclouds', 'plant_reports']
 
     for d_type in data_type:
         

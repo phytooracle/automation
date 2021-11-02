@@ -67,9 +67,9 @@ def season_dictionary():
                         'makeflow -T wq --json main_workflow_phase2.json -a -r 2 -M phytooracle_3d -N phytooracle_3d -p 60221 -dall -o dall.log --disable-cache $@'
                     ],
                     'outputs': {
-                        'pipeline_out': ['postprocessing_out', 'individual_plants_out'],
-                        'tag': ['postprocessed', 'plants'],
-                        'outdir': ['postprocessing', 'plantcrop']
+                        'pipeline_out': 'postprocessing_out',
+                        'tag': 'postprocessed',
+                        'outdir': 'postprocessing'
                     }
                 },
                 'workflow_3': {
@@ -78,9 +78,9 @@ def season_dictionary():
                         'makeflow -T wq --json main_workflow_phase3.json -a -r 2 -M phytooracle_3d -N phytooracle_3d -p 60221 -dall -o dall.log --disable-cache $@'
                     ],
                     'outputs': {
-                        'pipeline_out': ['combined_pointclouds', 'plant_reports'],
-                        'tag': ['combined', 'reports'],
-                        'outdir': ['combined_pointclouds', 'plant_reports']
+                        'pipeline_out': 'individual_plants_out',
+                        'tag':  'plants',
+                        'outdir': 'plantcrop'
                     }
                 }
             }
