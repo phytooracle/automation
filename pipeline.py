@@ -63,6 +63,7 @@ def get_args():
                         help='Scan date to process.',
                         metavar='scan_date',
                         type=str,
+                        nargs='+',
                         required=False)
 
     parser.add_argument('-sen',
@@ -497,7 +498,8 @@ def main():
         matching = [scan_date for scan_date in matching if args.crop in scan_date]
 
     if args.scan_date: 
-        matching = [args.scan_date]
+        # matching = [args.scan_date]
+        matching = args.scan_date
 
     for scan_date in matching:
 
