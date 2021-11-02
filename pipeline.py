@@ -463,6 +463,11 @@ def uncompress_plants():
     
 
 # --------------------------------------------------
+def run_plant_volume(dir_path):
+    sp.call(f'singularity run hull_volume_estimation.simg -i {dir_path}')
+
+
+# --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
@@ -574,6 +579,11 @@ def main():
 
                     if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out']):
                         run_workflow_3(args.season, args.sensor, season_dict)
+
+                    # processing_dir = os.path.join(cwd, season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')
+                    # if not os.path.isfile(os.path.join(processing_dir, 'hull_volumes.csv')):
+                    #     print('Estimating volume.')
+                    #     run_plant_volume(processing_dir)
 
                     for item in ['workflow_2', 'workflow_3']:
 
