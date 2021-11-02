@@ -26,6 +26,18 @@ def season_dictionary():
                     'plantcrop': {
                         'simg': '3d_crop_individual_plants.simg',
                         'dockerhub_path': 'docker://phytooracle/3d_crop_individual_plants:latest'
+                    },
+                    'plantregistration': {
+                        'simg': '3d_individual_plant_registration.simg',
+                        'dockerhub_path': 'docker://phytooracle/3d_individual_plant_registration:latest'
+                    },
+                    'plantsegmentation': {
+                        'simg': 'dgcnn_single_plant_soil_segmentation.simg',
+                        'dockerhub_path': 'docker://phytooracle/dgcnn_single_plant_soil_segmentation:latest'
+                    },
+                    'plantvolume': {
+                        'simg': 'hull_volume_estimation.simg',
+                        'dockerhub_path': 'docker://phytooracle/hull_volume_estimation:latest'
                     }
                 },
                 'workflow_1': {
