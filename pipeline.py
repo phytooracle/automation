@@ -583,12 +583,11 @@ def main():
                     if not os.path.isdir(os.path.join(scan_date, 'logs')):
                         create_pipeline_logs(scan_date)
 
-                    # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
-                    sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True) 
+                    send_slack_update(f'{scan_date}: Uploading...', channel='gantry_test')
+                    sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True)
 
-                # send_slack_update(f'Compressing {scan_date}.', channel='gantry_test')
-                # clean_directory(scan_date)
-                                                       
+                    send_slack_update(f'{scan_date}: Upload complete...', channel='gantry_test') 
+                    clean_directory(scan_date)                       
 
 
 # --------------------------------------------------
