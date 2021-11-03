@@ -443,9 +443,24 @@ def update_process_one(replacement):
 
             if 'HPC_PATH=' in line:
                 replacing = line.split('=')[-1]
-
                 replace_file_one(replacing, f'"{replacement}"\n')
+
+    with open('process_one_set2.sh', 'r') as f:
+        line_list = f.readlines()
+
+        for line in line_list:
+
+            if 'HPC_PATH=' in line:
+                replacing = line.split('=')[-1]
                 replace_file_two(replacing, f'"{replacement}"\n')
+
+    with open('process_one_set3.sh', 'r') as f:
+        line_list = f.readlines()
+
+        for line in line_list:
+
+            if 'HPC_PATH=' in line:
+                replacing = line.split('=')[-1]
                 replace_file_three(replacing, f'"{replacement}"\n')
 
 
@@ -460,7 +475,16 @@ def uncompress_plants():
     print('Uncompressing plants.')
     sp.call('ls *_individual_plants.tar | xargs -I {} tar -xvf {}', shell=True)
     sp.call('rm *_individual_plants.tar', shell=True)
-    
+
+
+# --------------------------------------------------
+def uncompress_inference():
+    print('Uncompressing plants.')
+    sp.call('ls *_combined_pointclouds.tar | xargs -I {} tar -xvf {}', shell=True)
+    sp.call('rm *_combined_pointclouds.tar', shell=True)
+
+    sp.call('ls *_plant_reports.tar | xargs -I {} tar -xvf {}', shell=True)
+    sp.call('rm *_plant_reports.tar', shell=True)
 
 # --------------------------------------------------
 def run_plant_volume(dir_path):
