@@ -565,7 +565,7 @@ def main():
                         pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
                         tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
 
-                    create_pipeline_logs(scan_date)
+                    create_pipeline_logs(scan_date, bundle=True)
 
                     # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
                     sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True) 

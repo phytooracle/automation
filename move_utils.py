@@ -41,7 +41,7 @@ def tar_outputs(scan_date, dir_path, tag, outdir):
 
 
 # --------------------------------------------------
-def create_pipeline_logs(scan_date):
+def create_pipeline_logs(scan_date, bundle=False):
     cwd = os.getcwd()
 
     if not os.path.isdir(os.path.join(cwd, scan_date, 'logs')):
@@ -53,8 +53,9 @@ def create_pipeline_logs(scan_date):
     for item in glob.glob('./*.json*'):
         shutil.move(item, os.path.join(cwd, scan_date, 'logs', item))
 
-    if os.path.isdir('bundle'):
-        shutil.move('bundle', os.path.join(cwd, scan_date, 'logs'))
+    if bundle:
+        if os.path.isdir('bundle'):
+            shutil.move('bundle', os.path.join(cwd, scan_date, 'logs'))
 
 
 # --------------------------------------------------
