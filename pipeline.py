@@ -490,7 +490,7 @@ def uncompress_inference(cwd):
 
 # --------------------------------------------------
 def run_plant_volume(dir_path):
-    sp.call(f'singularity run hull_volume_estimation.simg -i {dir_path}')
+    sp.call(f'singularity run hull_volume_estimation.simg -i {dir_path}', shell=True)
 
 
 # --------------------------------------------------
