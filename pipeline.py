@@ -577,7 +577,7 @@ def main():
                     update_process_one(os.getcwd()+'/')
                     pipeline_prep('individual_plants_out', bundle_size=args.bundle_size, plant=True)
 
-                    if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out']):
+                    if not os.path.isdir(os.path.join(cwd, season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')):
                         run_workflow_3(args.season, args.sensor, season_dict)
 
                     processing_dir = os.path.join(cwd, season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')
