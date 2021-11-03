@@ -381,10 +381,14 @@ def download_level_1_data(irods_path):
 
 
 # --------------------------------------------------
-def get_transformation_file(irods_path):
+def get_transformation_file(irods_path, cwd):
 
     cmd1 = f'iget -KPVT {os.path.join(irods_path, "preprocessing", "transfromation.json")}'
     sp.call(cmd1, shell=True)
+    
+    if not os.path.isfile(os.path.join(cwd, 'transfromation.json')):
+        cmd2 = f'iget -KPVT {os.path.join(irods_path, "alignment", "transfromation.json")}'
+        sp.call(cmd2, shell=True)
 
 
 # --------------------------------------------------
