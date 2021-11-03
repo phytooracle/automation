@@ -612,13 +612,7 @@ def main():
                     if not os.path.isfile(os.path.join(processing_dir, 'hull_volumes.csv')):
                         print('Estimating volume.')
                         run_plant_volume(processing_dir)
-
-                    os.rename(os.path.join(processing_dir, 'hull_volumes.csv'), os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'))
-
-                    if not os.path.isdir('season10_hull_volumes'):
-                        os.makedirs('season10_hull_volumes')
-
-                    shutil.move(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'), os.path.join(cwd, 'season10_hull_volumes'))
+                        os.rename(os.path.join(processing_dir, 'hull_volumes.csv'), os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'))
 
                     for item in ['workflow_2', 'workflow_3']:
 
@@ -627,6 +621,8 @@ def main():
 
                     if not os.path.isdir(os.path.join(scan_date, 'logs')):
                         create_pipeline_logs(scan_date)
+                        
+                    shutil.move(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'), os.path.join(cwd, scan_date))
 
                     send_slack_update(f'{scan_date}: Uploading...', channel='gantry_test')
                     sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True)
