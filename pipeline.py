@@ -479,6 +479,7 @@ def uncompress_plants():
 
 # --------------------------------------------------
 def uncompress_inference():
+    os.chdir('individual_plants_out')
     print('Uncompressing plants.')
     sp.call('ls *_combined_pointclouds.tar | xargs -I {} tar -xvf {}', shell=True)
     sp.call('rm *_combined_pointclouds.tar', shell=True)
@@ -603,7 +604,8 @@ def main():
 
                     if not os.path.isdir(os.path.join(cwd, season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')):
                         run_workflow_3(args.season, args.sensor, season_dict)
-
+                        uncompress_inference()
+                        
                     processing_dir = os.path.join(cwd, season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')
 
                     if not os.path.isfile(os.path.join(processing_dir, 'hull_volumes.csv')):
