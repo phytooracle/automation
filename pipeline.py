@@ -587,7 +587,7 @@ def main():
 
                         if not os.path.isfile('transfromation.json'):
                             
-                            get_transformation_file(os.path.join(level_1, scan_date))
+                            get_transformation_file(os.path.join(level_1, scan_date), cwd)
 
                         if not os.path.isdir('bundle'):
 
