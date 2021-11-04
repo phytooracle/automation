@@ -564,7 +564,7 @@ def main():
                         run_intermediate(args.season, args.sensor, season_dict)
                         move_scan_date(scan_date)
 
-                    for item in ['workflow_1', 'intermediate']:
+                    for item in ['intermediate']:
 
                         pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
                         tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
@@ -618,7 +618,7 @@ def main():
                         run_plant_volume(processing_dir)
                         os.rename(os.path.join(processing_dir, 'hull_volumes.csv'), os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'))
 
-                    for item in ['workflow_2', 'workflow_3']:
+                    for item in ['workflow_3']:
 
                         pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
                         tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
