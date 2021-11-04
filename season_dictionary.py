@@ -29,7 +29,7 @@ def season_dictionary():
                     },
                     'plantregistration': {
                         'simg': '3d_individual_plant_registration.simg',
-                        'dockerhub_path': 'docker://phytooracle/3d_individual_plant_registration:latest'
+                        'dockerhub_path': 'docker://phytooracle/3d_individual_plant_registration:multiway_registration'
                     },
                     'plantsegmentation': {
                         'simg': 'dgcnn_single_plant_soil_segmentation.simg',
