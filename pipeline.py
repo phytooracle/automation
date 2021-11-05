@@ -556,19 +556,18 @@ def main():
                     pipeline_prep(scan_date, bundle_size=args.bundle_size)
                     update_process_one(os.getcwd()+'/')
 
-                    # if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_1']['outputs']['pipeline_out']):
-                    #     run_workflow_1(args.season, args.sensor, season_dict)
+                    if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_1']['outputs']['pipeline_out']):
+                        run_workflow_1(args.season, args.sensor, season_dict)
                     
-                    # if not os.path.isdir(season_dict[args.season][args.sensor]['intermediate']['outputs']['pipeline_out']):
-                    #     run_intermediate(args.season, args.sensor, season_dict)
-                    #     move_scan_date(scan_date)
+                    if not os.path.isdir(season_dict[args.season][args.sensor]['intermediate']['outputs']['pipeline_out']):
+                        run_intermediate(args.season, args.sensor, season_dict)
+                        move_scan_date(scan_date)
 
-                    # for item in ['intermediate']:
+                    for item in ['intermediate']:
 
-                    #     pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
-                    #     tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
-                    
-                    move_scan_date(scan_date)
+                        pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
+                        tar_outputs(scan_date, pipeline_out, pipeline_tag, processed_outdir)
+
                     create_pipeline_logs(scan_date, bundle=True)
 
                     # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
@@ -626,7 +625,8 @@ def main():
                     if not os.path.isdir(os.path.join(scan_date, 'logs')):
                         create_pipeline_logs(scan_date)
 
-                    shutil.move(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'), os.path.join(cwd, scan_date))
+                    if os.path.isfile(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv')):
+                        shutil.move(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'), os.path.join(cwd, scan_date))
 
                     send_slack_update(f'{scan_date}: Uploading...', channel='gantry_test')
                     sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True)
