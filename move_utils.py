@@ -56,9 +56,9 @@ def create_pipeline_logs(scan_date, bundle=False):
     if bundle:
         if os.path.isdir('bundle'):
             shutil.move('bundle', os.path.join(cwd, scan_date, 'logs'))
-
-    if os.path.exists(os.path.join(cwd, scan_date, 'logs', 'bundle_list.json')):
-        os.remove(os.path.join(cwd, scan_date, 'logs', 'bundle_list.json'))
+    else:
+        if os.path.exists(os.path.join(cwd, scan_date, 'logs', 'bundle_list.json')):
+            os.remove(os.path.join(cwd, scan_date, 'logs', 'bundle_list.json'))
 
 
 # --------------------------------------------------
