@@ -530,10 +530,11 @@ def main():
 
     # Download, extract, and process raw data
     if args.crop: 
+
         matching = [scan_date for scan_date in matching if args.crop in scan_date]
 
     if args.scan_date: 
-        # matching = [args.scan_date]
+
         matching = args.scan_date
 
     for scan_date in matching:
@@ -544,9 +545,9 @@ def main():
                 cwd = os.getcwd()
 
                 if set(['1','2']).issubset(args.workflow):
-                    # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
-                    irods_data_path = os.path.join(level_0, tarball)
                     
+                    irods_data_path = os.path.join(level_0, tarball)
+
                     if args.season != '10':
                         scan_date = tarball.split('.')[0]
 
@@ -573,10 +574,8 @@ def main():
 
                     create_pipeline_logs(scan_date, bundle=True)
 
-                    # send_slack_update(f'Uploading {scan_date}.', channel='gantry_test')
                     sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True) 
-
-                    # send_slack_update(f'{scan_date} processing complete.', channel='gantry_test')  
+ 
                     clean_directory(scan_date)   
 
                 if set(['3', '4']).issubset(args.workflow): 
@@ -599,7 +598,6 @@ def main():
 
                             get_bundle_json(os.path.join(level_1, scan_date))
                     
-                    #if not all([os.path.isfile(f) for f in season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']]):
                     if not os.path.isdir(season_dict[args.season][args.sensor]['workflow_2']['outputs']['pipeline_out']):
                         run_workflow_2(args.season, args.sensor, season_dict)
                     
