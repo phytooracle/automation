@@ -540,8 +540,9 @@ def main():
         print(scan_date)
         
         for tarball in level_0_list:
-            
+
             scan_date = tarball.split('.')[0]
+            print(scan_date)
             if scan_date in tarball and 'none' not in tarball: 
                 cwd = os.getcwd()
 
