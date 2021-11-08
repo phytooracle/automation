@@ -537,12 +537,9 @@ def main():
         matching = args.scan_date
 
     for scan_date in matching:
-        print(scan_date)
         
         for tarball in level_0_list:
 
-            scan_date = tarball.split('.')[0]
-            print(scan_date)
             if scan_date in tarball and 'none' not in tarball: 
                 cwd = os.getcwd()
 
@@ -550,7 +547,8 @@ def main():
                     # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
                     irods_data_path = os.path.join(level_0, tarball)
                     
-
+                    scan_date = tarball.split('.')[0]
+                    print(scan_date)
                     if not os.path.isdir(scan_date):
                         download_raw_data(irods_data_path)
 
