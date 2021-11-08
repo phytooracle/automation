@@ -547,7 +547,8 @@ def main():
                 if set(['1','2']).issubset(args.workflow):
                     # send_slack_update(f'Downloading {scan_date}.', channel='gantry_test')
                     irods_data_path = os.path.join(level_0, tarball)
-                    
+                    scan_date = tarball.split('.')[0]
+                          
                     if not os.path.isdir(scan_date):
                         download_raw_data(irods_data_path)
 
