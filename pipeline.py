@@ -537,7 +537,8 @@ def main():
         matching = args.scan_date
 
     for scan_date in matching:
-
+        print(scan_date)
+        
         for tarball in level_0_list:
 
             if scan_date in tarball and 'none' not in tarball: 
