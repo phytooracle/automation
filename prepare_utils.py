@@ -132,9 +132,9 @@ def run_workflow_2(season, sensor, season_dict):
 
     home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
 
-    sp.run(["ocelote", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    sp.run(["elgato", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    sp.run(["puma", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
+    sp.call("ocelote && sbatch worker_scripts/po_work_puma_slurm.sh", shell=True)
+    sp.call("elgato && sbatch worker_scripts/po_work_puma_slurm.sh", shell=True)
+    sp.call("puma && sbatch worker_scripts/po_work_puma_slurm.sh", shell=True)
 
     for item in season_dict[season][sensor]['workflow_2']['commands']:
         
@@ -148,18 +148,18 @@ def run_workflow_2(season, sensor, season_dict):
             sp.call(cmd, shell=True)
             # raise ValueError('Did not create Makeflow JSON file.')
 
-    sp.run(["ocelote", "scancel", "--name=po_worker"])
-    sp.run(["elgato", "scancel", "--name=po_worker"])
-    sp.run(["puma", "scancel", "--name=po_worker"])
+    sp.call("ocelote && scancel --name=po_worker", shell=True)
+    sp.call("elgato && scancel --name=po_worker", shell=True)
+    sp.call("puma && scancel --name=po_worker", shell=True)
 
 
 # --------------------------------------------------
 def run_workflow_3(season, sensor, season_dict):
 
     home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
-    sp.run(["ocelote", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    sp.run(["elgato", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    sp.run(["puma", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
+    sp.call("ocelote && sbatch worker_scripts/po_work_puma_slurm.sh", shell=True)
+    sp.call("elgato && sbatch worker_scripts/po_work_puma_slurm.sh", shell=True)
+    sp.call("puma && sbatch worker_scripts/po_work_puma_slurm.sh", shell=True)
 
     for item in season_dict[season][sensor]['workflow_3']['commands']:
         
@@ -173,9 +173,9 @@ def run_workflow_3(season, sensor, season_dict):
             sp.call(cmd, shell=True)
             # raise ValueError('Did not create Makeflow JSON file.')
 
-    sp.run(["ocelote", "scancel", "--name=po_worker"])
-    sp.run(["elgato", "scancel", "--name=po_worker"])
-    sp.run(["puma", "scancel", "--name=po_worker"])
+    sp.call("ocelote && scancel --name=po_worker", shell=True)
+    sp.call("elgato && scancel --name=po_worker", shell=True)
+    sp.call("puma && scancel --name=po_worker", shell=True)
 
 
 # --------------------------------------------------
