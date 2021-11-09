@@ -148,7 +148,9 @@ def run_workflow_2(season, sensor, season_dict):
             sp.call(cmd, shell=True)
             # raise ValueError('Did not create Makeflow JSON file.')
 
-    sp.run(["scancel", "--name=po_worker"])
+    sp.run(["ocelote", "scancel", "--name=po_worker"])
+    sp.run(["elgato", "scancel", "--name=po_worker"])
+    sp.run(["puma", "scancel", "--name=po_worker"])
 
 
 # --------------------------------------------------
@@ -171,7 +173,9 @@ def run_workflow_3(season, sensor, season_dict):
             sp.call(cmd, shell=True)
             # raise ValueError('Did not create Makeflow JSON file.')
 
-    sp.run(["scancel", "--name=po_worker"])
+    sp.run(["ocelote", "scancel", "--name=po_worker"])
+    sp.run(["elgato", "scancel", "--name=po_worker"])
+    sp.run(["puma", "scancel", "--name=po_worker"])
 
 
 # --------------------------------------------------
