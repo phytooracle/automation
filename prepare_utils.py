@@ -131,10 +131,7 @@ def run_intermediate(season, sensor, season_dict):
 def run_workflow_2(season, sensor, season_dict):
 
     home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
-
-    sp.run(["ocelote", "&&", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    sp.run(["elgato", "&&", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    sp.run(["puma", "&&", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
+    sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
 
     for item in season_dict[season][sensor]['workflow_2']['commands']:
         
@@ -148,18 +145,14 @@ def run_workflow_2(season, sensor, season_dict):
             sp.call(cmd, shell=True)
             # raise ValueError('Did not create Makeflow JSON file.')
 
-    sp.run(["ocelote", "&&", "scancel", "--name=po_worker"])
-    sp.run(["elgato", "&&", "scancel", "--name=po_worker"])
-    sp.run(["puma", "&&", "scancel", "--name=po_worker"])
+    sp.run(["scancel", "--name=po_worker"])
 
 
 # --------------------------------------------------
 def run_workflow_3(season, sensor, season_dict):
 
     home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
-    sp.run(["ocelote", "&&", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    sp.run(["elgato", "&&", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
-    sp.run(["puma", "&&", "sbatch", "worker_scripts/po_work_puma_slurm.sh"])
+    sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
 
     for item in season_dict[season][sensor]['workflow_3']['commands']:
         
@@ -173,10 +166,7 @@ def run_workflow_3(season, sensor, season_dict):
             sp.call(cmd, shell=True)
             # raise ValueError('Did not create Makeflow JSON file.')
 
-    sp.run(["ocelote", "&&", "scancel", "--name=po_worker"])
-    sp.run(["elgato", "&&", "scancel", "--name=po_worker"])
-    sp.run(["puma", "&&", "scancel", "--name=po_worker"])
-
+    sp.run(["scancel", "--name=po_worker"])
 
 # --------------------------------------------------
 def get_tags(season_dict, season, sensor, wf):
