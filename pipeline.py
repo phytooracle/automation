@@ -550,6 +550,7 @@ def main():
 
                     if args.season != '10':
                         scan_date = tarball.split('.')[0]
+                        print(scan_date)
 
                     if not os.path.isdir(scan_date):
                         download_raw_data(irods_data_path)
