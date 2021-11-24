@@ -36,8 +36,8 @@ def season_dictionary():
                         'dockerhub_path': 'docker://phytooracle/dgcnn_single_plant_soil_segmentation:latest'
                     },
                     'plantvolume': {
-                        'simg': 'hull_volume_estimation.simg',
-                        'dockerhub_path': 'docker://phytooracle/hull_volume_estimation:latest'
+                        'simg': '3d_entropy_features.simg',
+                        'dockerhub_path': 'docker://phytooracle/3d_entropy_features:latest'
                     },
                     'plantclustering': {
                         'simg': '3d_neighbor_removal.simg',
