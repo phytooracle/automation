@@ -38,6 +38,10 @@ def season_dictionary():
                     'plantvolume': {
                         'simg': 'hull_volume_estimation.simg',
                         'dockerhub_path': 'docker://phytooracle/hull_volume_estimation:latest'
+                    },
+                    'plantclustering': {
+                        'simg': '3d_neighbor_removal.simg',
+                        'dockerhub_path': 'docker://phytooracle/3d_neighbor_removal:latest'
                     }
                 },
                 'workflow_1': {
