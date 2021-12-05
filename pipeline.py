@@ -615,12 +615,12 @@ def main():
                         run_workflow_3(args.season, args.sensor, season_dict)
                         uncompress_inference(cwd)
 
-                    processing_dir = os.path.join(season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')
-                    if not os.path.isfile(os.path.join(processing_dir, 'hull_volumes.csv')):
+                    # processing_dir = os.path.join(season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')
+                    # if not os.path.isfile(os.path.join(processing_dir, 'hull_volumes.csv')):
                         
-                        print('Estimating volume.')
-                        run_plant_volume(processing_dir)
-                        os.rename(os.path.join(processing_dir, 'hull_volumes.csv'), os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'))
+                    #     print('Estimating volume.')
+                    #     run_plant_volume(processing_dir)
+                    #     os.rename(os.path.join(processing_dir, 'hull_volumes.csv'), os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'))
 
                     processing_dir = os.path.join(cwd, season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')
 
@@ -632,8 +632,8 @@ def main():
                     if not os.path.isdir(os.path.join(scan_date, 'logs')):
                         create_pipeline_logs(scan_date)
 
-                    if os.path.isfile(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv')):
-                        shutil.move(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'), os.path.join(cwd, scan_date))
+                    # if os.path.isfile(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv')):
+                    #     shutil.move(os.path.join(processing_dir, f'{scan_date}_hull_volumes.csv'), os.path.join(cwd, scan_date))
 
                     send_slack_update(f'{scan_date}: Uploading...', channel='gantry_test')
                     sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True)
