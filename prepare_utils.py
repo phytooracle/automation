@@ -152,7 +152,7 @@ def run_workflow_2(season, sensor, season_dict):
 def run_workflow_3(season, sensor, season_dict):
 
     home = os.path.join(os.path.expanduser('~'), 'cctools-7.1.12-x86_64-centos7', 'bin/')
-    sp.run(["sbatch", "worker_scripts/po_work_puma_slurm.sh"])
+    sp.run(["sbatch", "worker_scripts/po_work_puma_slurm_cluster.sh"])
 
     for item in season_dict[season][sensor]['workflow_3']['commands']:
         
