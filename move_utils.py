@@ -70,5 +70,5 @@ def clean_directory(scan_date):
     if os.path.isdir(os.path.join('processed_scans', scan_date)):
         shutil.rmtree(os.path.join('processed_scans', scan_date))
 
-    if os.path.isfile('clean.sh'):
-        sp.call('./clean.sh', shell=True)
+    # if os.path.isfile('clean.sh'):
+    #     sp.call('./clean.sh', shell=True)
