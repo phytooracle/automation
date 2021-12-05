@@ -496,8 +496,7 @@ def uncompress_inference(cwd):
 def run_plant_volume(dir_path):
     point_clouds = os.path.join(dir_path, '*', '*_plant_clustered.ply')
     #sp.call(f'singularity run hull_volume_estimation.simg -i {dir_path}', shell=True)
-    print(f'singularity run 3d_entropy_features.simg -c 30 -o {dir_path} -f hull_volumes -p {point_clouds}')
-    sp.call(f'singularity run 3d_entropy_features.simg -c 30 -o {dir_path} -f hull_volumes -p {point_clouds}', shell=True)
+    sp.call(f'singularity run 3d_entropy_features.simg -o {dir_path} -f hull_volumes -p {point_clouds}', shell=True)
 
 
 # --------------------------------------------------
