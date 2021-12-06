@@ -42,6 +42,10 @@ def season_dictionary():
                     'plantclustering': {
                         'simg': '3d_neighbor_removal.simg',
                         'dockerhub_path': 'docker://phytooracle/3d_neighbor_removal:latest'
+                    },
+                    'featuremerge': {
+                        'simg': '3d_entropy_merge.simg',
+                        'dockerhub_path': 'docker://phytooracle/3d_entropy_merge:latest'
                     }
                 },
                 'workflow_1': {
