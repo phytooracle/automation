@@ -618,8 +618,6 @@ def main():
                         run_workflow_3(args.season, args.sensor, season_dict)
                         uncompress_inference(cwd)
 
-                    # processing_dir = os.path.join(cwd, season_dict[args.season][args.sensor]['workflow_3']['outputs']['pipeline_out'], 'combined_pointclouds')
-
                     for item in ['workflow_3']:
 
                         pipeline_out, pipeline_tag, processed_outdir = get_tags(season_dict, args.season, args.sensor, item)
@@ -628,9 +626,9 @@ def main():
                     if not os.path.isdir(os.path.join(scan_date, 'logs')):
                         create_pipeline_logs(scan_date)
 
-                    if not os.path.isfile(os.path.join(scan_date, f'{scan_date}_tda.csv')):
-                        print('Estimating volume.')
-                        run_plant_volume(scan_date)
+                    # if not os.path.isfile(os.path.join(scan_date, f'{scan_date}_tda.csv')):
+                    #     print('Estimating volume.')
+                    #     run_plant_volume(scan_date)
 
                     send_slack_update(f'{scan_date}: Uploading...', channel='gantry_test')
                     sp.call(f"ssh filexfer 'cd {cwd}' '&& ./upload.sh {scan_date} {cwd}' '&& exit'", shell=True)
