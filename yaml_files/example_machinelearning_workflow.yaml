@@ -15,7 +15,7 @@ modules:
     command: singularity run 3d_preprocessing.simg -l gcp_season_10.txt -o alignment -i ${SUBDIR}
     distribution_level: wq
     file_level: 
-    input_dir: [scanner3DTop, *]
+    input_dir: [scanner3DTop, '*']
     input_file: -west.ply
     inputs: [stereoTop_full_season_clustering.csv,
              gcp_season_10.txt]
