@@ -142,7 +142,7 @@ def download_raw_data(irods_path, dir_name):
             - Extracted files from the tarball.
     """
     args = get_args()
-    
+    file_name = os.path.basename(irods_path)
     if not os.path.isdir(dir_name):
         cmd1 = f'iget -fKPVT {irods_path}'
         cwd = os.getcwd()
