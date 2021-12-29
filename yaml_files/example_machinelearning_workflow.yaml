@@ -17,15 +17,17 @@ modules:
     file_level: 
     input_dir: [scanner3DTop]
     input_file: -west_0.ply
-    inputs: [stereoTop_full_season_clustering.csv,
+    inputs: [$FILE,
+             stereoTop_full_season_clustering.csv,
              gcp_season_10.txt]
 
-    outputs: [postprocessing_out/east/$SUBDIR-east.ply,
-              postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
-              postprocessing_out/merged/$SUBDIR-merged.ply,
-              postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
-              postprocessing_out/west/$SUBDIR-west.ply,
-              postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+    outputs: [alignment/east/$SUBDIR-east.ply,
+              alignment/east_downsampled/$SUBDIR-east.ply, 
+              alignment/merged/$SUBDIR-merged.ply,
+              alignment/merged_downsampled/$SUBDIR-merged.ply,
+              alignment/west/$SUBDIR-west.ply,
+              alignment/west_downsampled/$SUBDIR-west.ply,
+              alignment/metadata/$SUBDIR-metadata.json]
 
   # 1: 
   #   container: 
