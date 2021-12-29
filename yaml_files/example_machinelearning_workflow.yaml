@@ -19,7 +19,7 @@ modules:
     input_file: -west.ply
     inputs: [stereoTop_full_season_clustering.csv,
              gcp_season_10.txt]
-             
+
     outputs: [postprocessing_out/east/$SUBDIR-east.ply,
               postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
               postprocessing_out/merged/$SUBDIR-merged.ply,
@@ -197,9 +197,10 @@ paths:
 
   cyverse: 
     input: 
-      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_1/scanner3DTop/
-      subdir: test_set/
-      suffix: _test_set.tar.gz
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/scanner3DTop/
+      subdir: 
+      prefix: scanner3DTop-
+      suffix: .tar
     output: 
       basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_2/scanner3DTop
       subdir: individual_plants_out
