@@ -16,7 +16,7 @@ modules:
     distribution_level: wq
     file_level: 
     input_dir: [scanner3DTop, '*']
-    input_file: -west.ply
+    input_file: .ply
     inputs: [stereoTop_full_season_clustering.csv,
              gcp_season_10.txt]
 
