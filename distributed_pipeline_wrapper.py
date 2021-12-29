@@ -446,7 +446,7 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
         - json_out_path: Path to the resulting JSON file
     '''
     args = get_args()
-    files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '') for file in files_list]
+    files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('-west_0.ply', '') for file in files_list]
     timeout = 'timeout 3h '
 
     if inputs:
