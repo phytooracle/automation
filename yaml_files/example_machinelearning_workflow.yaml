@@ -28,13 +28,13 @@ modules:
              stereoTop_full_season_clustering.csv,
              gcp_season_10.txt]
 
-    outputs: [alignment/east/$SUBDIR-east.ply,
-              alignment/east_downsampled/$SUBDIR-east.ply, 
-              alignment/merged/$SUBDIR-merged.ply,
-              alignment/merged_downsampled/$SUBDIR-merged.ply,
-              alignment/west/$SUBDIR-west.ply,
-              alignment/west_downsampled/$SUBDIR-west.ply,
-              alignment/metadata/$SUBDIR-metadata.json]
+    outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
+              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
+              alignment/merged/$SUBDIR__Top-heading-merged.ply,
+              alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+              alignment/west/$SUBDIR__Top-heading-west.ply,
+              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
+              alignment/metadata/$SUBDIR_updated-metadata.json]
 
   # 1: 
   #   container: 
