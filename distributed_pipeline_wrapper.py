@@ -750,7 +750,6 @@ def main():
             except yaml.YAMLError as exc:
                 print(exc)
                 
-            
             irods_path, dir_name = get_irods_path(dictionary, date)
             download_raw_data(irods_path, dir_name)
 
@@ -760,20 +759,20 @@ def main():
             if args.hpc:
                 kill_workers(dictionary['workload_manager']['job_name'])
 
-                # launch_workers(account=dictionary['workload_manager']['account'], 
-                #         partition=dictionary['workload_manager']['partition'], 
-                #         job_name=dictionary['workload_manager']['job_name'], 
-                #         nodes=dictionary['workload_manager']['nodes'], 
-                #         number_tasks=dictionary['workload_manager']['number_tasks'], 
-                #         number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
-                #         time=dictionary['workload_manager']['time_minutes'], 
+                launch_workers(account=dictionary['workload_manager']['account'], 
+                        partition=dictionary['workload_manager']['partition'], 
+                        job_name=dictionary['workload_manager']['job_name'], 
+                        nodes=dictionary['workload_manager']['nodes'], 
+                        number_tasks=dictionary['workload_manager']['number_tasks'], 
+                        number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
+                        time=dictionary['workload_manager']['time_minutes'], 
 
-                #         mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
-                #         manager_name=dictionary['workload_manager']['manager_name'], 
-                #         min_worker=dictionary['workload_manager']['min_worker'], 
-                #         max_worker=dictionary['workload_manager']['max_worker'], 
-                #         cores=dictionary['workload_manager']['cores_per_worker'], 
-                #         worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
+                        mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
+                        manager_name=dictionary['workload_manager']['manager_name'], 
+                        min_worker=dictionary['workload_manager']['min_worker'], 
+                        max_worker=dictionary['workload_manager']['max_worker'], 
+                        cores=dictionary['workload_manager']['cores_per_worker'], 
+                        worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
             global seg_model_name, det_model_name
             seg_model_name, det_model_name = get_model_files(args.seg_model, args.det_model)
@@ -784,10 +783,10 @@ def main():
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
-            #     run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=True)
-            #     clean_directory()
+                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=True)
+                clean_directory()
         
-            # kill_workers(dictionary['workload_manager']['job_name'])
+            kill_workers(dictionary['workload_manager']['job_name'])
             # tar_outputs(date, dictionary)
             # create_pipeline_logs(date)
             # upload_outputs(date, dictionary)
