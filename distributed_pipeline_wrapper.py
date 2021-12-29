@@ -497,7 +497,7 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
                     "rules": [
                                 {
                                     "command" : timeout + command.replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date)\
-                                                .replace('$INPUT_DIR', os.path.basename(file)),
+                                                .replace('${INPUT_DIR}', os.path.basename(file)),
                                     "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
                                     "inputs"  : [container, 
                                                 seg_model_name, 
