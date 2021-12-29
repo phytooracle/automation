@@ -17,7 +17,14 @@ modules:
     file_level: 
     input_dir: [scanner3DTop]
     input_file: -west_0.ply
-    inputs: [$FILE,
+    inputs: [$FILE_metadata.json,
+             $FILE__Top-heading-east_0_g.png,
+             $FILE__Top-heading-east_0.ply,
+             $FILE__Top-heading-east_0_p.png,
+             $FILE__Top-heading-west_0_g.png,
+             $FILE__Top-heading-west_0.ply,
+             $FILE__Top-heading-west_0_p.png,
+             $FILE__Top-heading-west_0.ply,
              stereoTop_full_season_clustering.csv,
              gcp_season_10.txt]
 
