@@ -788,10 +788,10 @@ def main():
                 clean_directory()
         
             kill_workers(dictionary['workload_manager']['job_name'])
-            # tar_outputs(date, dictionary)
-            # create_pipeline_logs(date)
-            # upload_outputs(date, dictionary)
-            # clean_inputs(date)        
+            tar_outputs(date, dictionary)
+            create_pipeline_logs(date)
+            upload_outputs(date, dictionary)
+            clean_inputs(date)        
 
 
 # --------------------------------------------------
