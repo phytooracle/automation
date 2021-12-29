@@ -122,11 +122,17 @@ def get_irods_path(dictionary, date):
     """
     irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],\
         ''.join([dictionary['paths']['cyverse']['input']['prefix'], date, dictionary['paths']['cyverse']['input']['suffix']]))
-    return irods_path
+    
+    if dictionary['tags']['season']==10:
+        dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
+    else: 
+        file_name = os.path.basename(irods_path)
+        dir_name = file_name.split('.')[0]
+    return irods_path, dir_name
 
 
 # --------------------------------------------------
-def download_raw_data(irods_path):
+def download_raw_data(irods_path, dir_name):
     """Download raw dataset from CyVerse DataStore
     
         Input:
@@ -136,9 +142,7 @@ def download_raw_data(irods_path):
             - Extracted files from the tarball.
     """
     args = get_args()
-    file_name = os.path.basename(irods_path)
-    dir_name = file_name.split('.')[0]
-
+    
     if not os.path.isdir(dir_name):
         cmd1 = f'iget -fKPVT {irods_path}'
         cwd = os.getcwd()
@@ -745,9 +749,9 @@ def main():
                 print(exc)
                 
             # kill_workers(dictionary['workload_manager']['job_name'])
-            irods_path = get_irods_path(dictionary, date)
-            dir_name = download_raw_data(irods_path)
-            print(dir_name)
+            irods_path, dir_name = get_irods_path(dictionary, date)
+            download_raw_data(irods_path, dir_name)
+            # print(dir_name)
             
             # # if dictionary['tags']['sensor']=='scanner3DTop':
             # #     get_required_files_3d(dictionary=dictionary, date=date)
