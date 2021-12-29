@@ -746,7 +746,8 @@ def main():
                 
             # kill_workers(dictionary['workload_manager']['job_name'])
             irods_path = get_irods_path(dictionary, date)
-            download_raw_data(irods_path)
+            dir_name = download_raw_data(irods_path)
+            print(dir_name)
             
             # # if dictionary['tags']['sensor']=='scanner3DTop':
             # #     get_required_files_3d(dictionary=dictionary, date=date)
