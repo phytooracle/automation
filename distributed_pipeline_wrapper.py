@@ -261,7 +261,7 @@ def get_required_files_3d(dictionary, date):
     Output: 
         - Downloaded files/directories in the current working directory
     '''
-    level_1 = dictionary['paths']['cyverse']['input']['basename']
+    level_1 = dictionary['paths']['cyverse']['input']['basename'].replace('level_0', 'level_1')
     cwd = os.getcwd()
     irods_data_path = os.path.join(level_1, date, 'alignment')
     # if not os.path.isdir('alignment'):
@@ -446,7 +446,7 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
         - json_out_path: Path to the resulting JSON file
     '''
     args = get_args()
-    files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('-west_0.ply', '') for file in files_list]
+    files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
     timeout = 'timeout 3h '
 
     if inputs:
