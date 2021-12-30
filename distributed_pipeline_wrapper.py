@@ -167,7 +167,6 @@ def download_raw_data(irods_path, dir_name):
     return dir_name
 
 
-# --------------------------------------------------
 def get_file_list(directory, level, match_string='.ply'):
     '''
     Walks through a given directory and grabs all files with the given search string.
@@ -191,8 +190,53 @@ def get_file_list(directory, level, match_string='.ply'):
             
         for name in dirs:
             subdir_list.append(os.path.join(root, name))
+            
+    if level=='subdir':
+        if 'west' in directory: 
+            directory = directory.replace('west', 'east')
+            
+        elif 'east' in directory:
+            directory = directory.replace('east', 'west')
+            
+        for root, dirs, files in os.walk(directory, topdown=False):
+            for name in files:
+                if match_string in name:
+                    files_list.append(os.path.join(root, name))
+                    
+        plant_names = [os.path.basename(os.path.dirname(dir_path)) for dir_path in files_list]
+        plant_names = list(set(plant_names))
+        plant_names = [os.path.join(directory, plant_name, 'null.ply') for plant_name in plant_names]
+        files_list = plant_names
 
     return files_list
+
+
+# # --------------------------------------------------
+# def get_file_list(directory, level, match_string='.ply'):
+#     '''
+#     Walks through a given directory and grabs all files with the given search string.
+
+#     Input: 
+#         - directory: Local directory to search 
+#         - match_string: Substring to search and add only elements with items containing 
+#                         this string being added to the file list. 
+
+#     Output: 
+#         - subdir_list: List containing all subdirectories within the raw data.
+#         - files_list: List containing all files within each subdirectory within the raw data.
+#     '''
+#     files_list = []
+#     subdir_list = []
+
+#     for root, dirs, files in os.walk(directory, topdown=False):
+#         for name in files:
+#             if match_string in name:
+#                 files_list.append(os.path.join(root, name))
+            
+#         for name in dirs:
+#             subdir_list.append(os.path.join(root, name))
+
+#     return files_list
 
 
 # --------------------------------------------------

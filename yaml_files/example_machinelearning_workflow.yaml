@@ -8,90 +8,90 @@ tags:
   season: 10
 
 modules:
-  1: 
-    container: 
-      simg_name: 3d_preprocessing.simg
-      dockerhub_path: docker://phytooracle/3d_preprocessing:latest
-    command: singularity run 3d_preprocessing.simg -l gcp_season_10.txt -o alignment -i ${INPUT_DIR}
-    distribution_level: wq
-    file_level: 
-    input_dir: [scanner3DTop]
-    input_file: -west_0.ply
-    inputs: [$FILE_metadata.json,
-             $FILE__Top-heading-east_0_g.png,
-             $FILE__Top-heading-east_0.ply,
-             $FILE__Top-heading-east_0_p.png,
-             $FILE__Top-heading-west_0_g.png,
-             $FILE__Top-heading-west_0.ply,
-             $FILE__Top-heading-west_0_p.png,
-             $FILE__Top-heading-west_0.ply,
-             stereoTop_full_season_clustering.csv,
-             gcp_season_10.txt]
+  # 1: 
+  #   container: 
+  #     simg_name: 3d_preprocessing.simg
+  #     dockerhub_path: docker://phytooracle/3d_preprocessing:latest
+  #   command: singularity run 3d_preprocessing.simg -l gcp_season_10.txt -o alignment -i ${INPUT_DIR}
+  #   distribution_level: wq
+  #   file_level: 
+  #   input_dir: [scanner3DTop]
+  #   input_file: -west_0.ply
+  #   inputs: [$FILE_metadata.json,
+  #            $FILE__Top-heading-east_0_g.png,
+  #            $FILE__Top-heading-east_0.ply,
+  #            $FILE__Top-heading-east_0_p.png,
+  #            $FILE__Top-heading-west_0_g.png,
+  #            $FILE__Top-heading-west_0.ply,
+  #            $FILE__Top-heading-west_0_p.png,
+  #            $FILE__Top-heading-west_0.ply,
+  #            stereoTop_full_season_clustering.csv,
+  #            gcp_season_10.txt]
 
-    outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
-              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
-              alignment/merged/$SUBDIR__Top-heading-merged.ply,
-              alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
-              alignment/west/$SUBDIR__Top-heading-west.ply,
-              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
-              alignment/metadata/$SUBDIR_updated-metadata.json]
+  #   outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
+  #             alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
+  #             alignment/merged/$SUBDIR__Top-heading-merged.ply,
+  #             alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+  #             alignment/west/$SUBDIR__Top-heading-west.ply,
+  #             alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
+  #             alignment/metadata/$SUBDIR_updated-metadata.json]
 
-  2: 
-    container: 
-      simg_name: 3d_postprocessing.simg
-      dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run 3d_postprocessing.simg -i alignment/ -o postprocessing_out -f ${SUBDIR} -t transfromation.json -p stereoTop_full_season_clustering.csv -s 10 -d ${DATE} -l gcp_season_10.txt
-    distribution_level: wq
-    file_level: 
-    input_dir: [alignment, west]
-    input_file: -west.ply
-    inputs: [alignment/east/$SUBDIR-east.ply,
-             alignment/east_downsampled/$SUBDIR-east.ply, 
-             alignment/merged/$SUBDIR-merged.ply,
-             alignment/merged_downsampled/$SUBDIR-merged.ply,
-             alignment/west/$SUBDIR-west.ply,
-             alignment/west_downsampled/$SUBDIR-west.ply,
-             transfromation.json,
-             stereoTop_full_season_clustering.csv,
-             gcp_season_10.txt]
-    outputs: [postprocessing_out/east/$SUBDIR-east.ply,
-              postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
-              postprocessing_out/merged/$SUBDIR-merged.ply,
-              postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
-              postprocessing_out/west/$SUBDIR-west.ply,
-              postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+  # 2: 
+  #   container: 
+  #     simg_name: 3d_postprocessing.simg
+  #     dockerhub_path: docker://phytooracle/3d_postprocessing:latest
+  #   command: singularity run 3d_postprocessing.simg -i alignment/ -o postprocessing_out -f ${SUBDIR} -t transfromation.json -p stereoTop_full_season_clustering.csv -s 10 -d ${DATE} -l gcp_season_10.txt
+  #   distribution_level: wq
+  #   file_level: 
+  #   input_dir: [alignment, west]
+  #   input_file: -west.ply
+  #   inputs: [alignment/east/$SUBDIR-east.ply,
+  #            alignment/east_downsampled/$SUBDIR-east.ply, 
+  #            alignment/merged/$SUBDIR-merged.ply,
+  #            alignment/merged_downsampled/$SUBDIR-merged.ply,
+  #            alignment/west/$SUBDIR-west.ply,
+  #            alignment/west_downsampled/$SUBDIR-west.ply,
+  #            transfromation.json,
+  #            stereoTop_full_season_clustering.csv,
+  #            gcp_season_10.txt]
+  #   outputs: [postprocessing_out/east/$SUBDIR-east.ply,
+  #             postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
+  #             postprocessing_out/merged/$SUBDIR-merged.ply,
+  #             postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
+  #             postprocessing_out/west/$SUBDIR-west.ply,
+  #             postprocessing_out/west_downsampled/$SUBDIR-west.ply]
   
-  3: 
-    container: 
-      simg_name: 3d_crop_individual_plants.simg
-      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_crop_individual_plants.simg -i postprocessing_out/ -p stereoTop_full_season_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 10 -d ${DATE} && tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
-    distribution_level: wq
-    file_level: 
-    input_dir: [postprocessing_out, west]
-    input_file: -west.ply
-    inputs: [transfromation.json,
-             stereoTop_full_season_clustering.csv,
-             gcp_season_10.txt,
-             postprocessing_out/east/$SUBDIR-east.ply,
-             postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
-             postprocessing_out/merged/$SUBDIR-merged.ply,
-             postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
-             postprocessing_out/west/$SUBDIR-west.ply,
-             postprocessing_out/west_downsampled/$SUBDIR-west.ply]
-    outputs: [$BASENAME_individual_plants.tar]
+  # 3: 
+  #   container: 
+  #     simg_name: 3d_crop_individual_plants.simg
+  #     dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
+  #   command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_crop_individual_plants.simg -i postprocessing_out/ -p stereoTop_full_season_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 10 -d ${DATE} && tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
+  #   distribution_level: wq
+  #   file_level: 
+  #   input_dir: [postprocessing_out, west]
+  #   input_file: -west.ply
+  #   inputs: [transfromation.json,
+  #            stereoTop_full_season_clustering.csv,
+  #            gcp_season_10.txt,
+  #            postprocessing_out/east/$SUBDIR-east.ply,
+  #            postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
+  #            postprocessing_out/merged/$SUBDIR-merged.ply,
+  #            postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
+  #            postprocessing_out/west/$SUBDIR-west.ply,
+  #            postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+  #   outputs: [$BASENAME_individual_plants.tar]
 
-  4: 
-    container: 
-      simg_name: slack_notifications.simg
-      dockerhub_path: docker://phytooracle/slack_notifications:latest
-    command: tar -xvf ${SUBDIR}_individual_plants.tar && rm ${SUBDIR}_individual_plants.tar 
-    distribution_level: local
-    file_level: 
-    input_dir: [postprocessing_out, west]
-    input_file: -west.ply
-    inputs: [$BASENAME_individual_plants.tar]
-    outputs: []
+  # 4: 
+  #   container: 
+  #     simg_name: slack_notifications.simg
+  #     dockerhub_path: docker://phytooracle/slack_notifications:latest
+  #   command: tar -xvf ${SUBDIR}_individual_plants.tar && rm ${SUBDIR}_individual_plants.tar 
+  #   distribution_level: local
+  #   file_level: 
+  #   input_dir: [postprocessing_out, west]
+  #   input_file: -west.ply
+  #   inputs: [$BASENAME_individual_plants.tar]
+  #   outputs: []
 
   5: 
     container: 
@@ -102,10 +102,7 @@ modules:
     file_level: subdir
     input_dir: [individual_plants_out, west]
     input_file: _cropped.ply
-    inputs: [transfromation.json,
-             stereoTop_full_season_clustering.csv,
-             gcp_season_10.txt,
-             individual_plants_out/west/$PLANT_NAME,
+    inputs: [individual_plants_out/west/$PLANT_NAME,
              individual_plants_out/west_downsampled/$PLANT_NAME,
              individual_plants_out/east/$PLANT_NAME,
              individual_plants_out/east_downsampled/$PLANT_NAME]
