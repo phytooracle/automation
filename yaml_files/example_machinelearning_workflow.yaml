@@ -183,7 +183,7 @@ workload_manager:
   nodes: 1
   number_tasks: 1
   number_tasks_per_node: 1
-  time_minutes: 720 #1440
+  time_minutes: 1440
   retries: 1 #2
   port: 0
   
