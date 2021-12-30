@@ -530,7 +530,7 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
                                     "outputs" : [out.replace('$PLANT_NAME', file) for out in outputs],
                                     "inputs"  : [container, 
                                                 seg_model_name, 
-                                                det_model_name] + [input.replace('$PLANT_NAME', file) for input in inputs]
+                                                det_model_name] + [input.replace('$PLANT_NAME', file) for input in inputs if os.path.isdir(input.replace('$PLANT_NAME', file))]
 
                                 } for file in  subdir_list
                             ]
