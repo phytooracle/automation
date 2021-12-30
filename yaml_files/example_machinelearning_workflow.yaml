@@ -192,9 +192,9 @@ workload_manager:
   min_worker: 100
   max_worker: 300
   cores_per_worker: 6
-  alt_min_worker: 500
-  alt_max_worker: 1000
-  alt_cores_per_worker: 1
+  alt_min_worker: 300 #500
+  alt_max_worker: 800 #1000
+  alt_cores_per_worker: 2 #1
   worker_timeout_seconds: 600
 
 paths:
