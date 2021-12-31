@@ -764,6 +764,12 @@ def clean_inputs(date):
     if os.path.isdir(date):
         shutil.rmtree(date)
 
+    if os.path.isdir('scanner3DTop'):
+        shutil.rmtree('scanner3DTop')
+
+    if os.path.isdir(date):
+        shutil.rmtree(date)
+
     slurm_list = glob.glob('./slurm-*')
     if slurm_list:
         for slurm in slurm_list:
