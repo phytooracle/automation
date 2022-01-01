@@ -775,10 +775,10 @@ def clean_inputs(date):
         for slurm in slurm_list:
             os.remove(slurm)
     
-    # wq_list = glob.glob('./wq-pool-*')
-    # if wq_list:
-    #     for wq in wq_list:
-    #         shutil.rmtree(wq)
+    wq_list = glob.glob('./wq-pool-*')
+    if wq_list:
+        for wq in wq_list:
+            shutil.rmtree(wq)
     
 
 # --------------------------------------------------
@@ -842,7 +842,7 @@ def main():
             tar_outputs(date, dictionary)
             create_pipeline_logs(date)
             upload_outputs(date, dictionary)
-            # clean_inputs(date)        
+            clean_inputs(date)        
 
 
 # --------------------------------------------------
