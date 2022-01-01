@@ -842,7 +842,7 @@ def main():
             tar_outputs(date, dictionary)
             create_pipeline_logs(date)
             upload_outputs(date, dictionary)
-            clean_inputs(date)        
+            # clean_inputs(date)        
 
 
 # --------------------------------------------------
