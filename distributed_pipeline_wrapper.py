@@ -790,7 +790,7 @@ def main():
     for date in args.date:
 
         clean_directory()
-        clean_inputs(date)
+        # clean_inputs(date)
         
         with open(args.yaml, 'r') as stream:
             try:
