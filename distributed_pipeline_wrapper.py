@@ -460,8 +460,8 @@ def launch_workers(account, partition, job_name, nodes, number_tasks, number_tas
         fh.writelines(f"work_queue_factory -T slurm -B '--account={account} --partition={partition} --job-name={job_name} --time={time} --mem-per-cpu={mem_per_cpu}GB' -M {manager_name} -w {min_worker} -W {max_worker} --workers-per-cycle 0 --cores={cores} -t {worker_timeout}\n")
 
     os.system(f"sbatch {outfile}")
-    os.system(f"ocelote && sbatch {outfile} && puma")
-    os.system(f"elgato && sbatch {outfile} && puma")
+    # os.system(f"ocelote && sbatch {outfile} && puma")
+    # os.system(f"elgato && sbatch {outfile} && puma")
 
 
 # --------------------------------------------------
@@ -476,8 +476,8 @@ def kill_workers(job_name):
         - Kills workers on an HPC system
     '''
     os.system(f"scancel --name {job_name}")
-    os.system(f"ocelote && scancel --name {job_name} && puma")
-    os.system(f"elgato && scancel --name {job_name} && puma")
+    # os.system(f"ocelote && scancel --name {job_name} && puma")
+    # os.system(f"elgato && scancel --name {job_name} && puma")
 
     
 # --------------------------------------------------
