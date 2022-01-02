@@ -590,7 +590,7 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
 
 
 # --------------------------------------------------
-def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, retries=3, port=0, out_log=True):
+def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, retries=3, port=0, out_log='dall.log'):
     '''
     Create a JSON file for Makeflow distributed computing framework. 
 
@@ -604,14 +604,8 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, retries=3
     home = os.path.expanduser('~')
     cctools = os.path.join(home, cctools_path, 'bin', 'makeflow')
     cctools = os.path.join(home, cctools)
-
-    if out_log==True:
-        arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} -r {retries} -p {port} -dall -o dall.log --disable-cache $@'
-        cmd1 = ' '.join([cctools, arguments])
-
-    else:
-        arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} -r {retries} -p {port} --disable-cache $@'
-        cmd1 = ' '.join([cctools, arguments])
+    arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} -r {retries} -p {port} -dall -o {out_log} --disable-cache $@'
+    cmd1 = ' '.join([cctools, arguments])
 
     sp.call(cmd1, shell=True)
 
@@ -789,7 +783,7 @@ def main():
     cctools_path = download_cctools()
     for date in args.date:
 
-        clean_directory()
+        # clean_directory()
         # clean_inputs(date)
         
         with open(args.yaml, 'r') as stream:
@@ -833,9 +827,9 @@ def main():
                 dir_name = os.path.join(*v['input_dir'])
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
-                # if not os.path.isfile(f'wf_file_{k}.json'):
-                json_out_path = generate_makeflow_json(level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
-                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=True)
+                if not os.path.isfile(f'wf_file_{k}.json'):
+                    json_out_path = generate_makeflow_json(level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
+                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log')
                 clean_directory()
         
             kill_workers(dictionary['workload_manager']['job_name'])
