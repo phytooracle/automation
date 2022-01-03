@@ -100,7 +100,6 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
         cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
         cmd1 = f'cd {home} && wget {cctools_url}.tar.gz && tar -xzvf {cctools_file}.tar.gz && rm {cctools_file}.tar.gz'
         sp.call(cmd1, shell=True)
-        # sp.call(f'rm {cctools_url}.tar.gz', shell=True)
         print(f'Download complete. CCTools version {cctools_version} is ready!')
 
     else:
@@ -211,34 +210,6 @@ def get_file_list(directory, level, match_string='.ply'):
     return files_list
 
 
-# # --------------------------------------------------
-# def get_file_list(directory, level, match_string='.ply'):
-#     '''
-#     Walks through a given directory and grabs all files with the given search string.
-
-#     Input: 
-#         - directory: Local directory to search 
-#         - match_string: Substring to search and add only elements with items containing 
-#                         this string being added to the file list. 
-
-#     Output: 
-#         - subdir_list: List containing all subdirectories within the raw data.
-#         - files_list: List containing all files within each subdirectory within the raw data.
-#     '''
-#     files_list = []
-#     subdir_list = []
-
-#     for root, dirs, files in os.walk(directory, topdown=False):
-#         for name in files:
-#             if match_string in name:
-#                 files_list.append(os.path.join(root, name))
-            
-#         for name in dirs:
-#             subdir_list.append(os.path.join(root, name))
-
-#     return files_list
-
-
 # --------------------------------------------------
 def write_file_list(input_list, out_path='file.txt'):
     '''
@@ -272,7 +243,6 @@ def download_level_1_data(irods_path):
     direc = irods_path.split('/')[-1]
 
     cmd1 = f'iget -rfPVT {irods_path}'
-    # cmd1 = f'iget -fKPVT {irods_path}'
     cwd = os.getcwd()
 
     if '.gz' in file_name: 
@@ -768,9 +738,6 @@ def clean_inputs(date):
     if os.path.isdir('scanner3DTop'):
         shutil.rmtree('scanner3DTop')
 
-    if os.path.isdir(date):
-        shutil.rmtree(date)
-
     slurm_list = glob.glob('./slurm-*')
     if slurm_list:
         for slurm in slurm_list:
@@ -834,7 +801,6 @@ def main():
                 dir_name = os.path.join(*v['input_dir'])
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
-                # if not os.path.isfile(f'wf_file_{k}.json'):
                 json_out_path = generate_makeflow_json(level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
                 run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log')
                 clean_directory()
