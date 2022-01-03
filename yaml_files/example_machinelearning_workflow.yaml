@@ -184,7 +184,7 @@ workload_manager:
   number_tasks: 1
   number_tasks_per_node: 1
   time_minutes: 1440
-  retries: 1 #2
+  retries: 1
   port: 0
   
   mem_per_cpu: 5
@@ -192,10 +192,10 @@ workload_manager:
   min_worker: 100
   max_worker: 300
   cores_per_worker: 6
-  alt_min_worker: 300 #500
-  alt_max_worker: 900 #1000
+  alt_min_worker: 1000 #500
+  alt_max_worker: 1600 #1000
   alt_cores_per_worker: 1 #1
-  worker_timeout_seconds: 600
+  worker_timeout_seconds: 1200
 
 paths:
   pipeline_outpath: [individual_plants_out]
