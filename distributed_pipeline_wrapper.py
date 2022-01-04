@@ -642,8 +642,8 @@ def create_pipeline_logs(scan_date):
     if os.path.isfile(os.path.join(cwd, args.yaml)):
         shutil.copy(os.path.join(cwd, args.yaml), os.path.join(cwd, scan_date, 'logs', 'processing_instructions.yaml'))
 
-    for item in glob.glob('./*dall*'):
-        shutil.move(item, os.path.join(cwd, scan_date, 'logs', item))
+    for log in glob.glob('./*dall*'):
+        shutil.move(log, os.path.join(cwd, scan_date, 'logs', log))
 
 
 # --------------------------------------------------
