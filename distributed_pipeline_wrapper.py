@@ -393,7 +393,7 @@ def get_model_files(seg_model_path, det_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(account, partition, job_name, nodes, number_tasks, number_tasks_per_node, time, mem_per_cpu, manager_name, min_worker, max_worker, cores, worker_timeout, outfile='worker.sh'):
+def launch_workers(account, partition, job_name, nodes, number_tasks, number_tasks_per_node, cpus_per_task, time, mem_per_cpu, manager_name, min_worker, max_worker, cores, worker_timeout, outfile='worker.sh'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -424,11 +424,12 @@ def launch_workers(account, partition, job_name, nodes, number_tasks, number_tas
         fh.writelines(f"#SBATCH --nodes={nodes}\n")
         fh.writelines(f"#SBATCH --ntasks={number_tasks}\n")
         fh.writelines(f"#SBATCH --ntasks-per-node={number_tasks_per_node}\n")
+        fh.writelines(f"#SBATCH --cpus-per-task={cpus_per_task}")
         fh.writelines(f"#SBATCH --time={time}\n")
         fh.writelines("export CCTOOLS_HOME=${HOME}/cctools-7.1.12-x86_64-centos7\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-        fh.writelines(f"work_queue_factory -T slurm -M {manager_name} --workers-per-cycle 10 -B '--account={account} --partition={partition} --job-name={job_name} --time={time} --mem-per-cpu={mem_per_cpu}GB' -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
-
+        # fh.writelines(f"work_queue_factory -T slurm -M {manager_name} --workers-per-cycle 10 -B '--account={account} --partition={partition} --job-name={job_name} --time={time} --mem-per-cpu={mem_per_cpu}GB' -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
+        fh.writelines(f"work_queue_factory -T local -M {manager_name} -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
     os.system(f"sbatch {outfile}")
     # os.system(f"ocelote && sbatch {outfile} && puma")
     # os.system(f"elgato && sbatch {outfile} && puma")
@@ -480,8 +481,8 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
                             nodes=dictionary['workload_manager']['nodes'], 
                             number_tasks=dictionary['workload_manager']['number_tasks'], 
                             number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
+                            cpus_per_task=dictionary['workload_manager']['cpus_per_task'],
                             time=dictionary['workload_manager']['time_minutes'], 
-
                             mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
                             manager_name=dictionary['workload_manager']['manager_name'], 
                             min_worker=dictionary['workload_manager']['alt_min_worker'], 
@@ -757,8 +758,8 @@ def main():
     cctools_path = download_cctools()
     for date in args.date:
 
-        # clean_directory()
-        # clean_inputs(date)
+        clean_directory()
+        clean_inputs(date)
         
         with open(args.yaml, 'r') as stream:
             try:
@@ -783,9 +784,9 @@ def main():
                         job_name=dictionary['workload_manager']['job_name'], 
                         nodes=dictionary['workload_manager']['nodes'], 
                         number_tasks=dictionary['workload_manager']['number_tasks'], 
-                        number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
+                        number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
+                        cpus_per_task=dictionary['workload_manager']['cpus_per_task'], 
                         time=dictionary['workload_manager']['time_minutes'], 
-
                         mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
                         manager_name=dictionary['workload_manager']['manager_name'], 
                         min_worker=dictionary['workload_manager']['min_worker'], 
