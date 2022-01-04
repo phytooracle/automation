@@ -693,8 +693,6 @@ def clean_directory():
     '''
     for item in glob.glob('./*dall*'):
         os.remove(item)
-    # if os.path.isfile("dall.log"):
-    #     os.remove("dall.log")
     
     if os.path.isfile("file.txt"):
         os.remove("file.txt")
