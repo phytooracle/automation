@@ -184,7 +184,7 @@ workload_manager:
   number_tasks: 15
   number_tasks_per_node: 1
   cpus_per_task: 94
-  time_minutes: 1440
+  time_minutes: 720 #1440
   retries: 1
   port: 0
   
