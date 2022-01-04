@@ -749,6 +749,8 @@ def clean_inputs(date):
         for wq in wq_list:
             shutil.rmtree(wq)
     
+    if os.path.isfile('worker.sh'):
+        os.remove('worker.sh')
 
 # --------------------------------------------------
 def main():
