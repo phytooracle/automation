@@ -180,8 +180,8 @@ workload_manager:
   account: lyons-lab
   partition: standard
   job_name: phytooracle_worker
-  nodes: 1
-  number_tasks: 1
+  nodes: 50
+  number_tasks: 50
   number_tasks_per_node: 1
   cpus_per_task: 94
   time_minutes: 1440

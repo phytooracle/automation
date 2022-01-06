@@ -416,20 +416,24 @@ def launch_workers(account, partition, job_name, nodes, number_tasks, number_tas
     Output: 
         - Running workers on an HPC system
     '''
+    time_seconds = int(time)*60
     with open(outfile, 'w') as fh:
-        fh.writelines("#!/bin/bash -l\n")
+        # fh.writelines("#!/bin/bash -l\n")
+        fh.writelines("#!/bin/bash\n")
         fh.writelines(f"#SBATCH --account={account}\n")
         fh.writelines(f"#SBATCH --partition={partition}\n")
         fh.writelines(f"#SBATCH --job-name={job_name}\n")
         fh.writelines(f"#SBATCH --nodes={nodes}\n")
         fh.writelines(f"#SBATCH --ntasks={number_tasks}\n")
         fh.writelines(f"#SBATCH --ntasks-per-node={number_tasks_per_node}\n")
-        fh.writelines(f"#SBATCH --cpus-per-task={cpus_per_task}\n")
+        fh.writelines(f"#SBATCH --cpus-per-task={cores}\n")
+        fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_cpu}GB\n")
         fh.writelines(f"#SBATCH --time={time}\n")
         fh.writelines("export CCTOOLS_HOME=${HOME}/cctools-7.1.12-x86_64-centos7\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
         # fh.writelines(f"work_queue_factory -T slurm -M {manager_name} --workers-per-cycle 10 -B '--account={account} --partition={partition} --job-name={job_name} --time={time} --mem-per-cpu={mem_per_cpu}GB' -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
-        fh.writelines(f"work_queue_factory -T local -M {manager_name} -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
+        # fh.writelines(f"work_queue_factory -T local -M {manager_name} -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
+        fh.writelines(f"srun work_queue_worker -M {job_name} -t {time_seconds}\n"
     os.system(f"sbatch {outfile}")
     # os.system(f"ocelote && sbatch {outfile} && puma")
     # os.system(f"elgato && sbatch {outfile} && puma")
