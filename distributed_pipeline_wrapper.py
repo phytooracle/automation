@@ -695,8 +695,8 @@ def clean_directory():
     Output: 
         - Clean working directory
     '''
-    for item in glob.glob('./*dall*'):
-        os.remove(item)
+    # for item in glob.glob('./*dall*'):
+    #     os.remove(item)
     
     if os.path.isfile("file.txt"):
         os.remove("file.txt")
