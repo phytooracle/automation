@@ -196,7 +196,7 @@ workload_manager:
   alt_min_worker: 50
   alt_max_worker: 80
   alt_cores_per_worker: 1
-  worker_timeout_seconds: 900
+  worker_timeout_seconds: 86400
 
 paths:
   pipeline_outpath: [individual_plants_out]
