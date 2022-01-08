@@ -435,6 +435,7 @@ def launch_workers(account, partition, job_name, nodes, number_tasks, number_tas
         # fh.writelines(f"work_queue_factory -T local -M {manager_name} -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
         fh.writelines(f"srun work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout}\n")
     os.system(f"sbatch {outfile}")
+    os.system(f"sbatch {outfile}")
     # os.system(f"ocelote && sbatch {outfile} && puma")
     # os.system(f"elgato && sbatch {outfile} && puma")
 
