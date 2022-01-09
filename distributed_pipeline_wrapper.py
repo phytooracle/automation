@@ -435,7 +435,7 @@ def launch_workers(account, partition, job_name, nodes, number_tasks, number_tas
         # fh.writelines(f"work_queue_factory -T local -M {manager_name} -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
         fh.writelines(f"srun work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout}\n")
     os.system(f"sbatch {outfile}")
-    os.system(f"sbatch {outfile}")
+    # os.system(f"sbatch {outfile}")
     # os.system(f"ocelote && sbatch {outfile} && puma")
     # os.system(f"elgato && sbatch {outfile} && puma")
 
@@ -477,23 +477,23 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
         if sensor=='scanner3DTop':
             
             if level == 'subdir':
-                # kill_workers(dictionary['workload_manager']['job_name'])
+                kill_workers(dictionary['workload_manager']['job_name'])
 
-                # if args.hpc:
-                #     launch_workers(account=dictionary['workload_manager']['account'], 
-                #             partition=dictionary['workload_manager']['partition'], 
-                #             job_name=dictionary['workload_manager']['job_name'], 
-                #             nodes=dictionary['workload_manager']['nodes'], 
-                #             number_tasks=dictionary['workload_manager']['number_tasks'], 
-                #             number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
-                #             cpus_per_task=dictionary['workload_manager']['cpus_per_task'],
-                #             time=dictionary['workload_manager']['time_minutes'], 
-                #             mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
-                #             manager_name=dictionary['workload_manager']['manager_name'], 
-                #             min_worker=dictionary['workload_manager']['alt_min_worker'], 
-                #             max_worker=dictionary['workload_manager']['alt_max_worker'], 
-                #             cores=dictionary['workload_manager']['alt_cores_per_worker'], 
-                #             worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
+                if args.hpc:
+                    launch_workers(account=dictionary['workload_manager']['account'], 
+                            partition=dictionary['workload_manager']['partition'], 
+                            job_name=dictionary['workload_manager']['job_name'], 
+                            nodes=dictionary['workload_manager']['nodes'], 
+                            number_tasks=dictionary['workload_manager']['number_tasks'], 
+                            number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
+                            cpus_per_task=dictionary['workload_manager']['cpus_per_task'],
+                            time=dictionary['workload_manager']['time_minutes'], 
+                            mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
+                            manager_name=dictionary['workload_manager']['manager_name'], 
+                            min_worker=dictionary['workload_manager']['alt_min_worker'], 
+                            max_worker=dictionary['workload_manager']['alt_max_worker'], 
+                            cores=dictionary['workload_manager']['alt_cores_per_worker'], 
+                            worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
                 subdir_list = []
                 for item in files_list:
