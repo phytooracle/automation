@@ -477,9 +477,9 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
         if sensor=='scanner3DTop':
             
             if level == 'subdir':
-                kill_workers(dictionary['workload_manager']['job_name'])
-
+                
                 if args.hpc:
+                    kill_workers(dictionary['workload_manager']['job_name'])
                     launch_workers(account=dictionary['workload_manager']['account'], 
                             partition=dictionary['workload_manager']['partition'], 
                             job_name=dictionary['workload_manager']['job_name'], 
