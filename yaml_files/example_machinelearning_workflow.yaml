@@ -106,8 +106,8 @@ modules:
              individual_plants_out/west_downsampled/$PLANT_NAME,
              individual_plants_out/east/$PLANT_NAME,
              individual_plants_out/east_downsampled/$PLANT_NAME]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME, #/combined_multiway_registered.ply,
-              individual_plants_out/plant_reports/$PLANT_NAME]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+              #individual_plants_out/plant_reports/$PLANT_NAME]
 
   6:
     container:
@@ -149,8 +149,9 @@ modules:
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: segmentation_plant.ply
     inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/final.gif, 
-              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
+            #[individual_plants_out/plant_reports/$PLANT_NAME/final.gif, 
+              
   
   9:
     container: 
@@ -172,9 +173,9 @@ modules:
              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
              individual_plants_out/plant_reports/$PLANT_NAME/final.gif]
-    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/level_1_plant_clip.gif,
-              individual_plants_out/plant_reports/$PLANT_NAME/75_ML_compare.gif,
+    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/75_ML_compare.gif,
               individual_plants_out/plant_reports/$PLANT_NAME/segmentation_dbscan_compare.gif]
+              # [individual_plants_out/plant_reports/$PLANT_NAME/level_1_plant_clip.gif,
 
 workload_manager:
   account: lyons-lab
