@@ -15,6 +15,7 @@ import yaml
 import shutil
 import glob
 import tarfile
+import multiprocessing
 
 
 # --------------------------------------------------
@@ -36,6 +37,12 @@ def get_args():
                         nargs='+',
                         type=str,
                         required=True)
+    
+    parser.add_argument('-l',
+                        '--local_cores',
+                        help='Percentage of cores to use for local processing',
+                        type=float,
+                        default=0.70)
 
     parser.add_argument('-y',
                         '--yaml',
@@ -582,10 +589,12 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, retries=3
     Output: 
         - Running workflow
     '''
+    args = get_args()
+    cores_max = int(multiprocessing.cpu_count()*args.local_cores)
     home = os.path.expanduser('~')
     cctools = os.path.join(home, cctools_path, 'bin', 'makeflow')
     cctools = os.path.join(home, cctools)
-    arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} -r {retries} -p {port} -dall -o {out_log} --disable-cache $@'
+    arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --disable-cache $@'
     cmd1 = ' '.join([cctools, arguments])
 
     sp.call(cmd1, shell=True)
