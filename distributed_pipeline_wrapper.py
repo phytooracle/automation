@@ -143,7 +143,8 @@ def download_raw_data(irods_path, dir_name):
     args = get_args()
     file_name = os.path.basename(irods_path)
     if not os.path.isdir(dir_name):
-        cmd1 = f'iget -fKPVT {irods_path}'
+        # cmd1 = f'iget -fKPVT {irods_path}'
+        cmd1 = f'iget -fPVT {irods_path}'
         cwd = os.getcwd()
 
         if '.gz' in file_name: 
