@@ -401,7 +401,7 @@ def get_model_files(seg_model_path, det_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(account, partition, job_name, nodes, number_tasks, number_tasks_per_node, cpus_per_task, time, mem_per_cpu, manager_name, min_worker, max_worker, cores, worker_timeout, outfile='worker.sh'):
+def launch_workers(account, partition, job_name, nodes, number_tasks, number_tasks_per_node, time, mem_per_cpu, manager_name, cores, worker_timeout, outfile='worker.sh'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -806,12 +806,9 @@ def main():
                         nodes=dictionary['workload_manager']['nodes'], 
                         number_tasks=dictionary['workload_manager']['number_tasks'], 
                         number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
-                        cpus_per_task=dictionary['workload_manager']['cpus_per_task'], 
                         time=dictionary['workload_manager']['time_minutes'], 
                         mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
                         manager_name=dictionary['workload_manager']['manager_name'], 
-                        min_worker=dictionary['workload_manager']['min_worker'], 
-                        max_worker=dictionary['workload_manager']['max_worker'], 
                         cores=dictionary['workload_manager']['cores_per_worker'], 
                         worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
