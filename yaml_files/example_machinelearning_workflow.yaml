@@ -184,6 +184,7 @@ workload_manager:
   nodes: 100 
   number_tasks: 100
   number_tasks_per_node: 1
+  cpus_per_task: 
   cores_per_worker: 6
   alt_cores_per_worker: 2
   time_minutes: 1440
