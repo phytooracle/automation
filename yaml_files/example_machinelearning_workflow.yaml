@@ -181,22 +181,16 @@ workload_manager:
   account: lyons-lab
   partition: standard
   job_name: phytooracle_worker
-  nodes: 100
-  number_tasks: 100
-  number_tasks_per_node: 1
-  cpus_per_task: #94
+  nodes: 1
+  number_tasks: 94
+  number_tasks_per_node: 94
+  cores_per_worker: 6
+  alt_cores_per_worker: 2
   time_minutes: 1440
   retries: 1
   port: 0
-  
   mem_per_cpu: 5
   manager_name: phytooracle_manager
-  min_worker: #8
-  max_worker: #13
-  cores_per_worker: 6
-  alt_min_worker: #50
-  alt_max_worker: #80
-  alt_cores_per_worker: 1
   worker_timeout_seconds: 86400
 
 paths:
