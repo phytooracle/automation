@@ -440,7 +440,7 @@ def launch_workers(account, partition, job_name, nodes, number_tasks, number_tas
         fh.writelines("export CCTOOLS_HOME=${HOME}/cctools-7.1.12-x86_64-centos7\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
         fh.writelines(f"for i in `seq {number_tasks}`; do\n")
-        fh.writelines(f"  srun --exclusive --nodes 1 --ntasks {cores} work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} &\n")
+        fh.writelines(f"  srun --exclusive --nodes 1 --ntasks 1 --cpus-per-task {cores} work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} &\n")
         fh.writelines("done\n")
         fh.writelines("wait\n")
         # fh.writelines(f"work_queue_factory -T slurm -M {manager_name} --workers-per-cycle 10 -B '--account={account} --partition={partition} --job-name={job_name} --time={time} --mem-per-cpu={mem_per_cpu}GB' -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
