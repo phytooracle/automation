@@ -498,12 +498,9 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
                             nodes=dictionary['workload_manager']['nodes'], 
                             number_tasks=dictionary['workload_manager']['number_tasks'], 
                             number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
-                            cpus_per_task=dictionary['workload_manager']['cpus_per_task'],
                             time=dictionary['workload_manager']['time_minutes'], 
                             mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
                             manager_name=dictionary['workload_manager']['manager_name'], 
-                            min_worker=dictionary['workload_manager']['alt_min_worker'], 
-                            max_worker=dictionary['workload_manager']['alt_max_worker'], 
                             cores=dictionary['workload_manager']['alt_cores_per_worker'], 
                             worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
