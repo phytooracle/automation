@@ -37,7 +37,13 @@ def get_args():
                         nargs='+',
                         type=str,
                         required=True)
-    
+
+    parser.add_argument('-c',
+                        '--cctools_version',
+                        help='CCTools version',
+                        type=str,
+                        default='7.4.2')
+
     parser.add_argument('-l',
                         '--local_cores',
                         help='Percentage of cores to use for local processing',
@@ -787,7 +793,7 @@ def main():
     """Run distributed data processing here"""
 
     args = get_args()
-    cctools_path = download_cctools()
+    cctools_path = download_cctools(cctools_version=args.cctools_version)
     for date in args.date:
 
         # clean_directory()
