@@ -105,8 +105,21 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
     if not os.path.isdir(os.path.join(home, cctools_file)):
         print(f'Downloading {cctools_file}.')
         cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
-        cmd1 = f'cd {home} && wget {cctools_url}.tar.gz && tar -xzvf {cctools_file}.tar.gz && rm {cctools_file}.tar.gz'
+        cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
         sp.call(cmd1, shell=True)
+        os.chdir(home)
+        file = tarfile.open(f'{cctools_file}.tar.gz')
+        file.extractall('.')
+        file.close()
+        os.remove(f'{cctools_file}.tar.gz')
+
+        try:
+            shutil.move('-'.join(['cctools', cctools_version, architecture, sys_os+'.tar.gz', 'dir']), '-'.join(['cctools', cctools_version, architecture, sys_os]))
+
+        except:
+            pass
+
+        os.chdir(cwd)
         print(f'Download complete. CCTools version {cctools_version} is ready!')
 
     else:
@@ -401,7 +414,7 @@ def get_model_files(seg_model_path, det_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(account, partition, job_name, nodes, number_tasks, number_tasks_per_node, time, mem_per_cpu, manager_name, cores, worker_timeout, outfile='worker.sh'):
+def launch_workers(cctools_path, account, partition, job_name, nodes, number_tasks, number_tasks_per_node, time, mem_per_cpu, manager_name, cores, worker_timeout, outfile='worker.sh'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -437,7 +450,7 @@ def launch_workers(account, partition, job_name, nodes, number_tasks, number_tas
         fh.writelines(f"#SBATCH --cpus-per-task={cores}\n")
         fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_cpu}GB\n")
         fh.writelines(f"#SBATCH --time={time}\n")
-        fh.writelines("export CCTOOLS_HOME=${HOME}/cctools-7.1.12-x86_64-centos7\n")
+        fh.writelines("export CCTOOLS_HOME=${HOME}/}"+f"{cctools_path}\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
         fh.writelines(f"for i in `seq {number_tasks}`; do\n")
         fh.writelines(f"  srun --exclusive --nodes 1 --ntasks 1 --cpus-per-task {cores} work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} &\n")
@@ -469,7 +482,7 @@ def kill_workers(job_name):
 
     
 # --------------------------------------------------
-def generate_makeflow_json(level, files_list, command, container, inputs, outputs, date, sensor, n_rules=1, json_out_path='wf_file.json'):
+def generate_makeflow_json(cctools_path, level, files_list, command, container, inputs, outputs, date, sensor, n_rules=1, json_out_path='wf_file.json'):
     '''
     Generate Makeflow JSON file to distribute tasks. 
 
@@ -492,7 +505,8 @@ def generate_makeflow_json(level, files_list, command, container, inputs, output
                 
                 if args.hpc:
                     kill_workers(dictionary['workload_manager']['job_name'])
-                    launch_workers(account=dictionary['workload_manager']['account'], 
+                    launch_workers(cctools_path=cctools_path,
+                            account=dictionary['workload_manager']['account'], 
                             partition=dictionary['workload_manager']['partition'], 
                             job_name=dictionary['workload_manager']['job_name'], 
                             nodes=dictionary['workload_manager']['nodes'], 
@@ -797,7 +811,8 @@ def main():
             if args.hpc:
                 kill_workers(dictionary['workload_manager']['job_name'])
 
-                launch_workers(account=dictionary['workload_manager']['account'], 
+                launch_workers(cctools_path = cctools_path,
+                        account=dictionary['workload_manager']['account'], 
                         partition=dictionary['workload_manager']['partition'], 
                         job_name=dictionary['workload_manager']['job_name'], 
                         nodes=dictionary['workload_manager']['nodes'], 
@@ -817,7 +832,7 @@ def main():
                 dir_name = os.path.join(*v['input_dir'])
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
-                json_out_path = generate_makeflow_json(level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
+                json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
                 run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log')
                 clean_directory()
         
