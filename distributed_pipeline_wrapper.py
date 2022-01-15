@@ -57,20 +57,6 @@ def get_args():
                         type=str,
                         required=True)
 
-    parser.add_argument('-sm',
-                        '--seg_model',
-                        help='Model weights to use for segmentation container.',
-                        metavar='seg_model',
-                        type=str,
-                        default='/iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth')
-    
-    parser.add_argument('-dm',
-                        '--det_model',
-                        help='Model weights to use for detection container.',
-                        metavar='det_model',
-                        type=str,
-                        default='/iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth')
-
     return parser.parse_args()
 
 
@@ -305,8 +291,6 @@ def get_required_files_3d(dictionary, date):
     level_1 = dictionary['paths']['cyverse']['input']['basename'].replace('level_0', 'level_1')
     cwd = os.getcwd()
     irods_data_path = os.path.join(level_1, date, 'alignment')
-    # if not os.path.isdir('alignment'):
-    #     download_level_1_data(irods_data_path)
     if not os.path.isfile('transfromation.json'):
         get_transformation_file(os.path.join(level_1, date), cwd)
     if not os.path.isfile('stereoTop_full_season_clustering.csv'):
@@ -697,7 +681,6 @@ def upload_outputs(date, dictionary):
     args= get_args()
     root = dictionary['paths']['cyverse']['output']['basename']
     subdir = dictionary['paths']['cyverse']['output']['subdir']
-    # cyverse_path = os.path.join(root, subdir, date)
 
     cwd = os.getcwd()
     print(cwd)
@@ -727,8 +710,6 @@ def clean_directory():
     Output: 
         - Clean working directory
     '''
-    # for item in glob.glob('./*dall*'):
-    #     os.remove(item)
     
     if os.path.isfile("file.txt"):
         os.remove("file.txt")
@@ -795,9 +776,6 @@ def main():
     args = get_args()
     cctools_path = download_cctools(cctools_version=args.cctools_version)
     for date in args.date:
-
-        # clean_directory()
-        # clean_inputs(date)
         
         with open(args.yaml, 'r') as stream:
             try:
@@ -831,7 +809,7 @@ def main():
                         worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
             global seg_model_name, det_model_name
-            seg_model_name, det_model_name = get_model_files(args.seg_model, args.det_model)
+            seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
 
             for k, v in dictionary['modules'].items():
                 
