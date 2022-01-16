@@ -89,6 +89,11 @@ Data will be downloaded and workflows will be launched. You view progress inform
 #### Non-interactive job submission
 To submit a date for processing in a non-interactive node, run:
 ```shell
+sbatch slurm_submission.sh <scan_date> <yaml_file>
+```
+
+For example: 
+```shell
 sbatch slurm_submission.sh 2020-01-27 yaml_files/example_machinelearning_workflow.yaml
 ```
 
