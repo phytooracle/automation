@@ -89,7 +89,7 @@ Data will be downloaded and workflows will be launched. You view progress inform
 #### Non-interactive job submission
 To submit a date for processing in a non-interactive node, run:
 ```shell
-sbatch slurm_submission.sh ./distributed_pipeline_wrapper.py -hpc -d 2020-01-22 -y yaml_files/example_machinelearning_workflow.yaml
+sbatch slurm_submission.sh './distributed_pipeline_wrapper.py -hpc -d 2020-01-27 -y yaml_files/example_machinelearning_workflow.yaml' .
 ```
 
 Make sure to change the account, partition as needed. 
