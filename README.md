@@ -97,4 +97,4 @@ For example:
 sbatch slurm_submission.sh 2020-01-27 yaml_files/example_machinelearning_workflow.yaml
 ```
 
-Make sure to change the account, partition as needed. 
+Make sure to change the account, partition as needed in the YAML file. 
