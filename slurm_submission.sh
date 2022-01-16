@@ -7,4 +7,6 @@
 #SBATCH --ntasks-per-node=94
 #SBATCH --time=96:00:00
 PIPE_COMMAND=${1}
-$PIPE_COMMAND
+CWD=${2}
+cd ${CWD}
+${PIPE_COMMAND}

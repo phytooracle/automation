@@ -107,7 +107,6 @@ modules:
              individual_plants_out/east/$PLANT_NAME,
              individual_plants_out/east_downsampled/$PLANT_NAME]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
-              #individual_plants_out/plant_reports/$PLANT_NAME]
 
   6:
     container:
@@ -149,9 +148,7 @@ modules:
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: segmentation_plant.ply
     inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
-            #[individual_plants_out/plant_reports/$PLANT_NAME/final.gif, 
-              
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
   
   9:
     container: 
@@ -175,7 +172,6 @@ modules:
              individual_plants_out/plant_reports/$PLANT_NAME/final.gif]
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/75_ML_compare.gif,
               individual_plants_out/plant_reports/$PLANT_NAME/segmentation_dbscan_compare.gif]
-              # [individual_plants_out/plant_reports/$PLANT_NAME/level_1_plant_clip.gif,
 
 workload_manager:
   account: lyons-lab
@@ -185,7 +181,7 @@ workload_manager:
   number_tasks: 100
   number_tasks_per_node: 1
   cores_per_worker: 6
-  alt_cores_per_worker: 2
+  alt_cores_per_worker: 1
   time_minutes: 1440
   retries: 1
   port: 0
@@ -194,6 +190,9 @@ workload_manager:
   worker_timeout_seconds: 86400
 
 paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
   pipeline_outpath: [individual_plants_out]
   outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled]
 
