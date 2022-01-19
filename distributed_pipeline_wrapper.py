@@ -8,7 +8,7 @@ Purpose: PhytoOracle | Scalable, modular phenomic data processing pipelines
 import argparse
 import os
 import sys
-from typing_extensions import final
+# from typing_extensions import final
 import json
 import subprocess as sp
 import yaml
