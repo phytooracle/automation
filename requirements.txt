@@ -1,5 +1,4 @@
 typing_extensions
-json
 subprocess
 yaml
 shutil
