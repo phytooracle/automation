@@ -1,5 +1,4 @@
 typing_extensions
-yaml
 shutil
 glob
 tarfile
