@@ -1,4 +1,3 @@
 typing_extensions
-tarfile
 multiprocessing
 
