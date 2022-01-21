@@ -1,5 +1,4 @@
 typing_extensions
-subprocess
 yaml
 shutil
 glob
