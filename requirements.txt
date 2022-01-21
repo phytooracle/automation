@@ -1,5 +1,4 @@
 typing_extensions
-glob
 tarfile
 multiprocessing
 
