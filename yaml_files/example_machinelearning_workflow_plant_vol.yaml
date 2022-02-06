@@ -51,5 +51,5 @@ paths:
       prefix: 
       suffix: .tar
     output: 
-      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_2/scanner3DTop
-      subdir: individual_plants_out
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_3/scanner3DTop
+      subdir: 3d_volumes_entropy

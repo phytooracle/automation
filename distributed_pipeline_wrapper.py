@@ -131,8 +131,12 @@ def get_irods_path(dictionary, date):
     Output: 
         - irods_path: CyVerse filepath
     """
-    irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],\
-        ''.join([dictionary['paths']['cyverse']['input']['prefix'], date, dictionary['paths']['cyverse']['input']['suffix']]))
+    if dictionary['paths']['cyverse']['input']['subdir']:
+        irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],date,dictionary['paths']['cyverse']['input']['subdir'],\
+            ''.join([dictionary['paths']['cyverse']['input']['prefix'], date, dictionary['paths']['cyverse']['input']['suffix']]))
+    else:
+        irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],\
+            ''.join([dictionary['paths']['cyverse']['input']['prefix'], date, dictionary['paths']['cyverse']['input']['suffix']]))
     
     if dictionary['tags']['season']==10:
         dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
