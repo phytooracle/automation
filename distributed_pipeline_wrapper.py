@@ -146,6 +146,8 @@ def get_irods_path(dictionary, date):
     if dictionary['tags']['season']==10:
         if dictionary['paths']['cyverse']['input']['prefix']:
             dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
+        else:
+            dir_name = dictionary['paths']['cyverse']['input']['prefix']
     else: 
         file_name = os.path.basename(irods_path)
         dir_name = file_name.split('.')[0]
