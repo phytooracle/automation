@@ -151,6 +151,9 @@ def get_irods_path(dictionary, date):
     else: 
         file_name = os.path.basename(irods_path)
         dir_name = file_name.split('.')[0]
+    if dir_name[0]=='_':
+        dir_name = dir_name[1:]
+        print(dir_name)
     return irods_path, dir_name
 
 
