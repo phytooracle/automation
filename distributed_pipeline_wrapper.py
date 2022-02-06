@@ -147,7 +147,7 @@ def get_irods_path(dictionary, date):
         if dictionary['paths']['cyverse']['input']['prefix']:
             dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
         else:
-            dir_name = dictionary['paths']['cyverse']['input']['suffix'].replace('_', '').replace('_plants.tar', '')
+            dir_name = dictionary['paths']['cyverse']['input']['suffix'].replace('_plants.tar', '')
     else: 
         file_name = os.path.basename(irods_path)
         dir_name = file_name.split('.')[0]
