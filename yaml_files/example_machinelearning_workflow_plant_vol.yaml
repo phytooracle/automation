@@ -1,0 +1,55 @@
+---
+tags:
+  pipeline: season10_scanner3DTop
+  description: final
+  notes: Processing of Season 10 scanner3DTop data using the machine learning (ML)-based cropping approach. This approach using a Faster RCNN object detection model to localize plants in 2D.
+  runby: Emmanuel Miguel Gonzalez
+  sensor: scanner3DTop 
+  season: 10
+
+modules:
+
+  7:
+    container: 
+      simg_name: 3d_entropy_features.simg
+      dockerhub_path: docker://phytooracle/3d_entropy_features:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_entropy_features.simg -p ${PLANT_PATH} -c 1 -f ${PLANT_NAME}_volumes_entropy
+    distribution_level: wq
+    file_level: 
+    input_dir: [segmentation_pointclouds]
+    input_file: final.ply
+    inputs: [segmentation_pointclouds/$PLANT_NAME/final.ply]
+    outputs: [3d_volumes_entropy/$PLANT_NAME_volumes_entropy.csv]
+
+workload_manager:
+  account: lyons-lab
+  partition: standard
+  job_name: phytooracle_worker
+  nodes: 100 
+  number_tasks: 100
+  number_tasks_per_node: 1
+  cores_per_worker: 6
+  alt_cores_per_worker: 1
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  mem_per_cpu: 5
+  manager_name: phytooracle_manager
+  worker_timeout_seconds: 86400
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  pipeline_outpath: [individual_plants_out]
+  outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled]
+
+  cyverse: 
+    input: 
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/scanner3DTop/
+      subdir: 
+      prefix: scanner3DTop-
+      suffix: .tar
+    output: 
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_2/scanner3DTop
+      subdir: individual_plants_out
