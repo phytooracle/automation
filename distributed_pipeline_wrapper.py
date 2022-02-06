@@ -137,7 +137,7 @@ def get_irods_path(dictionary, date):
     else:
         irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],\
             ''.join([dictionary['paths']['cyverse']['input']['prefix'], date, dictionary['paths']['cyverse']['input']['suffix']]))
-    
+    print(irods_path)
     if dictionary['tags']['season']==10:
         dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
     else: 
