@@ -168,8 +168,8 @@ modules:
              individual_plants_out/plant_reports/$PLANT_NAME/heatmap.jpg,
              individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg,
              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
-             individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
-             individual_plants_out/plant_reports/$PLANT_NAME/final.gif]
+             individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif]
+#              individual_plants_out/plant_reports/$PLANT_NAME/final.gif]
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/75_ML_compare.gif,
               individual_plants_out/plant_reports/$PLANT_NAME/segmentation_dbscan_compare.gif]
 
