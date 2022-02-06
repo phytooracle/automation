@@ -46,8 +46,8 @@ paths:
 
   cyverse: 
     input: 
-      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/scanner3DTop/
-      subdir: 
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_2/scanner3DTop/
+      subdir: individual_plants_out
       prefix: scanner3DTop-
       suffix: .tar
     output: 
