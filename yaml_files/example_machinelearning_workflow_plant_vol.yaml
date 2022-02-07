@@ -12,7 +12,7 @@ modules:
     container: 
       simg_name: 3d_entropy_features.simg
       dockerhub_path: docker://phytooracle/3d_entropy_features:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_entropy_features.simg -p ${PLANT_PATH} -c 1 -f ${PLANT_NAME}_volumes_entropy -o season10_plant_volume/3d_volumes_entropy
+    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_entropy_features.simg -p ${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o season10_plant_volume/3d_volumes_entropy
     distribution_level: wq
     file_level: 
     input_dir: [segmentation_pointclouds]
