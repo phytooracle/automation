@@ -27,7 +27,7 @@ workload_manager:
   nodes: 100 
   number_tasks: 100
   number_tasks_per_node: 1
-  cores_per_worker: 6
+  cores_per_worker: 1
   alt_cores_per_worker: 1
   time_minutes: 1440
   retries: 1
