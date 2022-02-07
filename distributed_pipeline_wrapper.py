@@ -737,7 +737,7 @@ def clean_directory():
 
 
 # --------------------------------------------------
-def clean_inputs(date):
+def clean_inputs(date, dictionary):
     '''
     Cleans directory from distributed pipeline input directories and files.
 
@@ -770,6 +770,10 @@ def clean_inputs(date):
 
     if os.path.isdir('scanner3DTop'):
         shutil.rmtree('scanner3DTop')
+
+    for item in dictionary['paths']['pipeline_outpath']:
+        if os.path.isdir(item):
+            shutil.rmtree(item)
 
     slurm_list = glob.glob('./slurm-*')
     if slurm_list:
@@ -839,7 +843,7 @@ def main():
             tar_outputs(date, dictionary)
             create_pipeline_logs(date)
             upload_outputs(date, dictionary)
-            clean_inputs(date)        
+            clean_inputs(date, dictionary)        
 
 
 # --------------------------------------------------
