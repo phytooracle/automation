@@ -756,6 +756,9 @@ def clean_inputs(date, dictionary):
     if os.path.isdir('postprocessing_out'):
         shutil.rmtree('postprocessing_out')
 
+    if os.path.isdir('segmentation_pointclouds'):
+        shutil.rmtree('segmentation_pointclouds')
+
     if os.path.isfile('transfromation.json'):
         os.remove('transfromation.json')
     
