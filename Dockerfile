@@ -37,4 +37,4 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 # RUN docker pull irods/icommands:4.0.3
 # RUN docker run -ti irods/icommands:4.0.3
 
-ENTRYPOINT [ "/usr/local/bin/python3", "/opt/distributed_pipeline_wrapper.py" ]
+ENTRYPOINT [ "/usr/bin/python3", "/opt/distributed_pipeline_wrapper.py" ]
