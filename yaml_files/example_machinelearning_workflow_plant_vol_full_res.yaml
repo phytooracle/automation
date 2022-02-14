@@ -12,13 +12,13 @@ modules:
     container: 
       simg_name: 3d_entropy_features.simg
       dockerhub_path: docker://phytooracle/3d_entropy_features:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_entropy_features.simg -v 0.05 -p ${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o season10_plant_volume/3d_volumes_entropy_vs005
+    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_entropy_features.simg -v 0.09 -p ${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o season10_plant_volume/3d_volumes_entropy_vs009_fullres
     distribution_level: local
     file_level: 
     input_dir: [segmentation_pointclouds]
     input_file: final.ply
     inputs: [segmentation_pointclouds/$PLANT_NAME/final.ply]
-    outputs: [season10_plant_volume/3d_volumes_entropy_vs005/$PLANT_NAME_volumes_entropy.csv]
+    outputs: [season10_plant_volume/3d_volumes_entropy_vs009_fullres/$PLANT_NAME_volumes_entropy.csv]
 
 workload_manager:
   account: lyons-lab
@@ -41,7 +41,7 @@ paths:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
   pipeline_outpath: [season10_plant_volume]
-  outpath_subdirs: [3d_volumes_entropy_vs005]
+  outpath_subdirs: [3d_volumes_entropy_vs009_fullres]
 
   cyverse: 
     input: 
