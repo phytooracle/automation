@@ -78,7 +78,7 @@ The pipeline can use a data transfer node to download data, which speeds up proc
 
 Once the resources are allocated, run the following command to process data:
 ```
-./distributed_pipeline_wrapper.py -hpc -d 2020-01-22 -y yaml_files/example_machinelearning_workflow.yaml
+./distributed_pipeline_wrapper.py -hpc -d 2020-02-14 -y yaml_files/example_machinelearning_workflow.yaml
 ```
 
 Data will be downloaded and workflows will be launched. You view progress information for a specific workflow using the ```mf_monitor.sh``` script. For example, to view progress information for the first workflow, run:
