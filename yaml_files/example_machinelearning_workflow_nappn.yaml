@@ -1,0 +1,98 @@
+---
+tags:
+  pipeline: season10_scanner3DTop
+  description: final
+  notes: Processing of Season 10 scanner3DTop data using the machine learning (ML)-based cropping approach. This approach using a Faster RCNN object detection model to localize plants in 2D.
+  runby: Emmanuel Miguel Gonzalez
+  sensor: scanner3DTop 
+  season: 10
+
+modules:
+  1: 
+    container:
+      simg_name: heatmap_ml_based_cropping.simg
+      dockerhub_path: docker://phytooracle/heatmap_ml_based_cropping:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt heatmap_ml_based_cropping.simg -p ${PLANT_PATH} -m ${DET_MODEL_PATH} -c 0.5
+    distribution_level: local
+    file_level: 
+    input_dir: [2020-03-02_test_set]
+    input_file: _multiway_registered.ply
+    inputs: []
+    outputs: []
+
+  # 2: 
+  #   container: 
+  #     simg_name: 3d_postprocessing.simg
+  #     dockerhub_path: docker://phytooracle/3d_postprocessing:latest
+  #   command: singularity run 3d_postprocessing.simg -i alignment/ -o postprocessing_out -f ${SUBDIR} -t transfromation.json -p stereoTop_full_season_clustering.csv -s 10 -d ${DATE} -l gcp_season_10.txt
+  #   distribution_level: wq
+  #   file_level: 
+  #   input_dir: [alignment, west]
+  #   input_file: -west.ply
+  #   inputs: []
+  #   outputs: []
+  
+  # 3: 
+  #   container: 
+  #     simg_name: 3d_crop_individual_plants.simg
+  #     dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
+  #   command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_crop_individual_plants.simg -i postprocessing_out/ -p stereoTop_full_season_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 10 -d ${DATE} && tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
+  #   distribution_level: wq
+  #   file_level: 
+  #   input_dir: [postprocessing_out, west]
+  #   input_file: -west.ply
+  #   inputs: [transfromation.json,
+  #            stereoTop_full_season_clustering.csv,
+  #            gcp_season_10.txt,
+  #            postprocessing_out/east/$SUBDIR-east.ply,
+  #            postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
+  #            postprocessing_out/merged/$SUBDIR-merged.ply,
+  #            postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
+  #            postprocessing_out/west/$SUBDIR-west.ply,
+  #            postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+  #   outputs: [$BASENAME_individual_plants.tar]
+
+  # 4: 
+  #   container: 
+  #     simg_name: slack_notifications.simg
+  #     dockerhub_path: docker://phytooracle/slack_notifications:latest
+  #   command: tar -xvf ${SUBDIR}_individual_plants.tar && rm ${SUBDIR}_individual_plants.tar 
+  #   distribution_level: local
+  #   file_level: 
+  #   input_dir: [postprocessing_out, west]
+  #   input_file: -west.ply
+  #   inputs: [$BASENAME_individual_plants.tar]
+  #   outputs: []
+
+workload_manager:
+  account: lyons-lab
+  partition: standard
+  job_name: phytooracle_worker
+  nodes: 100 
+  number_tasks: 100
+  number_tasks_per_node: 1
+  cores_per_worker: 6
+  alt_cores_per_worker: 1
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  mem_per_cpu: 5
+  manager_name: phytooracle_manager
+  worker_timeout_seconds: 86400
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  pipeline_outpath: [individual_plants_out]
+  outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled]
+
+  cyverse: 
+    input: 
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/scanner3DTop/
+      subdir: test_set
+      prefix: #scanner3DTop-
+      suffix: _test_set.tar.gz
+    output: 
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_2/scanner3DTop
+      subdir: individual_plants_out
