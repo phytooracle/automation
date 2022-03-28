@@ -43,7 +43,7 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_segmentation_dashboard_assets.simg -i ${PLANT_PATH} -plant ${PLANT_NAME} -pod segmentation_pointclouds -fod plant_reports
     distribution_level: wq
     file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_dir: [segmentation_pointclouds]
     input_file: final.ply
     inputs: [segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
              segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
