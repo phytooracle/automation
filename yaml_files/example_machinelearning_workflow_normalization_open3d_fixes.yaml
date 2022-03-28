@@ -12,7 +12,7 @@ modules:
     container: 
       simg_name: dgcnn_single_plant_soil_segmentation_pipeline.simg
       dockerhub_path: docker://phytooracle/dgcnn_single_plant_soil_segmentation_pipeline:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${PLANT_PATH} --model_path ${SEG_MODEL_PATH} -po segmentation_pointclouds -fo individual_plants_out/plant_reports -ef ml_crop
+    command: mkdir -p individual_plants_out/plant_reports && singularity run -B $(pwd):/mnt --pwd /mnt dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${PLANT_PATH} --model_path ${SEG_MODEL_PATH} -po segmentation_pointclouds -fo individual_plants_out/plant_reports -ef ml_crop
     distribution_level: wq
     file_level: 
     input_dir: [segmentation_pointclouds]
@@ -82,7 +82,7 @@ workload_manager:
   time_minutes: 1440
   retries: 1
   port: 0
-  mem_per_cpu: 6
+  mem_per_cpu: 5
   manager_name: phytooracle_manager
   worker_timeout_seconds: 86400
 
