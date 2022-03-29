@@ -23,7 +23,7 @@ modules:
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
               individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
               individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
-              individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.ply]
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
 
   # 2:
   #   container: 
