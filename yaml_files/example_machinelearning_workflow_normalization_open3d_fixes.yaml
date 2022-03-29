@@ -12,7 +12,7 @@ modules:
     container: 
       simg_name: dgcnn_single_plant_soil_segmentation_pipeline.simg
       dockerhub_path: docker://phytooracle/dgcnn_single_plant_soil_segmentation_pipeline:latest
-    command: mv individual_plants_out/segmentation_pointclouds/${PLANT_NAME} segmentation_pointclouds/${PLANT_NAME} && mkdir -p individual_plants_out/plant_reports && singularity run -B $(pwd):/mnt --pwd /mnt dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${PLANT_PATH} --model_path ${SEG_MODEL_PATH} -po individual_plants_out/segmentation_pointclouds -fo individual_plants_out/plant_reports -ef ml_crop
+    command: mv segmentation_pointclouds/${PLANT_NAME} individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && mkdir -p individual_plants_out/plant_reports && singularity run -B $(pwd):/mnt --pwd /mnt dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${PLANT_PATH} --model_path ${SEG_MODEL_PATH} -po individual_plants_out/segmentation_pointclouds -fo individual_plants_out/plant_reports -ef ml_crop
     distribution_level: wq
     file_level: 
     input_dir: [segmentation_pointclouds]
