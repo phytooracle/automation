@@ -13,7 +13,7 @@ modules:
       simg_name: dgcnn_single_plant_soil_segmentation_pipeline.simg
       dockerhub_path: docker://phytooracle/dgcnn_single_plant_soil_segmentation_pipeline:latest
     command: mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && cp ${PLANT_PATH}/ml_crop.ply individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/ml_crop.ply && cp ${PLANT_PATH}/combined_multiway_registered.ply individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply && singularity run -B $(pwd):/mnt --pwd /mnt dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${PLANT_PATH} --model_path ${SEG_MODEL_PATH} -po individual_plants_out/segmentation_pointclouds -fo individual_plants_out/plant_reports -ef ml_crop
-    distribution_level: local
+    distribution_level: wq
     file_level: 
     input_dir: [segmentation_pointclouds]
     input_file: ml_crop.ply
@@ -31,7 +31,7 @@ modules:
       simg_name: 3d_neighbor_removal.simg
       dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
     command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod individual_plants_out/segmentation_pointclouds -fod individual_plants_out/plant_reports
-    distribution_level: local
+    distribution_level: wq
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: segmentation_plant.ply
@@ -43,7 +43,7 @@ modules:
       simg_name: 3d_segmentation_dashboard_assets.simg
       dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
     command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_segmentation_dashboard_assets.simg -i ${PLANT_PATH} -plant ${PLANT_NAME} -pod individual_plants_out/segmentation_pointclouds -fod individual_plants_out/plant_reports
-    distribution_level: local
+    distribution_level: wq
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: final.ply
@@ -65,7 +65,7 @@ modules:
       simg_name: 3d_entropy_features.simg
       dockerhub_path: docker://phytooracle/3d_entropy_features:latest
     command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_entropy_features.simg -v 0.07 -p ${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o individual_plants_out/3d_volumes_entropy_v007
-    distribution_level: local
+    distribution_level: wq
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: final.ply
