@@ -53,7 +53,7 @@ paths:
   cyverse: 
     input: 
       basename: /iplant/home/shared/phytooracle/2019_cotton
-      subdir: 
+      subdir: /
       prefix: 
       suffix: _rnaseq_spectra.tar
     output: 
