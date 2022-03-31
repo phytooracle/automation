@@ -808,8 +808,8 @@ def main():
             except yaml.YAMLError as exc:
                 print(exc)
                 
-            irods_path, dir_name = get_irods_path(dictionary, date)
-            download_raw_data(irods_path, dir_name)
+            # irods_path, dir_name = get_irods_path(dictionary, date)
+            # download_raw_data(irods_path, dir_name)
 
             if dictionary['tags']['sensor']=='scanner3DTop':
                 get_required_files_3d(dictionary=dictionary, date=date)
