@@ -34,7 +34,7 @@ workload_manager:
   time_minutes: 1440
   retries: 1
   port: 6022
-  mem_per_cpu: 5
+  mem_per_cpu: 6
   manager_name: phytooracle_manager_rna_seq
   worker_timeout_seconds: 86400
 
