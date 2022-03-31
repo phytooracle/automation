@@ -12,7 +12,7 @@ modules:
     container: 
       simg_name: 3d_preprocessing.simg
       dockerhub_path: docker://phytooracle/3d_preprocessing:latest
-    command: singularity run 3d_preprocessing.simg -l gcp_season_10.txt -o alignment -i ${INPUT_DIR}
+    command: singularity run 3d_preprocessing.simg -l gcp_season_10.txt -o alignment -i ${FILE}
     distribution_level: wq
     file_level: 
     input_dir: [rnaseq_spectra]
