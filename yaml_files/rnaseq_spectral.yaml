@@ -10,31 +10,26 @@ tags:
 modules:
   1: 
     container: 
-      simg_name: 3d_preprocessing.simg
-      dockerhub_path: docker://phytooracle/3d_preprocessing:latest
-    command: singularity run 3d_preprocessing.simg -l gcp_season_10.txt -o alignment -i ${FILE}
+      simg_name: rnaseq_spectral_plsr.simg
+      dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:latest
+    command: singularity run rnaseq_spectral_plsr.simg -c ${FILE}
     distribution_level: wq
     file_level: 
     input_dir: [rnaseq_spectra]
     input_file: _tpm_spectra.csv
     inputs: [$FILE]
 
-    outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
-              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
-              alignment/merged/$SUBDIR__Top-heading-merged.ply,
-              alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
-              alignment/west/$SUBDIR__Top-heading-west.ply,
-              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
-              alignment/metadata/$SUBDIR_updated-metadata.json]
+    outputs: [plsr_outputs/correlation_scores,
+              plsr_outputs/plots]
 
 workload_manager:
   account: lyons-lab
   partition: standard
   job_name: phytooracle_worker
-  nodes: 100 
-  number_tasks: 100
-  number_tasks_per_node: 1
-  cores_per_worker: 6
+  nodes: 1
+  number_tasks: 94
+  number_tasks_per_node: 94
+  cores_per_worker: 1
   alt_cores_per_worker: 1
   time_minutes: 1440
   retries: 1
