@@ -26,7 +26,7 @@ workload_manager:
   account: lyons-lab
   partition: standard
   job_name: phytooracle_worker
-  nodes: 2
+  nodes: 1
   number_tasks: 28
   number_tasks_per_node: 28
   cores_per_worker: 1
