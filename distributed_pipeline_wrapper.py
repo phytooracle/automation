@@ -534,7 +534,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                 jx_dict = {
                     "rules": [
                                 {
-                                    "command" : timeout + command.replace('${SEG_MODEL_PATH}', seg_model_name).replace('${DET_MODEL_PATH}', det_model_name).replace('${PLANT_NAME}', file),
+                                    "command" : timeout + command.replace('${FILE}', file).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${DET_MODEL_PATH}', det_model_name).replace('${PLANT_NAME}', file),
                                     "outputs" : [out.replace('$PLANT_NAME', file) for out in outputs],
                                     "inputs"  : [container, 
                                                 seg_model_name, 
@@ -548,7 +548,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                 jx_dict = {
                     "rules": [
                                 {
-                                    "command" : timeout + command.replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date)\
+                                    "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date)\
                                                 .replace('${INPUT_DIR}', os.path.dirname(file)),
                                     "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
                                     "inputs"  : [container, 
@@ -564,7 +564,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
             jx_dict = {
                 "rules": [
                             {
-                                "command" : timeout + command.replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
+                                "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
                                 "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date) for out in outputs],
                                 "inputs"  : [file, 
                                              container, 
@@ -580,7 +580,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
         jx_dict = {
             "rules": [
                         {
-                                "command" : timeout + command.replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
+                                "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
                                 "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date) for out in outputs],
                                 "inputs"  : [file, 
                                             container, 
