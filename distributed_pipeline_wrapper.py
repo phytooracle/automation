@@ -463,8 +463,8 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         fh.writelines(f"   srun --exclusive --nodes={nodes} --ntasks={cores} --mem-per-cpu={mem_per_cpu}GB work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} --memory {mem_per_cpu*1000}")
         # fh.writelines(f"for i in `seq {int(nodes) * int(number_tasks)}`; do\n")
         # fh.writelines(f"  srun --exclusive --nodes 1 --ntasks 1 --cpus-per-task {cores} work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} &\n")
-        # fh.writelines("done\n")
-        # fh.writelines("wait\n")
+        fh.writelines("done\n")
+        fh.writelines("wait\n")
 
         # fh.writelines(f"work_queue_factory -T slurm -M {manager_name} --workers-per-cycle 10 -B '--account={account} --partition={partition} --job-name={job_name} --time={time} --mem-per-cpu={mem_per_cpu}GB' -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
         # fh.writelines(f"work_queue_factory -T local -M {manager_name} -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
