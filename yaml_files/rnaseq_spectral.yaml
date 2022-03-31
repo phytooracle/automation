@@ -19,8 +19,8 @@ modules:
     input_file: _tpm_spectra.csv
     inputs: [$FILE]
 
-    outputs: [plsr_outputs/correlation_scores/,
-              plsr_outputs/plots/]
+    outputs: [plsr_outputs/correlation_scores/$UUID,
+              plsr_outputs/plots/$UUID]
 
 workload_manager:
   account: lyons-lab

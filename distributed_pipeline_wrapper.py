@@ -811,8 +811,8 @@ def main():
             # irods_path, dir_name = get_irods_path(dictionary, date)
             # download_raw_data(irods_path, dir_name)
 
-            if dictionary['tags']['sensor']=='scanner3DTop':
-                get_required_files_3d(dictionary=dictionary, date=date)
+            # if dictionary['tags']['sensor']=='scanner3DTop':
+            #     get_required_files_3d(dictionary=dictionary, date=date)
             
             if args.hpc:
                 kill_workers(dictionary['workload_manager']['job_name'])
