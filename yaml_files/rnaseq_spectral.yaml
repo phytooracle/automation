@@ -27,8 +27,8 @@ workload_manager:
   partition: standard
   job_name: phytooracle_worker
   nodes: 1
-  number_tasks: 94
-  number_tasks_per_node: 94
+  number_tasks: 500
+  number_tasks_per_node: 1
   cores_per_worker: 1
   alt_cores_per_worker: 1
   time_minutes: 1440
