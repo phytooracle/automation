@@ -460,7 +460,7 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         fh.writelines(f'#SBATCH --array 1-{int(nodes) * int(number_tasks)}\n')
         fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-        fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} --memory {mem_per_cpu*1000} &\n")
+        fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} --memory {mem_per_cpu*1000}\n")
         # New
         # fh.writelines(f"for i in `seq {int(nodes) * int(number_tasks)}`; do\n")
         # fh.writelines(f"   srun --ntasks={cores} --mem-per-cpu={mem_per_cpu}GB work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} --memory {mem_per_cpu*1000} &\n")
