@@ -476,8 +476,8 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         # fh.writelines(f"srun work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout}\n")
 
     sp.call(f"sbatch {outfile}", shell=True)
-    sp.call(f"ocelote 'sbatch {outfile}' '&& puma'", shell=True)
-    sp.call(f"elgato 'sbatch {outfile}' '&& puma'", shell=True)
+    sp.call(f"ocelote '&& sbatch {outfile}' '&& puma'", shell=True)
+    sp.call(f"elgato '&& sbatch {outfile}' '&& puma'", shell=True)
 
     # os.system(f"sbatch {outfile}")
     # os.system(f"ocelote 'sbatch {outfile}' '&& puma'")
