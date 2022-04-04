@@ -5,6 +5,7 @@ Date   : 2021-12-17
 Purpose: PhytoOracle | Scalable, modular phenomic data processing pipelines
 """
 
+import pdb
 import argparse
 import os
 import sys
@@ -131,10 +132,24 @@ def get_irods_path(dictionary, date):
     Output: 
         - irods_path: CyVerse filepath
     """
-    irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],\
-        ''.join([dictionary['paths']['cyverse']['input']['prefix'], date, dictionary['paths']['cyverse']['input']['suffix']]))
+
+    irods_dir = dictionary['paths']['cyverse']['input']['basename']
     
-    if dictionary['tags']['season']==10:
+    sp_ls = sp.run(["ils", irods_dir], stdout=sp.PIPE).stdout
+    irods_ls = sp_ls.decode('utf-8').splitlines()
+
+    date_search = [x.strip() for x in irods_ls if date in x]
+
+    if len(date_search) != 1:
+        raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
+                           Found: {date_search}")
+
+    irods_path = os.path.join(
+                    dictionary['paths']['cyverse']['input']['basename'],
+                    date_search[0]
+    )
+    
+    if dictionary['tags']['season'] == 10:
         dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
     else: 
         file_name = os.path.basename(irods_path)
@@ -293,9 +308,9 @@ def get_required_files_3d(dictionary, date):
     irods_data_path = os.path.join(level_1, date, 'alignment')
     if not os.path.isfile('transfromation.json'):
         get_transformation_file(os.path.join(level_1, date), cwd)
-    if not os.path.isfile('stereoTop_full_season_clustering.csv'):
+    if not os.path.isfile('season_11_clustering.csv'):
         get_season_detections()
-    if not os.path.isfile('gcp_season_10.txt'):
+    if not os.path.isfile('gcp_season_11.txt'):
         get_gcp_file()
 
 
@@ -362,7 +377,7 @@ def get_season_detections():
     Output: 
         - Season-specific detection clustering file
     '''
-    cmd1 = 'iget -KPVT /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_3/stereoTop/season10_plant_clustering/stereoTop_full_season_clustering.csv'
+    cmd1 = 'iget -KPVT /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_3/stereoTop/season_11_clustering.csv'
     sp.call(cmd1, shell=True)
 
 
@@ -377,7 +392,7 @@ def get_gcp_file():
     Output: 
         - Downloaded GCP file in the current working directory
     '''
-    cmd1 = 'iget -KPVT /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/gcp_season_10.txt'
+    cmd1 = 'iget -KPVT /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/gcp_season_11.txt'
     sp.call(cmd1, shell=True)
 
 
@@ -813,7 +828,7 @@ def main():
 
             for k, v in dictionary['modules'].items():
                 
-                dir_name = os.path.join(*v['input_dir'])
+                #dir_name = os.path.join(*v['input_dir'])
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
