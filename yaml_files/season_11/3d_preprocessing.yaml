@@ -178,7 +178,7 @@ workload_manager:
   partition: standard
   job_name: po_season11_3d
   nodes: 1 
-  number_tasks: 100
+  number_tasks: 300
   number_tasks_per_node: 1
   cores_per_worker: 1
   alt_cores_per_worker: 1
