@@ -1,0 +1,56 @@
+---
+tags:
+  pipeline: RNA-Seq & Spectral PLSR
+  description: TPM
+  notes: Processing of 2019 cotton RNA-Seq TPM data and spectral data for gene expression prediction.
+  runby: Emmanuel Miguel Gonzalez
+  sensor: scanner3DTop 
+  season: 10
+
+modules:
+  1: 
+    container: 
+      simg_name: rnaseq_spectral_plsr.simg
+      dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:train_test
+    command: singularity run rnaseq_spectral_plsr.simg -c ${FILE} -o plsr_outputs_update
+    distribution_level: wq
+    file_level: 
+    input_dir: [rnaseq_spectra]
+    input_file: _tpm_spectra.csv
+    inputs: [$FILE]
+
+    outputs: [plsr_outputs_update/correlation_scores/$UUID,
+              plsr_outputs_update/plots/$UUID]
+
+workload_manager:
+  account: lyons-lab
+  partition: standard
+  job_name: phytooracle_worker
+  nodes: 1
+  number_tasks: 300
+  number_tasks_per_node: 1
+  cores_per_worker: 1
+  alt_cores_per_worker: 1
+  time_minutes: 1440
+  retries: 1
+  port: 6022
+  mem_per_cpu: 5
+  manager_name: phytooracle_manager_rna_seq
+  worker_timeout_seconds: 900 #86400
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  pipeline_outpath: [plsr_outputs_update]
+  outpath_subdirs: [correlation_scores, plots]
+
+  cyverse: 
+    input: 
+      basename: /iplant/home/shared/phytooracle/2019_cotton/
+      subdir: raw_data
+      prefix: 
+      suffix: _rnaseq_spectra.tar
+    output: 
+      basename: /iplant/home/shared/phytooracle/2019_cotton/
+      subdir: rnaseq_spectra
