@@ -69,7 +69,13 @@ The script ```distributed_pipeline_wrapper.py``` is used to run the pipeline. Th
   * -sm, --seg_model | Segmentation model file path on CyVerse DataStore
   * -dm, --det_model | Detection model file path on CyVerse DataStore
 
-### Running on HPC cluster
+### Running on Cloud cluster
+On your Cloud VM, run the following command:
+```
+./distributed_pipeline_wrapper.py -d 2020-02-14 -y yaml_files/example_machinelearning_workflow.yaml
+```
+
+### Running on HPC cluster | interactive job submission
 #### Interactive node
 The pipeline can use a data transfer node to download data, which speeds up processing. You must first launch an interactive node using the following command on UA HPC Puma: 
 ```
@@ -78,7 +84,7 @@ The pipeline can use a data transfer node to download data, which speeds up proc
 
 Once the resources are allocated, run the following command to process data:
 ```
-./distributed_pipeline_wrapper.py -hpc -d 2020-01-22 -y yaml_files/example_machinelearning_workflow.yaml
+./distributed_pipeline_wrapper.py -hpc -d 2020-02-14 -y yaml_files/example_machinelearning_workflow.yaml
 ```
 
 Data will be downloaded and workflows will be launched. You view progress information for a specific workflow using the ```mf_monitor.sh``` script. For example, to view progress information for the first workflow, run:
@@ -86,7 +92,7 @@ Data will be downloaded and workflows will be launched. You view progress inform
 ./mf_monitor.sh 1
 ```
 
-#### Non-interactive job submission
+#### Running on HPC cluster | non-interactive job submission
 To submit a date for processing in a non-interactive node, run:
 ```shell
 sbatch slurm_submission.sh <scan_date> <yaml_file>

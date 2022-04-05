@@ -8,4 +8,5 @@
 #SBATCH --time=96:00:00
 DATE=${1}
 YAML=${2}
+singularity build automation.simg docker:phytooracle/pipeline_automation
 singularity run automation.simg -hpc -d ${DATE} -y ${YAML}
