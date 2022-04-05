@@ -177,17 +177,17 @@ workload_manager:
   account: lyons-lab
   partition: standard
   job_name: po_season11_3d
-  nodes: 100 
+  nodes: 1 
   number_tasks: 100
   number_tasks_per_node: 1
-  cores_per_worker: 6
+  cores_per_worker: 1
   alt_cores_per_worker: 1
   time_minutes: 1440
   retries: 1
-  port: 0
+  port: 6022
   mem_per_cpu: 5
-  manager_name: po_manager_equant
-  worker_timeout_seconds: 86400
+  manager_name: po_s11_3D
+  worker_timeout_seconds: 900   # 86400
 
 paths:
   models:
