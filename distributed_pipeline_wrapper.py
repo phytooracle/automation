@@ -5,7 +5,6 @@ Date   : 2021-12-17
 Purpose: PhytoOracle | Scalable, modular phenomic data processing pipelines
 """
 
-import pdb
 import argparse
 import os
 import sys
@@ -132,28 +131,29 @@ def get_irods_path(dictionary, date):
     Output: 
         - irods_path: CyVerse filepath
     """
+    if dictionary['paths']['cyverse']['input']['subdir']:
+        if dictionary['paths']['cyverse']['input']['prefix']:
+            irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],date,dictionary['paths']['cyverse']['input']['subdir'],\
+                ''.join([dictionary['paths']['cyverse']['input']['prefix'], date, dictionary['paths']['cyverse']['input']['suffix']]))
+        else:
+            irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],date,dictionary['paths']['cyverse']['input']['subdir'],\
+                ''.join([date, dictionary['paths']['cyverse']['input']['suffix']]))
 
-    irods_dir = dictionary['paths']['cyverse']['input']['basename']
-    
-    sp_ls = sp.run(["ils", irods_dir], stdout=sp.PIPE).stdout
-    irods_ls = sp_ls.decode('utf-8').splitlines()
-
-    date_search = [x.strip() for x in irods_ls if date in x]
-
-    if len(date_search) != 1:
-        raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
-                           Found: {date_search}")
-
-    irods_path = os.path.join(
-                    dictionary['paths']['cyverse']['input']['basename'],
-                    date_search[0]
-    )
-    
-    if dictionary['tags']['season'] == 10:
-        dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
+    else:
+        irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'],\
+            ''.join([dictionary['paths']['cyverse']['input']['prefix'], date, dictionary['paths']['cyverse']['input']['suffix']]))
+    print(irods_path)
+    if dictionary['tags']['season']==10:
+        if dictionary['paths']['cyverse']['input']['prefix']:
+            dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
+        else:
+            dir_name = dictionary['paths']['cyverse']['input']['suffix'].replace('_plants.tar', '')
     else: 
         file_name = os.path.basename(irods_path)
         dir_name = file_name.split('.')[0]
+    if dir_name[0]=='_':
+        dir_name = dir_name[1:]
+        print(dir_name)
     return irods_path, dir_name
 
 
@@ -308,9 +308,9 @@ def get_required_files_3d(dictionary, date):
     irods_data_path = os.path.join(level_1, date, 'alignment')
     if not os.path.isfile('transfromation.json'):
         get_transformation_file(os.path.join(level_1, date), cwd)
-    if not os.path.isfile('season_11_clustering.csv'):
+    if not os.path.isfile('stereoTop_full_season_clustering.csv'):
         get_season_detections()
-    if not os.path.isfile('gcp_season_11.txt'):
+    if not os.path.isfile('gcp_season_10.txt'):
         get_gcp_file()
 
 
@@ -377,7 +377,7 @@ def get_season_detections():
     Output: 
         - Season-specific detection clustering file
     '''
-    cmd1 = 'iget -KPVT /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_3/stereoTop/season_11_clustering.csv'
+    cmd1 = 'iget -KPVT /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_3/stereoTop/season10_plant_clustering/stereoTop_full_season_clustering.csv'
     sp.call(cmd1, shell=True)
 
 
@@ -392,7 +392,7 @@ def get_gcp_file():
     Output: 
         - Downloaded GCP file in the current working directory
     '''
-    cmd1 = 'iget -KPVT /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/gcp_season_11.txt'
+    cmd1 = 'iget -KPVT /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/gcp_season_10.txt'
     sp.call(cmd1, shell=True)
 
 
@@ -450,25 +450,37 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         fh.writelines(f"#SBATCH --partition={partition}\n")
         fh.writelines(f"#SBATCH --job-name={job_name}\n")
         fh.writelines(f"#SBATCH --nodes={nodes}\n")
-        fh.writelines(f"#SBATCH --ntasks={number_tasks}\n")
-        fh.writelines(f"#SBATCH --ntasks-per-node={number_tasks_per_node}\n")
-        fh.writelines(f"#SBATCH --cpus-per-task={cores}\n")
+        fh.writelines(f"#SBATCH --ntasks={number_tasks_per_node}\n")
+        # fh.writelines(f"#SBATCH --ntasks={int(nodes) * int(number_tasks)}\n")
+        # fh.writelines(f"#SBATCH --ntasks-per-node={number_tasks_per_node}\n")
+        # fh.writelines(f"#SBATCH --ntasks-per-core=1\n")
+        # fh.writelines(f"#SBATCH --cpus-per-task={cores}\n")
         fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_cpu}GB\n")
         fh.writelines(f"#SBATCH --time={time}\n")
+        # fh.writelines(f"#SBATCH --wait-all-nodes=1\n")
+        fh.writelines(f'#SBATCH --array 1-{number_tasks}\n')
         fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-        fh.writelines(f"for i in `seq {number_tasks}`; do\n")
-        #fh.writelines(f"  srun --exclusive --nodes 1 --ntasks 1 --cpus-per-task {cores} work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} &\n")
-        fh.writelines(f"  srun --nodes 1 --ntasks 1 --cpus-per-task {cores} work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} &\n")
-        fh.writelines("done\n")
-        fh.writelines("wait\n")
+        fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} --memory {mem_per_cpu*1000}\n")
+        # New
+        # fh.writelines(f"for i in `seq {int(nodes) * int(number_tasks)}`; do\n")
+        # fh.writelines(f"   srun --ntasks={cores} --mem-per-cpu={mem_per_cpu}GB work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} --memory {mem_per_cpu*1000} &\n")
+        # Previous
+        # fh.writelines(f"for i in `seq {int(nodes) * int(number_tasks)}`; do\n")
+        # fh.writelines(f"  srun --exclusive --nodes 1 --ntasks 1 --cpus-per-task {cores} work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} &\n")
+        # fh.writelines("done\n")
+        # fh.writelines("wait\n")
         # fh.writelines(f"work_queue_factory -T slurm -M {manager_name} --workers-per-cycle 10 -B '--account={account} --partition={partition} --job-name={job_name} --time={time} --mem-per-cpu={mem_per_cpu}GB' -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
         # fh.writelines(f"work_queue_factory -T local -M {manager_name} -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
         # fh.writelines(f"srun work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout}\n")
 
-    os.system(f"sbatch {outfile}")
-    # os.system(f"ocelote && sbatch {outfile} && puma")
-    # os.system(f"elgato && sbatch {outfile} && puma")
+    sp.call(f"sbatch {outfile}", shell=True)
+    # sp.call(f"ocelote '&& sbatch {outfile}' '&& puma'", shell=True)
+    # sp.call(f"elgato '&& sbatch {outfile}' '&& puma'", shell=True)
+
+    # os.system(f"sbatch {outfile}")
+    # os.system(f"ocelote 'sbatch {outfile}' '&& puma'")
+    # os.system(f"elgato 'sbatch {outfile}' '&& puma'")
 
 
 # --------------------------------------------------
@@ -535,7 +547,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                 jx_dict = {
                     "rules": [
                                 {
-                                    "command" : timeout + command.replace('${SEG_MODEL_PATH}', seg_model_name).replace('${DET_MODEL_PATH}', det_model_name).replace('${PLANT_NAME}', file),
+                                    "command" : timeout + command.replace('${FILE}', file).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${DET_MODEL_PATH}', det_model_name).replace('${PLANT_NAME}', file),
                                     "outputs" : [out.replace('$PLANT_NAME', file) for out in outputs],
                                     "inputs"  : [container, 
                                                 seg_model_name, 
@@ -549,9 +561,9 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                 jx_dict = {
                     "rules": [
                                 {
-                                    "command" : timeout + command.replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date)\
+                                    "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date)\
                                                 .replace('${INPUT_DIR}', os.path.dirname(file)),
-                                    "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
+                                    "outputs" : [out.replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
                                     "inputs"  : [container, 
                                                 seg_model_name, 
                                                 det_model_name] + [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date)\
@@ -565,7 +577,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
             jx_dict = {
                 "rules": [
                             {
-                                "command" : timeout + command.replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
+                                "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
                                 "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date) for out in outputs],
                                 "inputs"  : [file, 
                                              container, 
@@ -581,7 +593,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
         jx_dict = {
             "rules": [
                         {
-                                "command" : timeout + command.replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
+                                "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
                                 "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date) for out in outputs],
                                 "inputs"  : [file, 
                                             container, 
@@ -738,7 +750,7 @@ def clean_directory():
 
 
 # --------------------------------------------------
-def clean_inputs(date):
+def clean_inputs(date, dictionary):
     '''
     Cleans directory from distributed pipeline input directories and files.
 
@@ -757,6 +769,9 @@ def clean_inputs(date):
     if os.path.isdir('postprocessing_out'):
         shutil.rmtree('postprocessing_out')
 
+    if os.path.isdir('segmentation_pointclouds'):
+        shutil.rmtree('segmentation_pointclouds')
+
     if os.path.isfile('transfromation.json'):
         os.remove('transfromation.json')
     
@@ -771,6 +786,10 @@ def clean_inputs(date):
 
     if os.path.isdir('scanner3DTop'):
         shutil.rmtree('scanner3DTop')
+
+    for item in dictionary['paths']['pipeline_outpath']:
+        if os.path.isdir(item):
+            shutil.rmtree(item)
 
     slurm_list = glob.glob('./slurm-*')
     if slurm_list:
@@ -829,7 +848,7 @@ def main():
 
             for k, v in dictionary['modules'].items():
                 
-                #dir_name = os.path.join(*v['input_dir'])
+                dir_name = os.path.join(*v['input_dir'])
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
@@ -840,7 +859,7 @@ def main():
             tar_outputs(date, dictionary)
             create_pipeline_logs(date)
             upload_outputs(date, dictionary)
-            clean_inputs(date)        
+            clean_inputs(date, dictionary)        
 
 
 # --------------------------------------------------

@@ -1,0 +1,106 @@
+---
+tags:
+  pipeline: season10_scanner3DTop
+  description: final
+  notes: Processing of Season 10 scanner3DTop data using the machine learning (ML)-based cropping approach. This approach using a Faster RCNN object detection model to localize plants in 2D.
+  runby: Emmanuel Miguel Gonzalez
+  sensor: scanner3DTop 
+  season: 10
+
+modules:
+  1:
+    container: 
+      simg_name: dgcnn_single_plant_soil_segmentation_pipeline.simg
+      dockerhub_path: docker://phytooracle/dgcnn_single_plant_soil_segmentation_pipeline:latest
+    command: mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && cp ${PLANT_PATH}/ml_crop.ply individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/ml_crop.ply && cp ${PLANT_PATH}/combined_multiway_registered.ply individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply && singularity run -B $(pwd):/mnt --pwd /mnt dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${PLANT_PATH} --model_path ${SEG_MODEL_PATH} -po individual_plants_out/segmentation_pointclouds -fo individual_plants_out/plant_reports -ef ml_crop
+    distribution_level: wq
+    file_level: 
+    input_dir: [segmentation_pointclouds]
+    input_file: ml_crop.ply
+    inputs: [segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
+             segmentation_pointclouds/$PLANT_NAME/ml_crop.ply]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
+              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
+              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+
+  2:
+    container: 
+      simg_name: 3d_neighbor_removal.simg
+      dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod individual_plants_out/segmentation_pointclouds -fod individual_plants_out/plant_reports
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: segmentation_plant.ply
+    inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
+  
+  3:
+    container: 
+      simg_name: 3d_segmentation_dashboard_assets.simg
+      dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_segmentation_dashboard_assets.simg -i ${PLANT_PATH} -plant ${PLANT_NAME} -pod individual_plants_out/segmentation_pointclouds -fod individual_plants_out/plant_reports
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: final.ply
+    inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
+             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
+             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply,
+             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
+             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
+             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply,
+             individual_plants_out/plant_reports/$PLANT_NAME/heatmap.jpg,
+             individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg,
+             individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
+             individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif]
+    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/75_ML_compare.gif,
+              individual_plants_out/plant_reports/$PLANT_NAME/segmentation_dbscan_compare.gif]
+
+  4:
+    container: 
+      simg_name: 3d_entropy_features.simg
+      dockerhub_path: docker://phytooracle/3d_entropy_features:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_entropy_features.simg -v 0.07 -p ${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o individual_plants_out/3d_volumes_entropy_v007
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: final.ply
+    inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
+    outputs: [individual_plants_out/3d_volumes_entropy/$PLANT_NAME_volumes_entropy.csv]
+
+workload_manager:
+  account: lyons-lab
+  partition: standard
+  job_name: phytooracle_worker
+  nodes: 1
+  number_tasks: 300
+  number_tasks_per_node: 1
+  cores_per_worker: 1
+  alt_cores_per_worker: 1
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  mem_per_cpu: 5
+  manager_name: phytooracle_manager
+  worker_timeout_seconds: 900 #86400
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  pipeline_outpath: [individual_plants_out]
+  outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled, 3d_volumes_entropy_v007]
+
+  cyverse: 
+    input: 
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_2/scanner3DTop/
+      subdir: individual_plants_out
+      prefix: 
+      suffix: _segmentation_pointclouds_plants.tar
+    output: 
+      basename: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_2/scanner3DTop
+      subdir: individual_plants_out
