@@ -178,14 +178,14 @@ workload_manager:
   partition: standard
   job_name: po_season11_3d
   nodes: 1 
-  number_tasks: 300
+  number_tasks: 94
   number_tasks_per_node: 1
   cores_per_worker: 1
   alt_cores_per_worker: 1
   time_minutes: 1440
   retries: 1
   port: 6022
-  mem_per_cpu: 5
+  mem_per_cpu: 32
   manager_name: po_s11_3D
   worker_timeout_seconds: 900   # 86400
 

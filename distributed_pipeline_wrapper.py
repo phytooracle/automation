@@ -432,6 +432,7 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         - number_tasks_per_node: Number of tasks per node (usually 1)
         - time: Time alloted for job to run 
         - mem_per_cpu: Memory per CPU (depends on HPC system, units in GB)
+            -if mem_per_cpu > 5 then --constraint=hi_mem is used
         - manager_name: Name of workflow manager
         - min_worker: Minimum number of workers per Workqueue factory
         - max_worker: Maximum number of workers per Workqueue factory
@@ -456,6 +457,9 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         # fh.writelines(f"#SBATCH --ntasks-per-core=1\n")
         # fh.writelines(f"#SBATCH --cpus-per-task={cores}\n")
         fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_cpu}GB\n")
+        if mem_per_cpu > 5:
+            fh.writelines(f"#SBATCH --constraint=hi_mem\n")
+
         fh.writelines(f"#SBATCH --time={time}\n")
         # fh.writelines(f"#SBATCH --wait-all-nodes=1\n")
         fh.writelines(f'#SBATCH --array 1-{number_tasks}\n')
