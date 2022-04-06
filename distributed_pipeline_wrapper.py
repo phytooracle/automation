@@ -891,6 +891,8 @@ def main():
             irods_path = get_irods_path(dictionary, date)
             dir_name = download_raw_data(irods_path)
 
+            pdb.set_trace()
+
             if dictionary['tags']['sensor']=='scanner3DTop':
                 get_required_files_3d(dictionary=dictionary, date=date)
             
@@ -915,7 +917,8 @@ def main():
 
             for k, v in dictionary['modules'].items():
                 
-                dir_name = os.path.join(*v['input_dir'])
+                if k != 1:
+                    dir_name = os.path.join(*v['input_dir'])
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
