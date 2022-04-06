@@ -6,6 +6,7 @@ Purpose: PhytoOracle | Scalable, modular phenomic data processing pipelines
 """
 
 import argparse
+import pdb # pdb.set_trace()
 import os
 import sys
 # from typing_extensions import final
@@ -164,25 +165,6 @@ def get_irods_path(dictionary, date):
     
     print(f"get_irods_path() found a file: {irods_path}")
 
-    if dictionary['tags']['season'] == 10:
-        dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
-    else: 
-        file_name = os.path.basename(irods_path)
-        dir_name = file_name.split('.')[0]
-    return irods_path, dir_name
-
-#    if dictionary['tags']['season']==10:
-#        if dictionary['paths']['cyverse']['input']['prefix']:
-#            dir_name = dictionary['paths']['cyverse']['input']['prefix'].replace('-', '')
-#        else:
-#            dir_name = dictionary['paths']['cyverse']['input']['suffix'].replace('_plants.tar', '')
-#    else: 
-#        file_name = os.path.basename(irods_path)
-#        dir_name = file_name.split('.')[0]
-#    if dir_name[0]=='_':
-#        dir_name = dir_name[1:]
-#        print(dir_name)
-
     return irods_path
 
 
@@ -200,7 +182,9 @@ def download_raw_data(irods_path):
         Returns:
             - dir_name: name of directory created from tarball.
     """
+
     args = get_args()
+
     tarball_filename = os.path.basename(irods_path)
     if not os.path.isfile(tarball_filename):
         # We need to DL the tarball.
@@ -220,13 +204,13 @@ def download_raw_data(irods_path):
         # cmd1 = f'iget -fKPVT {irods_path}'
         #cmd1 = f'iget -fPVT {irods_path}'
 
-        if '.gz' in file_name: 
-            cmd2 = f'tar -xzvf {file_name}'
-            cmd3 = f'rm {file_name}'
+        if '.gz' in tarball_filename: 
+            cmd2 = f'tar -xzvf {tarball_filename}'
+            cmd3 = f'rm {tarball_filename}'
 
         else: 
-            cmd2 = f'tar -xvf {file_name}'
-            cmd3 = f'rm {file_name}'
+            cmd2 = f'tar -xvf {tarball_filename}'
+            cmd3 = f'rm {tarball_filename}'
         
         if args.hpc: 
             print('>>>>>>Using data transfer node.')
@@ -350,7 +334,7 @@ def get_required_files_3d(dictionary, date):
         - Downloaded files/directories in the current working directory
     '''
 
-    season = dictionary['tags']['season']:
+    season = dictionary['tags']['season']
 
     # Concatenate all requested files from each module
     # into one list (requested_input_files_from_yaml)
@@ -376,7 +360,7 @@ def get_required_files_3d(dictionary, date):
     # gcp
 
     expected_gcp_filename = f"gcp_season_{season}.txt"
-    if fexpected_gcp_filename in requested_input_files_from_yaml:
+    if expected_gcp_filename in requested_input_files_from_yaml:
         if not os.path.isfile(expected_gcp_filename):
             get_gcp_file(expected_gcp_filename)
 
@@ -434,7 +418,7 @@ def get_bundle_json(irods_path):
 
     sp.call(cmd1, shell=True)
 
-def get_season_dir_name()
+def get_season_dir_name():
     season_dir_name = dictionary['tags']['season_dir_name']
     if not season_dir_name:
         raise ValueError(
