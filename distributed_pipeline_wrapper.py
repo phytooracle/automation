@@ -418,6 +418,7 @@ def get_bundle_json(irods_path):
 
     sp.call(cmd1, shell=True)
 
+# --------------------------------------------------
 def get_season_dir_name():
     season_dir_name = dictionary['tags']['season_dir_name']
     if not season_dir_name:
