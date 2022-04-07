@@ -783,10 +783,13 @@ def upload_outputs(date, dictionary):
 
     if args.hpc: 
         print(':: Using data transfer node.')
-        sp.call(f"ssh filexfer 'cd {cwd}' '&& icd {root}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
+        sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {root}' '&& icd {root}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
 
     else:
         
+        cmd1 = f'imkdir -p {root}'
+        sp.call(cmd1, shell=True)
+
         cmd1 = f'icd {root}'
         sp.call(cmd1, shell=True)
 
