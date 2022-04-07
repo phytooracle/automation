@@ -891,8 +891,6 @@ def main():
             irods_path = get_irods_path(dictionary, date)
             dir_name = download_raw_data(irods_path)
 
-            pdb.set_trace()
-
             if dictionary['tags']['sensor']=='scanner3DTop':
                 get_required_files_3d(dictionary=dictionary, date=date)
             
