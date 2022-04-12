@@ -440,7 +440,7 @@ def get_season_detections(clustering_file):
         - Season-specific detection clustering file
     '''
     season_dir_name = get_season_dir_name()
-    cmd1 = f"iget -KPVT /iplant/home/shared/phytooracle/{season_dir_name}/level_3/stereoTop/season10_plant_clustering/{clustering_file}"
+    cmd1 = f"iget -KPVT /iplant/home/shared/phytooracle/{season_dir_name}/level_3/stereoTop/{clustering_file}"
     sp.call(cmd1, shell=True)
 
 
