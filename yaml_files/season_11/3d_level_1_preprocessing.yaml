@@ -179,7 +179,7 @@ workload_manager:
   partition: standard
   job_name: po_season11_3d
   nodes: 1 
-  number_tasks: 10 #94
+  number_tasks: 6 #94
   number_tasks_per_node: 6
   cores_per_worker: 1
   alt_cores_per_worker: 1
@@ -205,5 +205,5 @@ paths:
       prefix: scanner?DTop-
       suffix: __*.tar?gz
     output: 
-      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_2/scanner3DTop/
+      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_1/scanner3DTop/
       subdir: individual_plants_out
