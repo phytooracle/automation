@@ -16,7 +16,7 @@ wf_file*
 plant_reports                                                             
 segmentation_pointclouds                                                  
 makeflow.failed*                                                         
-slurm*                                                                      
+#slurm*                                                                      
 slurm-*
 wq-pool-*                                                                
 worker.sh
