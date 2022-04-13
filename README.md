@@ -79,7 +79,7 @@ On your Cloud VM, run the following command:
 #### Interactive node
 The pipeline can use a data transfer node to download data, which speeds up processing. You must first launch an interactive node using the following command on UA HPC Puma: 
 ```
-./interactive_node.sh
+./shell_scripts/interactive_node.sh
 ```
 
 Once the resources are allocated, run the following command to process data:
@@ -89,18 +89,18 @@ Once the resources are allocated, run the following command to process data:
 
 Data will be downloaded and workflows will be launched. You view progress information for a specific workflow using the ```mf_monitor.sh``` script. For example, to view progress information for the first workflow, run:
 ```
-./mf_monitor.sh 1
+./shell_scripts/mf_monitor.sh 1
 ```
 
 #### Running on HPC cluster | non-interactive job submission
 To submit a date for processing in a non-interactive node, run:
 ```shell
-sbatch slurm_submission.sh <scan_date> <yaml_file>
+sbatch shell_scripts/slurm_submission.sh <scan_date> <yaml_file>
 ```
 
 For example: 
 ```shell
-sbatch slurm_submission.sh 2020-01-27 yaml_files/example_machinelearning_workflow.yaml
+sbatch shell_scripts/slurm_submission.sh 2020-01-27 yaml_files/example_machinelearning_workflow.yaml
 ```
 
 Make sure to change the account, partition as needed in the YAML file. 
