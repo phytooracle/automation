@@ -19,6 +19,6 @@ makeflow.failed*
 slurm*                                                                      
 slurm-*
 wq-pool-*                                                                
-worker.sh
+worker*.sh
 alignment
 file.txt
