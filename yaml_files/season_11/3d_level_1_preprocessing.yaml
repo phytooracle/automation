@@ -1,0 +1,73 @@
+---
+tags:
+  pipeline: season11_scanner3DTop
+  description: testing_setup
+  notes: Processing of Season 11 scanner3DTop data
+  runby: Nathan and Travis
+  sensor: scanner3DTop 
+  season: 11
+  season_dir_name: season_11_sorghum_yr_2020
+
+modules:
+  1: 
+    container: 
+      simg_name: 3d_preprocessing.simg
+      dockerhub_path: docker://phytooracle/3d_preprocessing:latest
+    command: singularity run 3d_preprocessing.simg -l gcp_season_11.txt -o alignment -i ${INPUT_DIR}
+    distribution_level: wq
+    file_level: 
+    input_dir: [scanner3DTop]
+    input_file: -west_0.ply
+    inputs: [$FILE_metadata.json,
+             $FILE__Top-heading-east_0_g.png,
+             $FILE__Top-heading-east_0.ply,
+             $FILE__Top-heading-east_0_p.png,
+             $FILE__Top-heading-west_0_g.png,
+             $FILE__Top-heading-west_0.ply,
+             $FILE__Top-heading-west_0_p.png,
+             $FILE__Top-heading-west_0.ply,
+             stereoTop_full_season_clustering.csv,
+             gcp_season_11.txt]
+
+    outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
+              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
+              alignment/merged/$SUBDIR__Top-heading-merged.ply,
+              alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+              alignment/west/$SUBDIR__Top-heading-west.ply,
+              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
+              alignment/metadata/$SUBDIR_updated-metadata.json]
+
+
+workload_manager:
+  account: lyons-lab
+  partition: standard
+  job_name: po_season11_3d
+  nodes: 1                  # Just do one.  (each array is on a distinct node)
+  number_tasks: 28 #94      # This is number of arrays (workers)
+  number_tasks_per_node: 6  # This is how many cores (cpu/gpu) per array, used to increase tot mem
+  cores_per_worker: 1
+  alt_cores_per_worker: 1
+  time_minutes: 1440
+  retries: 1
+  port: 6022
+  #mem_per_cpu: 32
+  mem_per_cpu: 6
+  manager_name: po_s11_3D
+  worker_timeout_seconds: 900   # 86400
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  pipeline_outpath: [individual_plants_out]
+  outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled]
+
+  cyverse: 
+    input: 
+      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop/
+      subdir: 
+      prefix: scanner3DTop-
+      suffix: __*.tar.gz
+    output: 
+      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_1/scanner3DTop/
+      subdir: individual_plants_out
