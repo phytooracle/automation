@@ -195,9 +195,26 @@ def download_raw_data(irods_path):
         else: 
             sp.call(cmd1, shell=True)
 
-    tarball = tarfile.open(tarball_filename, mode='r')
-    print(f"Examining {tarball_filename}, this can take a minute.")
-    dir_name = os.path.commonprefix(tarball.getnames())
+    #tarball = tarfile.open(tarball_filename, mode='r')
+    #print(f"Examining {tarball_filename}, this can take a minute.")
+    #dir_name = os.path.commonprefix(tarball.getnames())
+
+    # We want to find the root directory of the tar ball.  It's very large and
+    # compressed, So using something like os.path.commonprefix(tarball.getnames())
+    # will take forever.  So we do this instead...
+    import shlex
+    print(f"Examining {tarball_filename}, this can take a second...")
+    command = f"tar -ztf {tarball_filename}"
+    with sp.Popen(shlex.split(command),
+            stdout=sp.PIPE,
+            bufsize=1,
+            universal_newlines=True) as process:
+        first_line = next(process.stdout)
+        process.kill
+    if not first_line.strip().endswith('/'):
+        raise ValueError(f"ERROR. We can't figure out the root dir of {tarball_filename}")
+    dir_name = first_line.strip()[:-1]
+    print(f"... found: {dir_name}")
 
     if not os.path.isdir(dir_name):
         # cmd1 = f'iget -fKPVT {irods_path}'
@@ -482,7 +499,7 @@ def get_model_files(seg_model_path, det_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(cctools_path, account, partition, job_name, nodes, number_tasks, number_tasks_per_node, time, mem_per_cpu, manager_name, cores, worker_timeout, outfile='worker.sh'):
+def launch_workers(cctools_path, account, partition, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, outfile='worker.sh'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -491,16 +508,11 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         - partition: Either standard or windfall hours
         - job_name: Name for the job 
         - nodes: Number of nodes to use per Workqueue factory
-        - number_tasks: Number of tasks per node (usually 1)
-        - number_tasks_per_node: Number of tasks per node (usually 1)
         - time: Time alloted for job to run 
-        # removed for time being.  Needs better logic...
-        #- mem_per_cpu: Memory per CPU (depends on HPC system, units in GB)
-            #-if mem_per_cpu > 5 then --constraint=hi_mem is used
         - manager_name: Name of workflow manager
         - min_worker: Minimum number of workers per Workqueue factory
         - max_worker: Maximum number of workers per Workqueue factory
-        - cores: Number of cores per worker
+        - cores_per_worker: Number of cores per worker
         - worker_timeout: Time to wait for worker to receive a task before timing out (units in seconds)
         - outfile: Output filename for SLURM submission script
     
@@ -509,46 +521,24 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
     '''
     time_seconds = int(time)*60
     with open(outfile, 'w') as fh:
-        # fh.writelines("#!/bin/bash -l\n")
         fh.writelines("#!/bin/bash\n")
         fh.writelines(f"#SBATCH --account={account}\n")
         fh.writelines(f"#SBATCH --partition={partition}\n")
         fh.writelines(f"#SBATCH --job-name={job_name}\n")
         fh.writelines(f"#SBATCH --nodes={nodes}\n")
-        fh.writelines(f"#SBATCH --ntasks={number_tasks_per_node}\n")
+        fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
         # fh.writelines(f"#SBATCH --ntasks={int(nodes) * int(number_tasks)}\n")
         # fh.writelines(f"#SBATCH --ntasks-per-node={number_tasks_per_node}\n")
         # fh.writelines(f"#SBATCH --ntasks-per-core=1\n")
         # fh.writelines(f"#SBATCH --cpus-per-task={cores}\n")
-        fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_cpu}GB\n")
-        #if mem_per_cpu > 6:
-            #fh.writelines(f"#SBATCH --constraint=hi_mem\n")
-
+        fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
         fh.writelines(f"#SBATCH --time={time}\n")
-        # fh.writelines(f"#SBATCH --wait-all-nodes=1\n")
-        fh.writelines(f'#SBATCH --array 1-{number_tasks}\n')
+        fh.writelines(f'#SBATCH --array 1-{number_worker_array}\n')
         fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-        fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} --memory {mem_per_cpu*number_tasks_per_node*1000}\n")
-        # New
-        # fh.writelines(f"for i in `seq {int(nodes) * int(number_tasks)}`; do\n")
-        # fh.writelines(f"   srun --ntasks={cores} --mem-per-cpu={mem_per_cpu}GB work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} --memory {mem_per_cpu*1000} &\n")
-        # Previous
-        # fh.writelines(f"for i in `seq {int(nodes) * int(number_tasks)}`; do\n")
-        # fh.writelines(f"  srun --exclusive --nodes 1 --ntasks 1 --cpus-per-task {cores} work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout} &\n")
-        # fh.writelines("done\n")
-        # fh.writelines("wait\n")
-        # fh.writelines(f"work_queue_factory -T slurm -M {manager_name} --workers-per-cycle 10 -B '--account={account} --partition={partition} --job-name={job_name} --time={time} --mem-per-cpu={mem_per_cpu}GB' -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
-        # fh.writelines(f"work_queue_factory -T local -M {manager_name} -w {min_worker} -W {max_worker} --cores {cores} -t {worker_timeout}\n")
-        # fh.writelines(f"srun work_queue_worker -M {manager_name} --cores {cores} -t {worker_timeout}\n")
+        fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
 
     sp.call(f"sbatch {outfile}", shell=True)
-    # sp.call(f"ocelote '&& sbatch {outfile}' '&& puma'", shell=True)
-    # sp.call(f"elgato '&& sbatch {outfile}' '&& puma'", shell=True)
-
-    # os.system(f"sbatch {outfile}")
-    # os.system(f"ocelote 'sbatch {outfile}' '&& puma'")
-    # os.system(f"elgato 'sbatch {outfile}' '&& puma'")
 
 
 # --------------------------------------------------
@@ -596,12 +586,13 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                             partition=dictionary['workload_manager']['partition'], 
                             job_name=dictionary['workload_manager']['job_name'], 
                             nodes=dictionary['workload_manager']['nodes'], 
-                            number_tasks=dictionary['workload_manager']['number_tasks'], 
-                            number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
+                            #number_tasks=dictionary['workload_manager']['number_tasks'], 
+                            #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
                             time=dictionary['workload_manager']['time_minutes'], 
-                            mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
+                            mem_per_core=dictionary['workload_manager']['mem_per_core'], 
                             manager_name=dictionary['workload_manager']['manager_name'], 
-                            cores=dictionary['workload_manager']['alt_cores_per_worker'], 
+                            number_worker_array=dictionary['workload_manager']['number_worker_array'], 
+                            cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
                             worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
                 subdir_list = []
@@ -909,12 +900,13 @@ def main():
                         partition=dictionary['workload_manager']['partition'], 
                         job_name=dictionary['workload_manager']['job_name'], 
                         nodes=dictionary['workload_manager']['nodes'], 
-                        number_tasks=dictionary['workload_manager']['number_tasks'], 
-                        number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
+                        #number_tasks=dictionary['workload_manager']['number_tasks'], 
+                        #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
                         time=dictionary['workload_manager']['time_minutes'], 
-                        mem_per_cpu=dictionary['workload_manager']['mem_per_cpu'], 
+                        mem_per_core=dictionary['workload_manager']['mem_per_core'], 
                         manager_name=dictionary['workload_manager']['manager_name'], 
-                        cores=dictionary['workload_manager']['cores_per_worker'], 
+                        number_worker_array=dictionary['workload_manager']['number_worker_array'], 
+                        cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
                         worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
             global seg_model_name, det_model_name

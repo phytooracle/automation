@@ -25,14 +25,12 @@ workload_manager:
   partition: standard
   job_name: phytooracle_worker
   nodes: 100
-  number_tasks: 100
-  number_tasks_per_node: 1
+  number_worker_array: 100
   cores_per_worker: 1
-  alt_cores_per_worker: 1
   time_minutes: 1440
   retries: 1
   port: 0
-  mem_per_cpu: 6
+  mem_per_core: 6
   manager_name: phytooracle_manager
   worker_timeout_seconds: 86400
 
