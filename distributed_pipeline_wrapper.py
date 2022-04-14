@@ -195,9 +195,26 @@ def download_raw_data(irods_path):
         else: 
             sp.call(cmd1, shell=True)
 
-    tarball = tarfile.open(tarball_filename, mode='r')
-    print(f"Examining {tarball_filename}, this can take a minute.")
-    dir_name = os.path.commonprefix(tarball.getnames())
+    #tarball = tarfile.open(tarball_filename, mode='r')
+    #print(f"Examining {tarball_filename}, this can take a minute.")
+    #dir_name = os.path.commonprefix(tarball.getnames())
+
+    # We want to find the root directory of the tar ball.  It's very large and
+    # compressed, So using something like os.path.commonprefix(tarball.getnames())
+    # will take forever.  So we do this instead...
+    import shlex
+    print(f"Examining {tarball_filename}, this can take a second...")
+    command = f"tar -ztf {tarball_filename}"
+    with sp.Popen(shlex.split(command),
+            stdout=sp.PIPE,
+            bufsize=1,
+            universal_newlines=True) as process:
+        first_line = next(process.stdout)
+        process.kill
+    if not first_line.strip().endswith('/'):
+        raise ValueError(f"ERROR. We can't figure out the root dir of {tarball_filename}")
+    dir_name = first_line.strip()[:-1]
+    print(f"... found: {dir_name}")
 
     if not os.path.isdir(dir_name):
         # cmd1 = f'iget -fKPVT {irods_path}'
@@ -482,7 +499,7 @@ def get_model_files(seg_model_path, det_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(cctools_path, account, partition, job_name, nodes, number_tasks, time, mem_per_core, manager_name, cores_per_worker, worker_timeout, outfile='worker.sh'):
+def launch_workers(cctools_path, account, partition, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, outfile='worker.sh'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -491,8 +508,6 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         - partition: Either standard or windfall hours
         - job_name: Name for the job 
         - nodes: Number of nodes to use per Workqueue factory
-        - number_tasks: Number of tasks per node (usually 1)
-        - number_tasks_per_node: Number of tasks per node (usually 1)
         - time: Time alloted for job to run 
         - manager_name: Name of workflow manager
         - min_worker: Minimum number of workers per Workqueue factory
@@ -511,17 +526,17 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, number_tas
         fh.writelines(f"#SBATCH --partition={partition}\n")
         fh.writelines(f"#SBATCH --job-name={job_name}\n")
         fh.writelines(f"#SBATCH --nodes={nodes}\n")
-        fh.writelines(f"#SBATCH --ntasks={number_tasks_per_node}\n")
+        fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
         # fh.writelines(f"#SBATCH --ntasks={int(nodes) * int(number_tasks)}\n")
         # fh.writelines(f"#SBATCH --ntasks-per-node={number_tasks_per_node}\n")
         # fh.writelines(f"#SBATCH --ntasks-per-core=1\n")
         # fh.writelines(f"#SBATCH --cpus-per-task={cores}\n")
         fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
         fh.writelines(f"#SBATCH --time={time}\n")
-        fh.writelines(f'#SBATCH --array 1-{number_tasks}\n')
+        fh.writelines(f'#SBATCH --array 1-{number_worker_array}\n')
         fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-        fh.writelines(f"work_queue_worker -M {manager_name} --cores {number_tasks_per_node} -t {worker_timeout} --memory {mem_per_core*number_tasks_per_node*1000}\n")
+        fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
 
     sp.call(f"sbatch {outfile}", shell=True)
 
@@ -571,11 +586,12 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                             partition=dictionary['workload_manager']['partition'], 
                             job_name=dictionary['workload_manager']['job_name'], 
                             nodes=dictionary['workload_manager']['nodes'], 
-                            number_tasks=dictionary['workload_manager']['number_tasks'], 
-                            number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
+                            #number_tasks=dictionary['workload_manager']['number_tasks'], 
+                            #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
                             time=dictionary['workload_manager']['time_minutes'], 
                             mem_per_core=dictionary['workload_manager']['mem_per_core'], 
                             manager_name=dictionary['workload_manager']['manager_name'], 
+                            number_worker_array=dictionary['workload_manager']['number_worker_array'], 
                             cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
                             worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
@@ -884,11 +900,12 @@ def main():
                         partition=dictionary['workload_manager']['partition'], 
                         job_name=dictionary['workload_manager']['job_name'], 
                         nodes=dictionary['workload_manager']['nodes'], 
-                        number_tasks=dictionary['workload_manager']['number_tasks'], 
-                        number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
+                        #number_tasks=dictionary['workload_manager']['number_tasks'], 
+                        #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
                         time=dictionary['workload_manager']['time_minutes'], 
                         mem_per_core=dictionary['workload_manager']['mem_per_core'], 
                         manager_name=dictionary['workload_manager']['manager_name'], 
+                        number_worker_array=dictionary['workload_manager']['number_worker_array'], 
                         cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
                         worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
 
