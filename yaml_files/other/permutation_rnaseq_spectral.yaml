@@ -28,17 +28,15 @@ workload_manager:
   account: lyons-lab
   partition: standard
   job_name: phytooracle_worker
-  nodes: 1
-  number_tasks: 900
-  number_tasks_per_node: 1
-  cores_per_worker: 1
-  alt_cores_per_worker: 1
+  nodes: 1                  # Just do one.  (each array is on a distinct node)
+  number_worker_array: 900 #94      # This is number of arrays (workers)
+  cores_per_worker: 1       # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
   port: 6022
-  mem_per_cpu: 5
+  mem_per_core: 5
   manager_name: phytooracle_manager_rna_seq
-  worker_timeout_seconds: 900 #86400
+  worker_timeout_seconds: 900   # 86400
 
 paths:
   models:
