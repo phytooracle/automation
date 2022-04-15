@@ -204,7 +204,14 @@ def download_raw_data(irods_path):
     # will take forever.  So we do this instead...
     import shlex
     print(f"Examining {tarball_filename}, this can take a second...")
-    command = f"tar -ztf {tarball_filename}"
+    gzip_extensions = ['.tgz', '.tar.gz']
+    
+    if any(x in tarball_filename for x in gzip_extensions):
+#     if gzip_extension in tarball_filename:
+        command = f"tar -ztf {tarball_filename}"
+    else:
+        command = f"tar -tf {tarball_filename}"
+        
     with sp.Popen(shlex.split(command),
             stdout=sp.PIPE,
             bufsize=1,
