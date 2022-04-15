@@ -57,6 +57,13 @@ def get_args():
                         type=str,
                         required=True)
 
+    parser.add_argument('--noclean',
+                        help='Do not rm results locally',
+                        #metavar='noclean',
+                        #default=False,
+                        action='store_true',
+                       )
+
     return parser.parse_args()
 
 
@@ -717,10 +724,12 @@ def tar_outputs(scan_date, dictionary):
 
         for v in dictionary['paths']['outpath_subdirs']:
 
-            if not os.path.isdir(v):
-                print(f"Skipping the tarring of '{v}' from yaml paths:outpath_subdirs because it was not found")
+            _full_v = os.path.join(cwd, outdir, v)
+
+            if not os.path.isdir(_full_v):
+                print(f"Skipping the tarring of '{_full_v}' from yaml paths:outpath_subdirs because it was not found")
                 continue
-            file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{v}_plants.tar') 
+            file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{v}.tar') 
             print(f'Creating {file_path}.')
             if not os.path.isfile(file_path):
                 with tarfile.open(file_path, 'w') as tar:
@@ -875,6 +884,7 @@ def main():
 
     args = get_args()
     cctools_path = download_cctools(cctools_version=args.cctools_version)
+
     for date in args.date:
         
         with open(args.yaml, 'r') as stream:
@@ -920,13 +930,15 @@ def main():
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
                 run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log')
-                clean_directory()
+                if not args.noclean:
+                    clean_directory()
         
             kill_workers(dictionary['workload_manager']['job_name'])
             tar_outputs(date, dictionary)
             create_pipeline_logs(date)
             upload_outputs(date, dictionary)
-            clean_inputs(date, dictionary)        
+            if not args.noclean:
+                clean_inputs(date, dictionary)        
 
 
 # --------------------------------------------------
