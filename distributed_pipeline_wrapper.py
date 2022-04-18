@@ -143,7 +143,7 @@ def get_irods_path(dictionary, date):
 
     # Add subdir if it's been specified in yaml
     subdir = dictionary['paths']['cyverse']['input']['subdir'] # for convenience
-    irods_path = os.path.join(irods_path, (subdir if subdir else ""))
+    irods_path = os.path.join(irods_path, date, (subdir if subdir else ""))
 
 
     # Get a list of all of the files found within irods_path
@@ -156,7 +156,7 @@ def get_irods_path(dictionary, date):
     # Now lets see if our file is in all_files_in_dir
     prefix = dictionary['paths']['cyverse']['input']['prefix']
     suffix = dictionary['paths']['cyverse']['input']['suffix']
-    pattern = date (prefix if prefix else "") + (suffix if suffix else "")
+    pattern = (prefix if prefix else "") + date + (suffix if suffix else "")
     import pathlib
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
 
