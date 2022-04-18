@@ -11,18 +11,18 @@ modules:
   1: 
     container: 
       simg_name: rnaseq_spectral_plsr.simg
-      dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:permutation #:train_test
-    command: singularity run rnaseq_spectral_plsr.simg -c ${FILE} -o plsr_outputs_update_permutation_test
+      dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:latest #:train_test
+    command: singularity run rnaseq_spectral_plsr.simg -c ${FILE} -o plsr_outputs_update_permutation_updated
     distribution_level: wq
     file_level: 
     input_dir: [rnaseq_spectra]
     input_file: _tpm_spectra.csv
     inputs: [$FILE]
 
-    outputs: [plsr_outputs_update_permutation_test/correlation_scores/$UUID,
-              plsr_outputs_update_permutation_test/plots/$UUID,
-              plsr_outputs_update_permutation_test/models/$UUID,
-              plsr_outputs_update_permutation_test/permutation/$UUID]
+    outputs: [plsr_outputs_update_permutation_updated/correlation_scores/$UUID,
+              plsr_outputs_update_permutation_updated/plots/$UUID,
+              plsr_outputs_update_permutation_updated/models/$UUID,
+              plsr_outputs_update_permutation_updated/permutation/$UUID]
 
 workload_manager:
   account: lyons-lab
@@ -42,7 +42,7 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
-  pipeline_outpath: [plsr_outputs_update_permutation_test]
+  pipeline_outpath: [plsr_outputs_update_permutation_updated]
   outpath_subdirs: [correlation_scores, plots, models, permutation]
 
   cyverse: 
