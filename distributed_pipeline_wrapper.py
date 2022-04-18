@@ -156,7 +156,7 @@ def get_irods_path(dictionary, date):
     # Now lets see if our file is in all_files_in_dir
     prefix = dictionary['paths']['cyverse']['input']['prefix']
     suffix = dictionary['paths']['cyverse']['input']['suffix']
-    pattern = (prefix if prefix else "") + date + (suffix if suffix else "")
+    pattern = date (prefix if prefix else "") + (suffix if suffix else "")
     import pathlib
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
 
