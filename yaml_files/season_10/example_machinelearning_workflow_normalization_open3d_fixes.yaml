@@ -77,13 +77,13 @@ workload_manager:
   partition: standard
   job_name: phytooracle_worker
   nodes: 1
-  number_worker_array: 300
-  cores_per_worker: 1
+  number_worker_array: 400
+  cores_per_worker: 26
   time_minutes: 1440
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: phytooracle_manager
+  manager_name: phytooracle_manager_emmanuel
   worker_timeout_seconds: 900 #86400
 
 paths:
