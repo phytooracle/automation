@@ -23,5 +23,6 @@ worker*.sh
 alignment
 file.txt
 .nfs*
+nathan.txt
 slurm-*
 makeflow.failed.*
