@@ -38,27 +38,27 @@ modules:
     inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
   
-  3:
-    container: 
-      simg_name: 3d_segmentation_dashboard_assets.simg
-      dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_segmentation_dashboard_assets.simg -i ${PLANT_PATH} -plant ${PLANT_NAME} -pod individual_plants_out/segmentation_pointclouds -fod individual_plants_out/plant_reports
-    distribution_level: wq
-    file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: final.ply
-    inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply,
-             individual_plants_out/plant_reports/$PLANT_NAME/heatmap.jpg,
-             individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg,
-             individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
-             individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif]
-    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/75_ML_compare.gif,
-              individual_plants_out/plant_reports/$PLANT_NAME/segmentation_dbscan_compare.gif]
+#   3:
+#     container: 
+#       simg_name: 3d_segmentation_dashboard_assets.simg
+#       dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
+#     command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_segmentation_dashboard_assets.simg -i ${PLANT_PATH} -plant ${PLANT_NAME} -pod individual_plants_out/segmentation_pointclouds -fod individual_plants_out/plant_reports
+#     distribution_level: wq
+#     file_level: 
+#     input_dir: [individual_plants_out, segmentation_pointclouds]
+#     input_file: final.ply
+#     inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
+#              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
+#              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply,
+#              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
+#              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
+#              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply,
+#              individual_plants_out/plant_reports/$PLANT_NAME/heatmap.jpg,
+#              individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg,
+#              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
+#              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif]
+#     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/75_ML_compare.gif,
+#               individual_plants_out/plant_reports/$PLANT_NAME/segmentation_dbscan_compare.gif]
 
   4:
     container: 
