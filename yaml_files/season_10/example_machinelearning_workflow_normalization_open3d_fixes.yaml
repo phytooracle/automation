@@ -73,12 +73,12 @@ modules:
     outputs: [individual_plants_out/3d_volumes_entropy_v007/$PLANT_NAME_volumes_entropy.csv]
 
 workload_manager:
-  account: lyons-lab
+  account: dukepauli
   partition: standard
   job_name: phytooracle_worker
   nodes: 1
   number_worker_array: 400
-  cores_per_worker: 26
+  cores_per_worker: 50
   time_minutes: 1440
   retries: 1
   port: 0
