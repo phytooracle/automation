@@ -16,6 +16,8 @@ import shutil
 import glob
 import tarfile
 import multiprocessing
+import fnmatch
+import glob
 
 
 # --------------------------------------------------
@@ -395,6 +397,53 @@ def get_required_files_3d(dictionary, date):
             get_gcp_file(expected_gcp_filename)
 
 
+# --------------------------------------------------
+def get_required_files_psii(dictionary):
+    '''
+    Downloads required inputs for psii processing
+
+    Input:
+        - dictionary: Dictionary variable (YAML file)
+    
+    Output: 
+        - Downloaded files/directories in the current working directory
+    '''
+
+    season = dictionary['tags']['season']
+
+    # Concatenate all requested files from each module
+    # into one list (requested_input_files_from_yaml)
+    # so we can search it for things we want to DL
+    # manually/ahead-of-time.
+    requested_input_files_from_yaml = []
+    for d in dictionary['modules'].keys():
+        requested_input_files_from_yaml += dictionary['modules'][d]['inputs']
+
+
+    # season agnostic way to grab the plot boundaries file
+    if len(fnmatch.filter(requested_input_files_from_yaml, '*multi_latlon_geno.geojson'))>0:
+
+        if not os.path.isfile(fnmatch.filter(requested_input_files_from_yaml, '*multi_latlon_geno.geojson')[0]):
+            get_plot_boundaries_file(dictionary)
+
+#--------------------------------------------------
+def get_plot_boundaries_file(dictionary):
+    '''
+    Downloads the season specific plot boundaries JSON file.
+
+    Input:
+        - YAML Dictionary
+    
+    Output: 
+        - Downloaded plot boundaries file in the current working directory
+    '''
+    irods_path = dictionary['paths']['cyverse']['input']['basename']
+    level_0 = os.path.join(irods_path[:irods_path.index('level_0')], 'level_0')
+    path = os.path.join(level_0, f'season{dictionary["tags"]["season"]}_multi_latlon_geno.geojson')
+    print(f'Downloading plot boundaries file from {path}.....')
+
+    cmd1 = f'iget -KPVT {path}'
+    sp.call(cmd1, shell=True)
 
 
 # --------------------------------------------------
@@ -645,6 +694,19 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                 } for file in  files_list
                             ]
                 } 
+
+        elif sensor == 'psii':
+            jx_dict = {
+                "rules": [
+                            {
+                                "command" : timeout + command.replace('$UUID', os.path.basename(file).split('_')[0]).replace('$FILE', file).replace('$SUB_DIR', os.path.dirname(file)),
+                                "outputs" : [out.replace('$FILE_BASE', os.path.basename(file).replace('.bin', '')) for out in outputs],
+                                "inputs"  : [container] + [input.replace('$SUB_DIR', os.path.dirname(file)).replace('$UUID',os.path.basename(file).split('_')[0]).replace('$FILE', file) for input in inputs]
+
+                            } for file in files_list
+                        ]
+            } 
+
 
         else: 
             jx_dict = {
@@ -908,6 +970,8 @@ def main():
 
             if dictionary['tags']['sensor']=='scanner3DTop':
                 get_required_files_3d(dictionary=dictionary, date=date)
+            if dictionary['tags']['sensor']=='psii':
+                get_required_files_psii(dictionary=dictionary)
             
             if args.hpc:
                 kill_workers(dictionary['workload_manager']['job_name'])
