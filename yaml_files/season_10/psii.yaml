@@ -37,14 +37,14 @@ modules:
 
 #  3:
 #     container: 
-#       simg_name: rgb_flir_plot_clip_geojson.simg
-#       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
-#     command: singularity run $FILE -sen psii -shp ./season10_multi_latlon_geno.geojson
+#       simg_name: segmentation.simg
+#       dockerhub_path: docker://phytooracle/
+#     command: singularity run 
 #     distribution_level: local
 #     file_level: 
-#     input_dir: [./bin2tif_out]
-#     input_file: .tif
-#     inputs: [$FILE, season10_multi_latlon_geno.geojson]
+#     input_dir: []
+#     input_file: 
+#     inputs: []
 #     outputs: []  
 
 
@@ -66,8 +66,8 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
-  pipeline_outpath: [individual_plants_out]
-  outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled, 3d_volumes_entropy_v007]
+  pipeline_outpath: [.]
+  outpath_subdirs: [bin2tif_out, plotclip_out]
 
   cyverse: 
     input: 
@@ -77,4 +77,4 @@ paths:
       suffix: .tar
     output: 
       basename: /iplant/home/travis_simmons/
-      subdir: analyses
+      subdir: 
