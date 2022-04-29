@@ -23,7 +23,7 @@ worker*.sh
 alignment
 file.txt
 .nfs*
-nathan.txt
+nathan*
 slurm-*
 makeflow.failed.*
 season*gcp*.txt

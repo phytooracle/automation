@@ -38,6 +38,8 @@ def get_args():
                         type=str,
                         required=True)
 
+    # Season 12 and on should have a value for experiment set (e.g. sorghum, sunflower)
+    # For Season 11 it should be left '' (so no experiment dir is created)
     parser.add_argument('-x',
                         '--experiment',
                         help='Experiment (e.g. Sorghum, Sunflower)',
@@ -65,6 +67,13 @@ def get_args():
 
     parser.add_argument('--noclean',
                         help='Do not rm results locally',
+                        #metavar='noclean',
+                        #default=False,
+                        action='store_true',
+                       )
+
+    parser.add_argument('--uploadonly',
+                        help='just do cyverse ul and exit (for testing)',
                         #metavar='noclean',
                         #default=False,
                         action='store_true',
@@ -134,7 +143,7 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 
 
 # --------------------------------------------------
-def get_irods_input_path(dictionary, date):
+def get_irods_input_path(dictionary, date, args):
     """
     Get IRODS path to download
     
@@ -146,7 +155,7 @@ def get_irods_input_path(dictionary, date):
     """
 
     season_name = dictionary['tags']['season_name']
-    experiment  = dictionary['tags']['experiment']
+    experiment  = args.experiment
     sensor      = dictionary['tags']['sensor']
     cyverse_basename  = dictionary['paths']['cyverse']['basename']
     cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
@@ -400,17 +409,7 @@ def get_support_files(dictionary, date):
             season_name
     )
 
-    # Concatenate all requested files from each module
-    # into one list (requested_input_files_from_yaml)
-    # so we can search it for things we want to DL
-    # manually/ahead-of-time.
-    requested_input_files_from_yaml = []
-    for d in dictionary['modules'].keys():
-        requested_input_files_from_yaml += dictionary['modules'][d]['inputs']
-
-    # make list of support files to pre download from cyverse...
-    support_files = [x for x in requested_input_files_from_yaml if x.startswith("level_")]
-
+    support_files = dictionary['paths']['cyverse']['input']['necessary_files']
 
     for file_path in support_files:
         print(f"Looking for {file_path}...")
@@ -842,10 +841,10 @@ def upload_outputs(date, dictionary):
     #subdir = dictionary['paths']['cyverse']['output']['subdir']
 
     season_name = dictionary['tags']['season_name']
-    experiment  = dictionary['tags']['experiment']
+    experiment  = args.experiment
     sensor      = dictionary['tags']['sensor']
     cyverse_basename  = dictionary['paths']['cyverse']['basename']
-    cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
+    cyverse_datalevel = dictionary['paths']['cyverse']['output']['level']
 
     # Every path (level zero or otherwise) starts the same:
     # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
@@ -864,7 +863,8 @@ def upload_outputs(date, dictionary):
                                          irods_output_path,
                                          (experiment if experiment else "")
         )
-
+    
+    pdb.set_trace()
 
     cwd = os.getcwd()
     print(cwd)
@@ -878,11 +878,11 @@ def upload_outputs(date, dictionary):
         cmd1 = f'imkdir -p {irods_output_path}'
         sp.call(cmd1, shell=True)
 
-        cmd1 = f'icd {irods_output_path}'
-        sp.call(cmd1, shell=True)
-
-        cmd2 = f'iput -rfKPVT {date}'
+        cmd2 = f'icd {irods_output_path}'
         sp.call(cmd2, shell=True)
+
+        cmd3 = f'iput -rfKPVT {date}'
+        sp.call(cmd3, shell=True)
 
 
 # --------------------------------------------------
@@ -979,8 +979,12 @@ def main():
 
             except yaml.YAMLError as exc:
                 print(exc)
+
+            if args.uploadonly:
+                upload_outputs(date, dictionary)
+                return
                 
-            irods_path = get_irods_input_path(dictionary, date)
+            irods_path = get_irods_input_path(dictionary, date, args)
             dir_name = download_raw_data(irods_path)
 
             #if dictionary['tags']['sensor']=='scanner3DTop':
