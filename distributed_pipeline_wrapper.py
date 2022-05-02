@@ -142,6 +142,24 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
     return '-'.join(['cctools', cctools_version, architecture, sys_os])
 
 
+def get_irods_input_dir(dictionary, date, args):
+
+    season_name = dictionary['tags']['season_name']
+    experiment  = args.experiment
+    sensor      = dictionary['tags']['sensor']
+    cyverse_basename  = dictionary['paths']['cyverse']['basename']
+    cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
+    prefix            = dictionary['paths']['cyverse']['input']['prefix']
+    suffix            = dictionary['paths']['cyverse']['input']['suffix']
+
+    # Every path (level zero or otherwise) starts the same:
+    # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
+    irods_path = os.path.join(
+            cyverse_basename,
+            season_name,
+            cyverse_datalevel,
+            sensor)
+
 # --------------------------------------------------
 def get_irods_input_path(dictionary, date, args):
     """
@@ -161,7 +179,6 @@ def get_irods_input_path(dictionary, date, args):
     cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
     prefix            = dictionary['paths']['cyverse']['input']['prefix']
     suffix            = dictionary['paths']['cyverse']['input']['suffix']
-    input_dir         = dictionary['paths']['cyverse']['input']['input_dir']
 
     # Every path (level zero or otherwise) starts the same:
     # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
@@ -985,8 +1002,16 @@ def main():
                 upload_outputs(date, dictionary)
                 return
                 
-            irods_path = get_irods_input_path(dictionary, date, args)
-            dir_name = download_raw_data(irods_path)
+            # Figure out what we need to DL
+            # + a single file with a prefix and suffix and randum numbers in it?
+            # + a directory full of files?
+            input_dir = dictionary['paths']['cyverse']['input']['input_dir']
+            if input_dir:
+                get_irods_input_dir(dictionary, date, args)
+                dir_name = input_dir
+            else:
+                irods_path = get_irods_input_path(dictionary, date, args)
+                dir_name = download_raw_data(irods_path)
 
             #if dictionary['tags']['sensor']=='scanner3DTop':
                 #get_required_files_3d(dictionary=dictionary, date=date)
