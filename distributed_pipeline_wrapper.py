@@ -161,6 +161,7 @@ def get_irods_input_path(dictionary, date, args):
     cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
     prefix            = dictionary['paths']['cyverse']['input']['prefix']
     suffix            = dictionary['paths']['cyverse']['input']['suffix']
+    input_dir         = dictionary['paths']['cyverse']['input']['input_dir']
 
     # Every path (level zero or otherwise) starts the same:
     # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop

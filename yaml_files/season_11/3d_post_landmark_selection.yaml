@@ -180,6 +180,6 @@ paths:
     basename: /iplant/home/shared/phytooracle/
     input: 
       level: level_1
-      input_dir: [alignment]
+      input_dir: alignment
     output: 
       level: level_1
