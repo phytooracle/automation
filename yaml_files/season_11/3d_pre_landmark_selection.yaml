@@ -1,7 +1,7 @@
 ---
 tags:
   pipeline: season11_scanner3DTop
-  description: testing_setup
+  description: Process gantry data so that it can be run through landmark selection.
   notes: Processing of Season 11 scanner3DTop data
   runby: Nathan and Travis
   sensor: scanner3DTop 
