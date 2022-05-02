@@ -178,6 +178,8 @@ paths:
 #      subdir: individual_plants_out
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
+      necessary_files: [level_3/stereoTop/season_11_clustering.csv,
+                        level_0/necessary_files/gcp_season_11.txt]
     input: 
       level: level_1
       input_dir: [alignment]

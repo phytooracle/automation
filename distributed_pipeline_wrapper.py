@@ -161,6 +161,7 @@ def get_irods_input_path(dictionary, date, args):
     cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
     prefix            = dictionary['paths']['cyverse']['input']['prefix']
     suffix            = dictionary['paths']['cyverse']['input']['suffix']
+    input_dir         = dictionary['paths']['cyverse']['input']['input_dir']
 
     # Every path (level zero or otherwise) starts the same:
     # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
@@ -192,11 +193,9 @@ def get_irods_input_path(dictionary, date, args):
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
 
     if len(matching_files) < 1:
-        pdb.set_trace()
         raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
                            Found: {matching_files}")
     if len(matching_files) > 1:
-        pdb.set_trace()
         raise ValueError(f"Found too many tarballs for date: {date}\n \
                            Found: {matching_files}")
 
@@ -208,7 +207,6 @@ def get_irods_input_path(dictionary, date, args):
     
     print(f"get_irods_input_path() found a file: {irods_path}")
 
-    #pdb.set_trace()
 
     return irods_path
 
@@ -864,8 +862,6 @@ def upload_outputs(date, dictionary):
                                          (experiment if experiment else "")
         )
     
-    pdb.set_trace()
-
     cwd = os.getcwd()
     print(cwd)
 
