@@ -38,6 +38,14 @@ def get_args():
                         type=str,
                         required=True)
 
+    # Season 12 and on should have a value for experiment set (e.g. sorghum, sunflower)
+    # For Season 11 it should be left '' (so no experiment dir is created)
+    parser.add_argument('-x',
+                        '--experiment',
+                        help='Experiment (e.g. Sorghum, Sunflower)',
+                        type=str,
+                        default='')
+
     parser.add_argument('-c',
                         '--cctools_version',
                         help='CCTools version',
@@ -59,6 +67,13 @@ def get_args():
 
     parser.add_argument('--noclean',
                         help='Do not rm results locally',
+                        #metavar='noclean',
+                        #default=False,
+                        action='store_true',
+                       )
+
+    parser.add_argument('--uploadonly',
+                        help='just do cyverse ul and exit (for testing)',
                         #metavar='noclean',
                         #default=False,
                         action='store_true',
@@ -128,7 +143,7 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 
 
 # --------------------------------------------------
-def get_irods_path(dictionary, date):
+def get_irods_input_path(dictionary, date, args):
     """
     Get IRODS path to download
     
@@ -138,13 +153,31 @@ def get_irods_path(dictionary, date):
     Output: 
         - irods_path: CyVerse filepath
     """
-    # Begin building irods_path
-    irods_path = os.path.join(dictionary['paths']['cyverse']['input']['basename'])
 
-    # Add subdir if it's been specified in yaml
-    subdir = dictionary['paths']['cyverse']['input']['subdir'] # for convenience
-    irods_path = os.path.join(irods_path, date, (subdir if subdir else ""))
+    season_name = dictionary['tags']['season_name']
+    experiment  = args.experiment
+    sensor      = dictionary['tags']['sensor']
+    cyverse_basename  = dictionary['paths']['cyverse']['basename']
+    cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
+    prefix            = dictionary['paths']['cyverse']['input']['prefix']
+    suffix            = dictionary['paths']['cyverse']['input']['suffix']
 
+    # Every path (level zero or otherwise) starts the same:
+    # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
+    irods_path = os.path.join(
+            cyverse_basename,
+            season_name,
+            cyverse_datalevel,
+            sensor)
+
+    # If level is greater than level zero, then we need to add
+    # two directories: .../expirment/date
+    # for example: level_1/scanner3DTop/sunflower/2222-22-22
+    if cyverse_datalevel > 'level_0':
+        irods_output_path = os.path.join(
+                                         irods_output_path,
+                                         (experiment if experiment else "")
+        )
 
     # Get a list of all of the files found within irods_path
     sp_ls = sp.run(["ils", irods_path], stdout=sp.PIPE).stdout
@@ -154,22 +187,28 @@ def get_irods_path(dictionary, date):
     all_files_in_dir = [x.strip() for x in sp_ls.decode('utf-8').splitlines()][1:]
 
     # Now lets see if our file is in all_files_in_dir
-    prefix = dictionary['paths']['cyverse']['input']['prefix']
-    suffix = dictionary['paths']['cyverse']['input']['suffix']
     pattern = (prefix if prefix else "") + date + (suffix if suffix else "")
     import pathlib
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
 
-    if len(matching_files) != 1:
+    if len(matching_files) < 1:
+        pdb.set_trace()
         raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
                            Found: {matching_files}")
+    if len(matching_files) > 1:
+        pdb.set_trace()
+        raise ValueError(f"Found too many tarballs for date: {date}\n \
+                           Found: {matching_files}")
+
 
     irods_path = os.path.join(
                     irods_path,
                     matching_files[0]
     )
     
-    print(f"get_irods_path() found a file: {irods_path}")
+    print(f"get_irods_input_path() found a file: {irods_path}")
+
+    #pdb.set_trace()
 
     return irods_path
 
@@ -228,7 +267,7 @@ def download_raw_data(irods_path):
     if not first_line.strip().endswith('/'):
         raise ValueError(f"ERROR. We can't figure out the root dir of {tarball_filename}")
     dir_name = first_line.strip()[:-1]
-    print(f"... found: {dir_name}")
+    #print(f"... found: {dir_name}")
 
     if not os.path.isdir(dir_name):
         # cmd1 = f'iget -fKPVT {irods_path}'
@@ -352,10 +391,8 @@ def download_level_1_data(irods_path):
 
 
 # --------------------------------------------------
-def get_required_files_3d(dictionary, date):
+def get_support_files(dictionary, date):
     '''
-    Downloads required inputs for scanner3DTop data post-processing.
-
     Input:
         - dictionary: Dictionary variable (YAML file)
         - date: Scan date being processed
@@ -364,37 +401,52 @@ def get_required_files_3d(dictionary, date):
         - Downloaded files/directories in the current working directory
     '''
 
-    season = dictionary['tags']['season']
+    season_name = dictionary['tags']['season_name']
+    cyverse_basename  = dictionary['paths']['cyverse']['basename']
 
-    # Concatenate all requested files from each module
-    # into one list (requested_input_files_from_yaml)
-    # so we can search it for things we want to DL
-    # manually/ahead-of-time.
-    requested_input_files_from_yaml = []
-    for d in dictionary['modules'].keys():
-        requested_input_files_from_yaml += dictionary['modules'][d]['inputs']
+    irods_basename = os.path.join(
+            cyverse_basename,
+            season_name
+    )
+
+    support_files = dictionary['paths']['cyverse']['input']['necessary_files']
+
+    for file_path in support_files:
+        print(f"Looking for {file_path}...")
+        filename = os.path.basename(file_path)
+        if not os.path.isfile(filename):
+            cyverse_path = os.path.join(irods_basename, file_path)
+            print(f"    We need to get: {cyverse_path}")
+            get_file_from_cyverse(os.path.join(irods_basename, file_path))
+        else:
+            print(f"FOUND")
 
     # transformation.json
 
-    if 'transfromation.json' in requested_input_files_from_yaml:
-        if not os.path.isfile('transfromation.json'):
-            level_1 = dictionary['paths']['cyverse']['input']['basename'].replace('level_0', 'level_1')
-            get_transformation_file(os.path.join(level_1, date), cwd)
+#    if 'transfromation.json' in requested_input_files_from_yaml:
+#        if not os.path.isfile('transfromation.json'):
+#            level_1 = dictionary['paths']['cyverse']['input']['basename'].replace('level_0', 'level_1')
+#            get_transformation_file(os.path.join(level_1, date), cwd)
+#
+#    # clustering csv
+#
+#    if 'stereoTop_full_season_clustering.csv' in requested_input_files_from_yaml:
+#        if not os.path.isfile('stereoTop_full_season_clustering.csv'):
+#            get_season_detections('stereoTop_full_season_clustering.csv')
+#
+#    # gcp
+#
+#    expected_gcp_filename = f"gcp_season_{season}.txt"
+#    if expected_gcp_filename in requested_input_files_from_yaml:
+#        if not os.path.isfile(expected_gcp_filename):
+#            get_gcp_file(expected_gcp_filename)
 
-    # clustering csv
 
-    if 'stereoTop_full_season_clustering.csv' in requested_input_files_from_yaml:
-        if not os.path.isfile('stereoTop_full_season_clustering.csv'):
-            get_season_detections('stereoTop_full_season_clustering.csv')
+# --------------------------------------------------
+def get_file_from_cyverse(irods_path):
 
-    # gcp
-
-    expected_gcp_filename = f"gcp_season_{season}.txt"
-    if expected_gcp_filename in requested_input_files_from_yaml:
-        if not os.path.isfile(expected_gcp_filename):
-            get_gcp_file(expected_gcp_filename)
-
-
+    cmd1 = f'iget -KPVT {os.path.join(irods_path)}'
+    sp.call(cmd1, shell=True)
 
 
 # --------------------------------------------------
@@ -449,45 +501,45 @@ def get_bundle_json(irods_path):
     sp.call(cmd1, shell=True)
 
 # --------------------------------------------------
-def get_season_dir_name():
-    season_dir_name = dictionary['tags']['season_dir_name']
-    if not season_dir_name:
+def get_season_name():
+    season_name = dictionary['tags']['season_name']
+    if not season_name:
         raise ValueError(
-          f"ERROR.  You need to specify dictionary['tags']['season_dir_name'] in your yaml file.  For example: \n" + \
-          "season_dir_name: season_11_sorghum_yr_2020"
+          f"ERROR.  You need to specify dictionary['tags']['season_name'] in your yaml file.  For example: \n" + \
+          "season_name: season_11_sorghum_yr_2020"
         )
-    return season_dir_name
+    return season_name
 
-# --------------------------------------------------
-def get_season_detections(clustering_file):
-    '''
-    Gets the season-specific detection clustering file from the CyVerse DataStore.
-
-    Input:
-        - NA
-    
-    Output: 
-        - Season-specific detection clustering file
-    '''
-    season_dir_name = get_season_dir_name()
-    cmd1 = f"iget -KPVT /iplant/home/shared/phytooracle/{season_dir_name}/level_3/stereoTop/{clustering_file}"
-    sp.call(cmd1, shell=True)
-
-
-# --------------------------------------------------
-def get_gcp_file(gcp_file):
-    '''
-    Downloads the season-specific GCP file from the CyVerse DataStore.
-
-    Input:
-        - NA
-    
-    Output: 
-        - Downloaded GCP file in the current working directory
-    '''
-    season_dir_name = get_season_dir_name()
-    cmd1 = f"iget -KPVT /iplant/home/shared/phytooracle/{season_dir_name}/level_0/necessary_files/{gcp_file}"
-    sp.call(cmd1, shell=True)
+## --------------------------------------------------
+#def get_season_detections(clustering_file):
+#    '''
+#    Gets the season-specific detection clustering file from the CyVerse DataStore.
+#
+#    Input:
+#        - NA
+#    
+#    Output: 
+#        - Season-specific detection clustering file
+#    '''
+#    season_name = get_season_name()
+#    cmd1 = f"iget -KPVT /iplant/home/shared/phytooracle/{season_name}/level_3/stereoTop/{clustering_file}"
+#    sp.call(cmd1, shell=True)
+#
+#
+## --------------------------------------------------
+#def get_gcp_file(gcp_file):
+#    '''
+#    Downloads the season-specific GCP file from the CyVerse DataStore.
+#
+#    Input:
+#        - NA
+#    
+#    Output: 
+#        - Downloaded GCP file in the current working directory
+#    '''
+#    season_name = get_season_name()
+#    cmd1 = f"iget -KPVT /iplant/home/shared/phytooracle/{season_name}/level_0/necessary_files/{gcp_file}"
+#    sp.call(cmd1, shell=True)
 
 
 # --------------------------------------------------
@@ -785,27 +837,52 @@ def upload_outputs(date, dictionary):
         - Uploaded data on CyVerse DataStore
     '''  
     args= get_args()
-    root = dictionary['paths']['cyverse']['output']['basename']
-    subdir = dictionary['paths']['cyverse']['output']['subdir']
+    #root = dictionary['paths']['cyverse']['output']['basename']
+    #subdir = dictionary['paths']['cyverse']['output']['subdir']
+
+    season_name = dictionary['tags']['season_name']
+    experiment  = args.experiment
+    sensor      = dictionary['tags']['sensor']
+    cyverse_basename  = dictionary['paths']['cyverse']['basename']
+    cyverse_datalevel = dictionary['paths']['cyverse']['output']['level']
+
+    # Every path (level zero or otherwise) starts the same:
+    # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
+    irods_output_path = os.path.join(
+            cyverse_basename,
+            season_name,
+            cyverse_datalevel,
+            sensor)
+
+    # If level is greater than level zero, then we need to add
+    # two directories: .../experiment/date
+    # for example: level_1/scanner3DTop/sunflower/2222-22-22
+    # but we only add experiment if it exists in YAML
+    if cyverse_datalevel > 'level_0':
+        irods_output_path = os.path.join(
+                                         irods_output_path,
+                                         (experiment if experiment else "")
+        )
+    
+    pdb.set_trace()
 
     cwd = os.getcwd()
     print(cwd)
 
-
     if args.hpc: 
         print(':: Using data transfer node.')
-        sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {root}' '&& icd {root}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
+        sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
 
     else:
         
-        cmd1 = f'imkdir -p {root}'
+        cmd1 = f'imkdir -p {irods_output_path}'
         sp.call(cmd1, shell=True)
 
-        cmd1 = f'icd {root}'
-        sp.call(cmd1, shell=True)
-
-        cmd2 = f'iput -rfKPVT {date}'
+        cmd2 = f'icd {irods_output_path}'
         sp.call(cmd2, shell=True)
+
+        cmd3 = f'iput -rfKPVT {date}'
+        sp.call(cmd3, shell=True)
 
 
 # --------------------------------------------------
@@ -902,12 +979,17 @@ def main():
 
             except yaml.YAMLError as exc:
                 print(exc)
+
+            if args.uploadonly:
+                upload_outputs(date, dictionary)
+                return
                 
-            irods_path = get_irods_path(dictionary, date)
+            irods_path = get_irods_input_path(dictionary, date, args)
             dir_name = download_raw_data(irods_path)
 
-            if dictionary['tags']['sensor']=='scanner3DTop':
-                get_required_files_3d(dictionary=dictionary, date=date)
+            #if dictionary['tags']['sensor']=='scanner3DTop':
+                #get_required_files_3d(dictionary=dictionary, date=date)
+            get_support_files(dictionary=dictionary, date=date)
             
             if args.hpc:
                 kill_workers(dictionary['workload_manager']['job_name'])

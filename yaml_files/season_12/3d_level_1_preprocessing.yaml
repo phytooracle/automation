@@ -1,20 +1,24 @@
 ---
 tags:
-  pipeline: season11_scanner3DTop
-  description: testing_setup
-  notes: Processing of Season 11 scanner3DTop data
-  runby: Nathan and Travis
+  pipeline: season12_scanner3DTop
+  description: testing_season12_preprocessing
+  notes: Test processing of Season 12 scanner3DTop data
+  runby: Nathan
   sensor: scanner3DTop 
-  season: 11
-  season_name: season_11_sorghum_yr_2020
+  season: 12
+  season_name: season_12_sorghum_soybean_sunflower_tepary_yr_2021
   sensor: scanner3DTop
+  # Season 12 and on should have a value for experiment set
+  # (e.g. sorghum, sunflower)
+  # For Season 11 it should be left blank
+  experiment: sorghum
 
 modules:
   1: 
     container: 
       simg_name: 3d_preprocessing.simg
       dockerhub_path: docker://phytooracle/3d_preprocessing:latest
-    command: singularity run 3d_preprocessing.simg -l gcp_season_11.txt -o alignment -i ${INPUT_DIR}
+    command: singularity run 3d_preprocessing.simg -l season12_all_bucket_gcps.txt -o alignment -i ${INPUT_DIR}
     distribution_level: wq
     file_level: 
     input_dir: [scanner3DTop]
@@ -27,7 +31,10 @@ modules:
              $FILE__Top-heading-west_0.ply,
              $FILE__Top-heading-west_0_p.png,
              $FILE__Top-heading-west_0.ply,
-             gcp_season_11.txt]
+             #stereoTop_full_season_clustering.csv,
+             #level_3/stereoTop/stereoTop_full_season_clustering.csv,
+             #level_3/stereoTop/season_12_midseason_clustering.csv,
+             level_0/necessary_files/season12_all_bucket_gcps.txt]
 
     outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
               alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
@@ -39,9 +46,9 @@ modules:
 
 
 workload_manager:
-  account: dukepauli
+  account: lyons-lab
   partition: standard
-  job_name: po_season11_3d
+  job_name: po_season12_3d
   nodes: 1                  # Just do one.  (each array is on a distinct node)
   number_worker_array: 28 #94      # This is number of arrays (workers)
   cores_per_worker: 6       # This is how many cores (cpu/gpu) per array, used to increase tot mem
@@ -49,7 +56,7 @@ workload_manager:
   retries: 1
   port: 6022
   #mem_per_core: 32
-  mem_per_core: 5
+  mem_per_core: 6
   manager_name: po_s11_3D
   worker_timeout_seconds: 900   # 86400
 
@@ -58,15 +65,13 @@ paths:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
   pipeline_outpath: [alignment]
-  outpath_subdirs: [east, east_downsampled, west, west_downsampled, merged, merged_downsampled, metadata]
+  outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled, merged, merged_downsampled, metadata]
 
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
-
     input: 
-      necessary_files: [level_0/necessary_files/gcp_season_11.txt]
       level: level_0
       prefix: scanner3DTop-
-      suffix: __*.tar.gz
+      suffix: __*_sorghum.tar.gz
     output: 
       level: level_1
