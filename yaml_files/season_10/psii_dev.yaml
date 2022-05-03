@@ -2,7 +2,7 @@
 tags:
   pipeline: season10_psii
   description: dev
-  notes: Processing of Season 10 psii data
+  notes: Processing of Season 10 ps2Top data
   runby: Travis Simmons
   sensor: ps2Top
   season: 10

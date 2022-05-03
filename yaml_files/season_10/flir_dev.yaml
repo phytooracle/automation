@@ -1,19 +1,19 @@
 
 tags:
-  pipeline: season10_psii
+  pipeline: season10_flir
   description: dev
-  notes: Processing of Season 10 psii data
+  notes: Processing of Season 10 flir data
   runby: Travis Simmons
-  sensor: ps2Top
+  sensor: flir
   season: 10
   season_dir_name: season_10_lettuce_yr_2020
 
 modules:
   1:
     container: 
-      simg_name: psii_bin_to_tif.simg
-      dockerhub_path: docker://phytooracle/psii_bin_to_tif:latest
-    command:  singularity run psii_bin_to_tif.simg ${FILE} -m ${SUB_DIR}/${UUID}_metadata.json
+      simg_name: flir_bin_to_tif_s10.simg
+      dockerhub_path: docker://phytooracle/flir_bin_to_tif_s10:latest
+    command:  singularity run flir_bin_to_tif_s10.simg ${FILE} -m ${SUB_DIR}/${UUID}_metadata.json
     distribution_level: local
     file_level:
     input_dir: [./$RAW_DATA_PATH]
@@ -25,6 +25,31 @@ modules:
 
   2:
     container: 
+      simg_name: rgb_flir_collect_gps.simg
+      dockerhub_path: docker://phytooracle/rgb_flir_collect_gps.simg
+    command: singularity run rgb_flir_collect_gps.simg
+    distribution_level: local
+    file_level: 
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: []
+
+  3:
+    container: 
+      simg_name: full_geocorrection.simg
+      dockerhub_path: docker://ariyanzarei/full_geocorrection.simg
+    command: singularity run full_geocorrection.simg
+    distribution_level: local
+    file_level: 
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: []
+ 
+
+  4:
+    container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
     command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -sen psii -shp ./season10_multi_latlon_geno.geojson
@@ -33,20 +58,31 @@ modules:
     input_dir: [./bin2tif_out]
     input_file: .tif
     inputs: [$FILE, level_0/season10_multi_latlon_geno.geojson]
-    outputs: []             
-  
+    outputs: []
 
-#  3:
-#     container: 
-#       simg_name: segmentation.simg
-#       dockerhub_path: docker://phytooracle/
-#     command: singularity run 
-#     distribution_level: local
-#     file_level: 
-#     input_dir: []
-#     input_file: 
-#     inputs: []
-#     outputs: []  
+  5:
+    container: 
+      simg_name: stitch_plots.simg?
+      dockerhub_path: docker://phytooracle/stitch_plots.simg
+    command: singularity run stitch_plots.simg
+    distribution_level: local
+    file_level: 
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: []
+    
+  6:
+    container: 
+      simg_name: flir_meantemp.simg
+      dockerhub_path: docker://phytooracle/flir_meantemp.simg
+    command: singularity run flir_meantemp.simg
+    distribution_level: local
+    file_level: 
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: []  
 
 
 workload_manager:
@@ -78,9 +114,3 @@ paths:
       input_dir: []
     output:
       level: level_1
-    #   subdir: 
-    #   prefix: ps2Top-
-    #   suffix: .tar
-    # output: 
-    #   basename: /iplant/home/travis_simmons/
-    #   subdir: 
