@@ -1,19 +1,19 @@
 
 tags:
-  pipeline: season10_psii
+  pipeline: season10_rgb
   description: dev
-  notes: Processing of Season 10 psii data
+  notes: Processing of Season 10 stereoTopRGB data
   runby: Travis Simmons
-  sensor: ps2Top
+  sensor: stereoTopRGB
   season: 10
   season_dir_name: season_10_lettuce_yr_2020
 
 modules:
   1:
     container: 
-      simg_name: psii_bin_to_tif.simg
-      dockerhub_path: docker://phytooracle/psii_bin_to_tif:latest
-    command:  singularity run psii_bin_to_tif.simg ${FILE} -m ${SUB_DIR}/${UUID}_metadata.json
+      simg_name: rgb_bin_to_tif.simg
+      dockerhub_path: docker://phytooracle/rgb_bin_to_tif:latest
+    command:  singularity run rgb_bin_to_tif.simg ${FILE} -m ${SUB_DIR}/${UUID}_metadata.json
     distribution_level: local
     file_level:
     input_dir: [./$RAW_DATA_PATH]
@@ -22,8 +22,31 @@ modules:
              $SUB_DIR/$UUID_metadata.json]
     outputs: [bin2tif_out/$FILE_BASE.tif,
              ]
-
   2:
+    container: 
+      simg_name: full_geocorrection.simg
+      dockerhub_path: docker://ariyanzarei/full_geocorrection.simg
+    command: singularity run full_geocorrection.simg
+    distribution_level: local
+    file_level: 
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: []
+ 
+  3:
+    container: 
+      simg_name: rgb_flir_edit_gps.simg
+      dockerhub_path: docker://phytooracle/rgb_flir_edit_gps.simg
+    command: singularity run rgb_flir_edit_gps.simg
+    distribution_level: local
+    file_level: 
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: []
+
+  4:
     container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
@@ -33,20 +56,31 @@ modules:
     input_dir: [./bin2tif_out]
     input_file: .tif
     inputs: [$FILE, level_0/season10_multi_latlon_geno.geojson]
-    outputs: []             
-  
+    outputs: []    
 
-#  3:
-#     container: 
-#       simg_name: segmentation.simg
-#       dockerhub_path: docker://phytooracle/
-#     command: singularity run 
-#     distribution_level: local
-#     file_level: 
-#     input_dir: []
-#     input_file: 
-#     inputs: []
-#     outputs: []  
+  5:
+    container: 
+      simg_name: stitch_plots.simg
+      dockerhub_path: docker://phytooracle/stitch_plots.simg
+    command: singularity run stitch_plots.simg
+    distribution_level: local
+    file_level: 
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: [] 
+
+  6:
+    container: 
+      simg_name: rgb_flir_plant_detection.simg
+      dockerhub_path: docker://phytooracle/rgb_flir_plant_detection.simg
+    command: singularity run rgb_flir_plant_detection.simg
+    distribution_level: local
+    file_level: 
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: []  
 
 
 workload_manager:
@@ -69,7 +103,7 @@ paths:
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
   pipeline_outpath: [.]
   outpath_subdirs: [bin2tif_out, plotclip_out]
-
+  
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
       necessary_files: [level_0/season10_multi_latlon_geno.geojson]
@@ -78,9 +112,3 @@ paths:
       input_dir: []
     output:
       level: level_1
-    #   subdir: 
-    #   prefix: ps2Top-
-    #   suffix: .tar
-    # output: 
-    #   basename: /iplant/home/travis_simmons/
-    #   subdir: 
