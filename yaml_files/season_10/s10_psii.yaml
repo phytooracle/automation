@@ -13,13 +13,13 @@ modules:
     container: 
       simg_name: psii_bin_to_tif.simg
       dockerhub_path: docker://phytooracle/psii_bin_to_tif:latest
-    command:  singularity run psii_bin_to_tif.simg ${FILE} -m ${SUB_DIR}/${UUID}_metadata.json
+    command:  singularity run psii_bin_to_tif.simg ${FILE} -m ${S_D_PATH}/${UUID}_metadata.json
     distribution_level: local
     file_level:
     input_dir: [./$RAW_DATA_PATH]
     input_file: .bin
     inputs: [$FILE,
-             $SUB_DIR/$UUID_metadata.json]
+             $S_D_PATH/$UUID_metadata.json]
     outputs: [bin2tif_out/$FILE_BASE.tif,
              ]
 
