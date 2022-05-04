@@ -696,6 +696,18 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                             ]
                 } 
 
+        elif sensor == 'ps2Top':
+            jx_dict = {
+                "rules": [
+                            {
+                                "command" : timeout + command.replace('${UUID}', os.path.basename(file).split('_')[0]).replace('${FILE}', file).replace('${SUB_DIR}', os.path.dirname(file)),
+                                "outputs" : [out.replace('$FILE_BASE', os.path.basename(file).replace('.bin', '')) for out in outputs],
+                                "inputs"  : [container] + [input.replace('$SUB_DIR', os.path.dirname(file)).replace('$UUID',os.path.basename(file).split('_')[0]).replace('$FILE', file) for input in inputs]
+
+                            } for file in files_list
+                        ]
+            } 
+            
         else: 
             jx_dict = {
                 "rules": [
