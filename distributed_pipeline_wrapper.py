@@ -1019,8 +1019,7 @@ def main():
                 return
                 
             irods_path = get_irods_input_path(dictionary, date, args)
-            # dir_name = download_raw_data(irods_path)
-            dir_name = 'ps2Top'
+            dir_name = download_raw_data(irods_path)
 
             #if dictionary['tags']['sensor']=='scanner3DTop':
                 #get_required_files_3d(dictionary=dictionary, date=date)
@@ -1062,7 +1061,7 @@ def main():
             create_pipeline_logs(date)
             upload_outputs(date, dictionary)
             if not args.noclean:
-                clean_inputs(date, dictionary)        
+                clean_inputs(date, dictionary)
 
 
 # --------------------------------------------------
