@@ -11,58 +11,29 @@ tags:
 modules:
   1: 
     container: 
-      simg_name: 3d_preprocessing.simg
-      dockerhub_path: docker://phytooracle/3d_preprocessing:latest
-    command: singularity run 3d_preprocessing.simg -l gcp_season_11.txt -o alignment -i ${INPUT_DIR}
+      simg_name: 3d_postprocessing.simg
+      dockerhub_path: docker://phytooracle/3d_postprocessing:latest
+    command: singularity run 3d_postprocessing.simg -i alignment/ -o postprocessing_out -f ${SUBDIR} -t alignment/transfromation.json -p stereoTop_full_season_clustering.csv -s 10 -d ${DATE} -l gcp_season_10.txt
     distribution_level: wq
     file_level: 
-    input_dir: [scanner3DTop]
-    input_file: -west_0.ply
-    inputs: [$FILE_metadata.json,
-             $FILE__Top-heading-east_0_g.png,
-             $FILE__Top-heading-east_0.ply,
-             $FILE__Top-heading-east_0_p.png,
-             $FILE__Top-heading-west_0_g.png,
-             $FILE__Top-heading-west_0.ply,
-             $FILE__Top-heading-west_0_p.png,
-             $FILE__Top-heading-west_0.ply,
-             stereoTop_full_season_clustering.csv,
-             gcp_season_11.txt]
-
-    outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
-              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
-              alignment/merged/$SUBDIR__Top-heading-merged.ply,
-              alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
-              alignment/west/$SUBDIR__Top-heading-west.ply,
-              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
-              alignment/metadata/$SUBDIR_updated-metadata.json]
-
-#  2: 
-#    container: 
-#      simg_name: 3d_postprocessing.simg
-#      dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-#    command: singularity run 3d_postprocessing.simg -i alignment/ -o postprocessing_out -f ${SUBDIR} -t transfromation.json -p stereoTop_full_season_clustering.csv -s 10 -d ${DATE} -l gcp_season_10.txt
-#    distribution_level: wq
-#    file_level: 
-#    input_dir: [alignment, west]
-#    input_file: -west.ply
-#    inputs: [alignment/east/$SUBDIR-east.ply,
-#             alignment/east_downsampled/$SUBDIR-east.ply, 
-#             alignment/merged/$SUBDIR-merged.ply,
-#             alignment/merged_downsampled/$SUBDIR-merged.ply,
-#             alignment/west/$SUBDIR-west.ply,
-#             alignment/west_downsampled/$SUBDIR-west.ply,
-#             transfromation.json,
-#             stereoTop_full_season_clustering.csv,
-#             gcp_season_10.txt]
-#    outputs: [postprocessing_out/east/$SUBDIR-east.ply,
-#              postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
-#              postprocessing_out/merged/$SUBDIR-merged.ply,
-#              postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
-#              postprocessing_out/west/$SUBDIR-west.ply,
-#              postprocessing_out/west_downsampled/$SUBDIR-west.ply]
-#  
-#  3: 
+    input_dir: [alignment, west]
+    input_file: -west.ply
+    inputs: [alignment/east/$SUBDIR-east.ply,
+             alignment/east_downsampled/$SUBDIR-east.ply, 
+             alignment/merged/$SUBDIR-merged.ply,
+             alignment/merged_downsampled/$SUBDIR-merged.ply,
+             alignment/west/$SUBDIR-west.ply,
+             alignment/west_downsampled/$SUBDIR-west.ply,
+             level_3/stereoTop/season_11_clustering.csv,
+             level_0/necessary_files/gcp_season_11.txt]
+    outputs: [postprocessing_out/east/$SUBDIR-east.ply,
+              postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
+              postprocessing_out/merged/$SUBDIR-merged.ply,
+              postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
+              postprocessing_out/west/$SUBDIR-west.ply,
+              postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+  
+  3: 
 #    container: 
 #      simg_name: 3d_crop_individual_plants.simg
 #      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
@@ -196,12 +167,21 @@ paths:
   pipeline_outpath: [individual_plants_out]
   outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled]
 
+#  cyverse: 
+#    input: 
+#      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop/
+#      subdir: 
+#      prefix: scanner?DTop-
+#      suffix: __*.tar?gz
+#    output: 
+#      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_2/scanner3DTop/
+#      subdir: individual_plants_out
   cyverse: 
+    basename: /iplant/home/shared/phytooracle/
+      necessary_files: [level_3/stereoTop/season_11_clustering.csv,
+                        level_0/necessary_files/gcp_season_11.txt]
     input: 
-      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop/
-      subdir: 
-      prefix: scanner?DTop-
-      suffix: __*.tar?gz
+      level: level_1
+      input_dir: [alignment]
     output: 
-      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_2/scanner3DTop/
-      subdir: individual_plants_out
+      level: level_1
