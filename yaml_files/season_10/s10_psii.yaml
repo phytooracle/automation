@@ -73,14 +73,10 @@ paths:
   cyverse:
     basename: /iplant/home/shared/phytooracle/
     input: 
-      level: level_0
-      input_dir: []
+
       necessary_files: [level_0/season10_multi_latlon_geno.geojson]
+      level: level_0
+      prefix: ps2Top-
+      suffix: .tar
     output:
       level: level_1
-    #   subdir: 
-    #   prefix: ps2Top-
-    #   suffix: .tar
-    # output: 
-    #   basename: /iplant/home/travis_simmons/
-    #   subdir: 
