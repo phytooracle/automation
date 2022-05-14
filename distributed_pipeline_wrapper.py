@@ -306,7 +306,7 @@ def get_file_list(directory, level, match_string='.ply'):
     '''
     files_list = []
     subdir_list = []
-
+    print(directory, match_string)
     for root, dirs, files in os.walk(directory, topdown=False):
         for name in files:
             if match_string in name:
@@ -331,7 +331,16 @@ def get_file_list(directory, level, match_string='.ply'):
         plant_names = list(set(plant_names))
         plant_names = [os.path.join(directory, plant_name, 'null.ply') for plant_name in plant_names]
         files_list = plant_names
-
+    if level=='directory':
+        print(f'Looking for directories matching {match_string} to submit...')
+        for root, dirs, files in os.walk(directory, topdown=False):
+            for name in dirs:
+                if match_string in name:
+                    print(name)
+                    if ' ' in name:
+                        name = name.replace(' ', '\ ')
+                        print(name)
+                    files_list.append(os.path.join(root, name))
     return files_list
 
 
@@ -697,11 +706,12 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                 } 
 
         elif sensor == 'ps2Top':
+            print(files_list)
             jx_dict = {
                 "rules": [
                             {
                                 "command" : timeout + command.replace('${UUID}', os.path.basename(file).split('_')[0]).replace('${FILE}', file).replace('${SUB_DIR}', os.path.dirname(file)),
-                                "outputs" : [out.replace('$FILE_BASE', os.path.basename(file).replace('.bin', '')) for out in outputs],
+                                "outputs" : [out.replace('$PLOTCLIP_OUTFILES', 'plotclip_out/$(wildcard *)/$FILE_BASE').replace('$FILE_BASE', os.path.basename(file).replace('.bin', '')) for out in outputs],
                                 "inputs"  : [container] + [input.replace('$SUB_DIR', os.path.dirname(file)).replace('$UUID',os.path.basename(file).split('_')[0]).replace('$FILE', file) for input in inputs]
 
                             } for file in files_list
@@ -993,8 +1003,8 @@ def main():
                 return
                 
             irods_path = get_irods_input_path(dictionary, date, args)
-            dir_name = download_raw_data(irods_path)
-
+            #dir_name = download_raw_data(irods_path)
+            dir_name = 'ps2Top'
             #if dictionary['tags']['sensor']=='scanner3DTop':
                 #get_required_files_3d(dictionary=dictionary, date=date)
             get_support_files(dictionary=dictionary, date=date)
@@ -1032,10 +1042,10 @@ def main():
         
             kill_workers(dictionary['workload_manager']['job_name'])
             tar_outputs(date, dictionary)
-            create_pipeline_logs(date)
-            upload_outputs(date, dictionary)
-            if not args.noclean:
-                clean_inputs(date, dictionary)        
+    #        create_pipeline_logs(date)
+    #        upload_outputs(date, dictionary)
+    #        if not args.noclean:
+     #           clean_inputs(date, dictionary)        
 
 
 # --------------------------------------------------

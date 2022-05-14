@@ -13,14 +13,13 @@ modules:
       simg_name: psii_bin_to_tif.simg
       dockerhub_path: docker://phytooracle/psii_bin_to_tif:latest
     command:  singularity run psii_bin_to_tif.simg ${FILE} -m ${SUB_DIR}/${UUID}_metadata.json
-    distribution_level: local
+    distribution_level: wq
     file_level:
-    input_dir: [./$RAW_DATA_PATH]
+    input_dir: [$RAW_DATA_PATH]
     input_file: .bin
-    inputs: [$FILE,
-             $SUB_DIR/$UUID_metadata.json]
-    outputs: [bin2tif_out/$FILE_BASE.tif,
-             ]
+    inputs: [$FILE, 
+$SUB_DIR/$UUID_metadata.json]
+    outputs: [bin2tif_out/$FILE_BASE.tif]
 
   2:
     container: 
@@ -31,7 +30,7 @@ modules:
     file_level: 
     input_dir: [./bin2tif_out]
     input_file: .tif
-    inputs: [$FILE, level_0/season10_multi_latlon_geno.geojson]
+    inputs: [$FILE, season10_multi_latlon_geno.geojson]
     outputs: []             
 
   3:
@@ -42,7 +41,7 @@ modules:
     distribution_level: local
     file_level: directory
     input_dir: [./plotclip_out]
-    input_file: MAC
+    input_file: MAC     
     inputs: [$FILE]
     outputs: []
 
@@ -52,24 +51,24 @@ modules:
       dockerhub_path: docker://phytooracle/psii_fluorescence_aggregation
     command: singularity run psii_fluorescence_aggregation.simg ${FILE} -m multithresh.json
     distribution_level: local
-    file_level: 
-    input_dir: [./psii_segmentation_out]
-    input_file: .csv
+    file_level: directory
+    input_dir: [.]
+    input_file: psii_segmentation_out 
     inputs: [$FILE, multithresh.json]
     outputs: []  
 
 workload_manager:
   account: dukepauli
   partition: standard
-  job_name: phytooracle_worker
+  job_name: psii_phytooracle_worker
   nodes: 1
   number_worker_array: 400
   cores_per_worker: 50
   time_minutes: 4320
   retries: 1
-  port: 0
+  port: 1738
   mem_per_core: 5
-  manager_name: phytooracle_manager_travis
+  manager_name: psii_manager_travis
   worker_timeout_seconds: 900 #86400
 
 paths:
@@ -84,12 +83,12 @@ paths:
     input: 
       level: level_0
       input_dir: []
+      prefix: ps2Top-
+      suffix: .tar
       necessary_files: [level_0/season10_multi_latlon_geno.geojson, level_0/necessary_files/multithresh.json]
     output:
       level: level_1
     #   subdir: 
-    #   prefix: ps2Top-
-    #   suffix: .tar
     # output: 
     #   basename: /iplant/home/travis_simmons/
     #   subdir: 
