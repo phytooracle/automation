@@ -7,6 +7,7 @@ tags:
   sensor: scanner3DTop 
   season: 11
   season_name: season_11_sorghum_yr_2020
+  sensor: scanner3DTop
 
 modules:
   1: 
@@ -62,7 +63,8 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
 
-    input: 
+    input:
+      input_dir: [] 
       necessary_files: [level_0/necessary_files/gcp_season_11.txt]
       level: level_0
       prefix: scanner3DTop-

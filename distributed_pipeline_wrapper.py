@@ -940,7 +940,11 @@ def clean_inputs(date, dictionary):
 
     if os.path.isdir('scanner3DTop'):
         shutil.rmtree('scanner3DTop')
-
+                                                                                                                                                                                                         
+    raw_data_list = glob.glob(f'./scanner3DTop-{date}*')                                                                                                                                                 
+    if len(raw_data_list) > 0:                                                                                                                                                                           
+        shutil.rmtree(glob.glob(f'scanner3DTop-{date}*')[0])                                                                                                                                             
+                   
     for item in dictionary['paths']['pipeline_outpath']:
         if os.path.isdir(item):
             shutil.rmtree(item)
