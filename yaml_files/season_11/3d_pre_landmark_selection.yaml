@@ -7,7 +7,6 @@ tags:
   sensor: scanner3DTop 
   season: 11
   season_name: season_11_sorghum_yr_2020
-  sensor: scanner3DTop
 
 modules:
   1: 

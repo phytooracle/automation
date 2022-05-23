@@ -6,7 +6,7 @@ tags:
   runby: Travis Simmons
   sensor: ps2Top
   season: 10
-  season_dir_name: season_10_lettuce_yr_2020
+  season_name: season_10_lettuce_yr_2020
 
 modules:
   1:
@@ -70,17 +70,13 @@ paths:
   pipeline_outpath: [.]
   outpath_subdirs: [bin2tif_out, plotclip_out]
 
-  cyverse: 
+  cyverse:
     basename: /iplant/home/shared/phytooracle/
-      necessary_files: [level_0/season10_multi_latlon_geno.geojson]
     input: 
+
+      necessary_files: [level_0/season10_multi_latlon_geno.geojson]
       level: level_0
-      input_dir: []
+      prefix: ps2Top-
+      suffix: .tar
     output:
       level: level_1
-    #   subdir: 
-    #   prefix: ps2Top-
-    #   suffix: .tar
-    # output: 
-    #   basename: /iplant/home/travis_simmons/
-    #   subdir: 
