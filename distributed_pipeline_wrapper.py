@@ -142,23 +142,38 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
     return '-'.join(['cctools', cctools_version, architecture, sys_os])
 
 
-def get_irods_input_dir(dictionary, date, args):
+def build_irods_path_to_sensor_from_yaml(yaml_dictionary):
+    """
+    Every path (level zero or otherwise) starts the same:
+    .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
+    """
 
-    season_name = dictionary['tags']['season_name']
-    experiment  = args.experiment
-    sensor      = dictionary['tags']['sensor']
-    cyverse_basename  = dictionary['paths']['cyverse']['basename']
-    cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
-    prefix            = dictionary['paths']['cyverse']['input']['prefix']
-    suffix            = dictionary['paths']['cyverse']['input']['suffix']
+    cyverse_basename  = yaml_dictionary['paths']['cyverse']['basename']
+    season_name       = yaml_dictionary['tags']['season_name']
+    cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
+    sensor            = yaml_dictionary['tags']['sensor']
 
-    # Every path (level zero or otherwise) starts the same:
-    # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
-    irods_path = os.path.join(
+    path = os.path.join(
             cyverse_basename,
             season_name,
             cyverse_datalevel,
-            sensor)
+            sensor
+    )
+
+    return path
+
+def download_irods_input_dir(dictionary, date, args):
+    """
+    Download all contents from the dictionary['paths']['cyverse']['input']['input_dir']
+    """
+
+    input_dir = dictionary['paths']['cyverse']['input']['input_dir']
+
+
+    sensor_path = build_irods_path_to_sensor_from_yaml(dictionary)
+    input_dir_path = os.path.join(sensor_path, input_dir_path)
+
+    breakpoint()
 
 # --------------------------------------------------
 def get_irods_input_path(dictionary, date, args):
@@ -172,22 +187,12 @@ def get_irods_input_path(dictionary, date, args):
         - irods_path: CyVerse filepath
     """
 
-    season_name = dictionary['tags']['season_name']
-    experiment  = args.experiment
-    sensor      = dictionary['tags']['sensor']
-    cyverse_basename  = dictionary['paths']['cyverse']['basename']
+    experiment        = args.experiment
     cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
     prefix            = dictionary['paths']['cyverse']['input']['prefix']
     suffix            = dictionary['paths']['cyverse']['input']['suffix']
-    input_dir         = dictionary['paths']['cyverse']['input']['input_dir']
 
-    # Every path (level zero or otherwise) starts the same:
-    # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
-    irods_path = os.path.join(
-            cyverse_basename,
-            season_name,
-            cyverse_datalevel,
-            sensor)
+    irods_path = build_irods_path_to_sensor_from_yaml(dictionary)
 
     # If level is greater than level zero, then we need to add
     # two directories: .../expirment/date
@@ -230,7 +235,7 @@ def get_irods_input_path(dictionary, date, args):
 
 
 # --------------------------------------------------
-def download_raw_data(irods_path):
+def download_irods_input_file(irods_path):
     """Download raw dataset from CyVerse DataStore
     
         Input:
@@ -986,13 +991,9 @@ def main():
     for date in args.date:
         
         with open(args.yaml, 'r') as stream:
-            try:
-                global dictionary
-                dictionary = yaml.safe_load(stream)
-                build_containers(dictionary)
-
-            except yaml.YAMLError as exc:
-                print(exc)
+            global dictionary
+            dictionary = yaml.safe_load(stream)
+            build_containers(dictionary)
 
             if args.uploadonly:
                 upload_outputs(date, dictionary)
@@ -1001,13 +1002,14 @@ def main():
             # Figure out what we need to DL
             # + a single file with a prefix and suffix and randum numbers in it?
             # + a directory full of files?
-            input_dir = dictionary['paths']['cyverse']['input']['input_dir']
-            if input_dir:
-                get_irods_input_dir(dictionary, date, args)
-                dir_name = input_dir
-            else:
+            try:
+                # if 'input_dir' exists in YAML...
+                dir_name = dictionary['paths']['cyverse']['input']['input_dir']
+                download_irods_input_dir(dictionary, date, args)
+            except KeyError:
+                # else...
                 irods_path = get_irods_input_path(dictionary, date, args)
-                dir_name = download_raw_data(irods_path)
+                dir_name = download_irods_input_file(irods_path)
 
             #if dictionary['tags']['sensor']=='scanner3DTop':
                 #get_required_files_3d(dictionary=dictionary, date=date)

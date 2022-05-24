@@ -33,7 +33,7 @@ modules:
               postprocessing_out/west/$SUBDIR-west.ply,
               postprocessing_out/west_downsampled/$SUBDIR-west.ply]
   
-  3: 
+#  3: 
 #    container: 
 #      simg_name: 3d_crop_individual_plants.simg
 #      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
@@ -166,21 +166,10 @@ paths:
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
   pipeline_outpath: [individual_plants_out]
   outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled]
-
-#  cyverse: 
-#    input: 
-#      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop/
-#      subdir: 
-#      prefix: scanner?DTop-
-#      suffix: __*.tar?gz
-#    output: 
-#      basename: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_2/scanner3DTop/
-#      subdir: individual_plants_out
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
-      necessary_files: [level_3/stereoTop/season_11_clustering.csv,
-                        level_0/necessary_files/gcp_season_11.txt]
     input: 
+      necessary_files: [level_3/stereoTop/season_11_clustering.csv, level_0/necessary_files/gcp_season_11.txt]
       level: level_1
       input_dir: alignment
     output: 
