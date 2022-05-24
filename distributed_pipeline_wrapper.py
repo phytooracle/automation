@@ -149,7 +149,8 @@ def build_irods_path_to_sensor_from_yaml(yaml_dictionary):
     """
 
     cyverse_basename  = yaml_dictionary['paths']['cyverse']['basename']
-    season_name       = yaml_dictionary['tags']['season_name']
+    #season_name       = yaml_dictionary['tags']['season_name']
+    season_name       = get_season_name()
     cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
     sensor            = yaml_dictionary['tags']['sensor']
 
@@ -171,7 +172,28 @@ def download_irods_input_dir(dictionary, date, args):
 
 
     sensor_path = build_irods_path_to_sensor_from_yaml(dictionary)
-    input_dir_path = os.path.join(sensor_path, input_dir_path)
+    irods_input_dir_path = os.path.join(sensor_path, date, input_dir)
+
+    cyverse_ls = sp.run(["ils", irods_input_dir_path], stdout=sp.PIPE).stdout
+    dir_files = [x.strip() for x in cyverse_ls.decode('utf-8').splitlines()][1:]
+
+    cwd = os.getcwd()
+    print(cwd)
+
+    if args.hpc: 
+        print(':: Using data transfer node.')
+        sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
+
+    else:
+        
+        cmd1 = f'imkdir -p {irods_output_path}'
+        sp.call(cmd1, shell=True)
+
+        cmd2 = f'icd {irods_output_path}'
+        sp.call(cmd2, shell=True)
+
+        cmd3 = f'iput -rfKPVT {date}'
+        sp.call(cmd3, shell=True)
 
     breakpoint()
 
@@ -422,7 +444,8 @@ def get_support_files(dictionary, date):
         - Downloaded files/directories in the current working directory
     '''
 
-    season_name = dictionary['tags']['season_name']
+    #season_name = dictionary['tags']['season_name']
+    season_name = get_season_name()
     cyverse_basename  = dictionary['paths']['cyverse']['basename']
 
     irods_basename = os.path.join(
@@ -530,37 +553,6 @@ def get_season_name():
           "season_name: season_11_sorghum_yr_2020"
         )
     return season_name
-
-## --------------------------------------------------
-#def get_season_detections(clustering_file):
-#    '''
-#    Gets the season-specific detection clustering file from the CyVerse DataStore.
-#
-#    Input:
-#        - NA
-#    
-#    Output: 
-#        - Season-specific detection clustering file
-#    '''
-#    season_name = get_season_name()
-#    cmd1 = f"iget -KPVT /iplant/home/shared/phytooracle/{season_name}/level_3/stereoTop/{clustering_file}"
-#    sp.call(cmd1, shell=True)
-#
-#
-## --------------------------------------------------
-#def get_gcp_file(gcp_file):
-#    '''
-#    Downloads the season-specific GCP file from the CyVerse DataStore.
-#
-#    Input:
-#        - NA
-#    
-#    Output: 
-#        - Downloaded GCP file in the current working directory
-#    '''
-#    season_name = get_season_name()
-#    cmd1 = f"iget -KPVT /iplant/home/shared/phytooracle/{season_name}/level_0/necessary_files/{gcp_file}"
-#    sp.call(cmd1, shell=True)
 
 
 # --------------------------------------------------
@@ -861,7 +853,8 @@ def upload_outputs(date, dictionary):
     #root = dictionary['paths']['cyverse']['output']['basename']
     #subdir = dictionary['paths']['cyverse']['output']['subdir']
 
-    season_name = dictionary['tags']['season_name']
+    #season_name = dictionary['tags']['season_name']
+    season_name = get_season_name()
     experiment  = args.experiment
     sensor      = dictionary['tags']['sensor']
     cyverse_basename  = dictionary['paths']['cyverse']['basename']
@@ -1004,10 +997,12 @@ def main():
             # + a directory full of files?
             try:
                 # if 'input_dir' exists in YAML...
+                print("Using input dir (not file)")
                 dir_name = dictionary['paths']['cyverse']['input']['input_dir']
                 download_irods_input_dir(dictionary, date, args)
             except KeyError:
                 # else...
+                print("Using input file (not dir)")
                 irods_path = get_irods_input_path(dictionary, date, args)
                 dir_name = download_irods_input_file(irods_path)
 

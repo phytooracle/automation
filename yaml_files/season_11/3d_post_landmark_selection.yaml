@@ -6,7 +6,7 @@ tags:
   runby: Nathan and Travis
   sensor: scanner3DTop 
   season: 11
-  season_dir_name: season_11_sorghum_yr_2020
+  season_name: season_11_sorghum_yr_2020
 
 modules:
   1: 
