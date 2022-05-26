@@ -27,3 +27,4 @@ nathan*
 slurm-*
 makeflow.failed.*
 season*gcp*.txt
+__pycache__
