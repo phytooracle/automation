@@ -4,7 +4,7 @@ tags:
   description: Process gantry data so that it can be run through landmark selection.
   notes: Processing of Season 11 scanner3DTop data
   runby: Nathan and Travis
-  sensor: scanner3DTop 
+  sensor: scanner3DTop
   season: 11
   season_name: season_11_sorghum_yr_2020
 
@@ -68,6 +68,6 @@ paths:
       necessary_files: [level_0/necessary_files/gcp_season_11.txt]
       level: level_0
       prefix: scanner3DTop-
-      suffix: .tar.gz #__*
+      suffix: __*.tar.gz #
     output: 
       level: level_1
