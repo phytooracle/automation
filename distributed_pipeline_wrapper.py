@@ -76,8 +76,6 @@ def get_args():
 
     parser.add_argument('--uploadonly',
                         help='just do cyverse ul and exit (for testing)',
-                        #metavar='noclean',
-                        #default=False,
                         action='store_true',
                        )
 
@@ -1036,6 +1034,7 @@ def main():
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
                 run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log')
                 if not args.noclean:
+                    print(f"Cleaning directory")
                     clean_directory()
         
             kill_workers(dictionary['workload_manager']['job_name'])
@@ -1043,6 +1042,7 @@ def main():
             create_pipeline_logs(date)
             upload_outputs(date, dictionary)
             if not args.noclean:
+                print(f"Cleaning inputs")
                 clean_inputs(date, dictionary)        
 
 
