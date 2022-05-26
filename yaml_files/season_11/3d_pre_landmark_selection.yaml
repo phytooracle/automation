@@ -64,6 +64,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
+      input_dir: []
       necessary_files: [level_0/necessary_files/gcp_season_11.txt]
       level: level_0
       prefix: scanner3DTop-
