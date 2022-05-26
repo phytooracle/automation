@@ -68,6 +68,6 @@ paths:
       necessary_files: [level_0/necessary_files/gcp_season_11.txt]
       level: level_0
       prefix: scanner3DTop-
-      suffix: __*.tar.gz
+      suffix: .tar.gz #__*
     output: 
       level: level_1
