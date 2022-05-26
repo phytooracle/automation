@@ -17,6 +17,8 @@ import glob
 import tarfile
 import multiprocessing
 
+# Our libraries...
+import server_utils
 
 # --------------------------------------------------
 def get_args():
@@ -165,37 +167,35 @@ def build_irods_path_to_sensor_from_yaml(yaml_dictionary):
 
 def download_irods_input_dir(dictionary, date, args):
     """
-    Download all contents from the dictionary['paths']['cyverse']['input']['input_dir']
+    (0) Make the local input_dir
+    (1) Download all contents from the cyverse location pointed to
+    by dictionary['paths']['cyverse']['input']['input_dir']
+    (2) Untar stuff if needed
+
+    Usecase example...  The level 1 3D data after landmark selection is a bunch of tarballs
+    and a json file that live in a directory called `alignment`.  So we have to make that
+    dir locally, and then DL and untar each tarball and then DL the json file too.
     """
 
+    # Step (0)
     input_dir = dictionary['paths']['cyverse']['input']['input_dir']
+    server_utils.make_dir(input_dir)
 
-
+    # Step (1)
     sensor_path = build_irods_path_to_sensor_from_yaml(dictionary)
     irods_input_dir_path = os.path.join(sensor_path, date, input_dir)
+    files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_input_dir_path)
+    file_paths = [os.path.join(irods_input_dir_path, x) for x in files_in_dir]
 
-    cyverse_ls = sp.run(["ils", irods_input_dir_path], stdout=sp.PIPE).stdout
-    dir_files = [x.strip() for x in cyverse_ls.decode('utf-8').splitlines()][1:]
+    os.chdir(input_dir)
+    server_utils.download_files_from_cyverse(file_paths)
 
-    cwd = os.getcwd()
-    print(cwd)
+    # Step (2)
 
-    if args.hpc: 
-        print(':: Using data transfer node.')
-        sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
+    server_utils.untar_files(files_in_dir)
 
-    else:
-        
-        cmd1 = f'imkdir -p {irods_output_path}'
-        sp.call(cmd1, shell=True)
-
-        cmd2 = f'icd {irods_output_path}'
-        sp.call(cmd2, shell=True)
-
-        cmd3 = f'iput -rfKPVT {date}'
-        sp.call(cmd3, shell=True)
-
-    breakpoint()
+    os.chdir('../')
+    return
 
 # --------------------------------------------------
 def get_irods_input_path(dictionary, date, args):
@@ -461,7 +461,7 @@ def get_support_files(dictionary, date):
         if not os.path.isfile(filename):
             cyverse_path = os.path.join(irods_basename, file_path)
             print(f"    We need to get: {cyverse_path}")
-            get_file_from_cyverse(os.path.join(irods_basename, file_path))
+            server_utils.download_file_from_cyverse(os.path.join(irods_basename, file_path))
         else:
             print(f"FOUND")
 
@@ -486,11 +486,6 @@ def get_support_files(dictionary, date):
 #            get_gcp_file(expected_gcp_filename)
 
 
-# --------------------------------------------------
-def get_file_from_cyverse(irods_path):
-
-    cmd1 = f'iget -KPVT {os.path.join(irods_path)}'
-    sp.call(cmd1, shell=True)
 
 
 # --------------------------------------------------
@@ -991,6 +986,8 @@ def main():
             if args.uploadonly:
                 upload_outputs(date, dictionary)
                 return
+
+            server_utils.hpc = args.hpc
                 
             # Figure out what we need to DL
             # + a single file with a prefix and suffix and randum numbers in it?
