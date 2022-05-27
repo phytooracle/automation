@@ -181,10 +181,7 @@ def download_irods_input_dir(dictionary, date, args):
 
     # Step (1)
     sensor_path = build_irods_path_to_sensor_from_yaml(dictionary)
-    print(sensor_path)
-    print(date)
-    print(input_dir)
-    irods_input_dir_path = os.path.join(sensor_path, date, input_dir) if input_dir else os.path.join(sensor_path, date) 
+    irods_input_dir_path = os.path.join(sensor_path, date, input_dir) 
     files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_input_dir_path)
     file_paths = [os.path.join(irods_input_dir_path, x) for x in files_in_dir]
 
