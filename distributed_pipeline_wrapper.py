@@ -181,7 +181,7 @@ def download_irods_input_dir(dictionary, date, args):
 
     # Step (1)
     sensor_path = build_irods_path_to_sensor_from_yaml(dictionary)
-    irods_input_dir_path = os.path.join(sensor_path, date, input_dir)
+    irods_input_dir_path = os.path.join(sensor_path, date, input_dir) 
     files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_input_dir_path)
     file_paths = [os.path.join(irods_input_dir_path, x) for x in files_in_dir]
 
@@ -571,7 +571,7 @@ def get_model_files(seg_model_path, det_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(cctools_path, account, partition, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, outfile='worker.sh'):
+def launch_workers(cctools_path, account, partition, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, qos_group, outfile='worker.sh'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -606,6 +606,8 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, time, mem_
         fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
         fh.writelines(f"#SBATCH --time={time}\n")
         fh.writelines(f'#SBATCH --array 1-{number_worker_array}\n')
+        if qos_group:
+            fh.writelines(f'#SBATCH --qos={qos_group}\n')
         fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
         fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
@@ -665,7 +667,8 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                             manager_name=dictionary['workload_manager']['manager_name'], 
                             number_worker_array=dictionary['workload_manager']['number_worker_array'], 
                             cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                            worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
+                            worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'],
+                            qos_group=dictionary['workload_manager']['qos_group'])
 
                 subdir_list = []
                 for item in files_list:
@@ -1020,7 +1023,8 @@ def main():
                         manager_name=dictionary['workload_manager']['manager_name'], 
                         number_worker_array=dictionary['workload_manager']['number_worker_array'], 
                         cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                        worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
+                        worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'],
+                        qos_group=dictionary['workload_manager']['qos_group'])
 
             global seg_model_name, det_model_name
             seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
