@@ -997,6 +997,9 @@ def main():
                 # if 'input_dir' exists in YAML...
                 print("Using input dir (not file)")
                 dir_name = dictionary['paths']['cyverse']['input']['input_dir']
+                if len(dir_name) < 1:
+                    raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
+                                       Found: {matching_files}")
                 download_irods_input_dir(dictionary, date, args)
             except KeyError:
                 # else...
