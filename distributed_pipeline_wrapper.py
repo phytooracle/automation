@@ -612,7 +612,10 @@ def launch_workers(cctools_path, account, partition, job_name, nodes, time, mem_
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
         fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
 
-    sp.call(f"sbatch {outfile}", shell=True)
+    return_code = sp.call(f"sbatch {outfile}", shell=True)
+    if return_code == 1:
+        raise Exception(f"sbatch Failed")
+
 
 
 # --------------------------------------------------
