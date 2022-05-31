@@ -766,7 +766,6 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, retries=3
     cctools = os.path.join(home, cctools)
     arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --disable-cache $@'
     cmd1 = ' '.join([cctools, arguments])
-
     sp.call(cmd1, shell=True)
 
 
@@ -1037,8 +1036,9 @@ def main():
 
             for k, v in dictionary['modules'].items():
                 
-                if k != 1:
+                if 'input_dir' in v.keys():
                     dir_name = os.path.join(*v['input_dir'])
+
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
