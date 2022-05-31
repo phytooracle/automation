@@ -1,9 +1,9 @@
 ---
 tags:
   pipeline: season11_scanner3DTop
-  description: testing_setup
+  description: dev
   notes: Post landmark selection processing of Season 11 scanner3DTop data
-  runby: Paulilab
+  runby: Unspecified Paulilab member
   sensor: scanner3DTop 
   season: 11
   season_name: season_11_sorghum_yr_2020
@@ -146,6 +146,7 @@ modules:
 #              individual_plants_out/plant_reports/$PLANT_NAME/segmentation_dbscan_compare.gif]
 workload_manager:
   account: dukepauli
+  qos_group: user_qos_dukepauli
   partition: standard
   job_name: po_season11_3d
   nodes: 1                  # Just do one.  (each array is on a distinct node)
@@ -158,7 +159,6 @@ workload_manager:
   mem_per_core: 5
   manager_name: s11_3D_post
   worker_timeout_seconds: 900   # 86400
-
 
 paths:
   models:
