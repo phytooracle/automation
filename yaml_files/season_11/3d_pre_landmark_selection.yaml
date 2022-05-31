@@ -39,8 +39,14 @@ modules:
 
 workload_manager:
   account: dukepauli
-  qos_group: user_qos_dukepauli
-  partition: standard
+
+  high_priority_settings:
+    use: False
+    qos_group: user_qos_dukepauli
+    partition: high_priority
+  standard_settings:
+    partition: standard
+
   job_name: po_season11_3d
   nodes: 1                  # Just do one.  (each array is on a distinct node)
   number_worker_array: 333 #94      # This is number of arrays (workers)
