@@ -571,7 +571,7 @@ def get_model_files(seg_model_path, det_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, outfile='worker.sh'):
+def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, outfile='worker.sh', outfile_priority='worker_priority.sh'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -592,31 +592,44 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
         - Running workers on an HPC system
     '''
     time_seconds = int(time)*60
-    with open(outfile, 'w') as fh:
-        fh.writelines("#!/bin/bash\n")
-        fh.writelines(f"#SBATCH --account={account}\n")
-        fh.writelines(f"#SBATCH --job-name={job_name}\n")
-        fh.writelines(f"#SBATCH --nodes={nodes}\n")
-        fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
-        # fh.writelines(f"#SBATCH --ntasks={int(nodes) * int(number_tasks)}\n")
-        # fh.writelines(f"#SBATCH --ntasks-per-node={number_tasks_per_node}\n")
-        # fh.writelines(f"#SBATCH --ntasks-per-core=1\n")
-        # fh.writelines(f"#SBATCH --cpus-per-task={cores}\n")
-        fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
-        fh.writelines(f"#SBATCH --time={time}\n")
-        fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
-        if dictionary['workload_manager']['high_priority_settings']['use']=='True':
+    
+    if dictionary['workload_manager']['standard_settings']['use']==True:
+        with open(outfile, 'w') as fh:
+            fh.writelines("#!/bin/bash\n")
+            fh.writelines(f"#SBATCH --account={account}\n")
+            fh.writelines(f"#SBATCH --job-name={job_name}\n")
+            fh.writelines(f"#SBATCH --nodes={nodes}\n")
+            fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
+            fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
+            fh.writelines(f"#SBATCH --time={time}\n")
+            fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
+            fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
+            fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
+            fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
+            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
+        return_code = sp.call(f"sbatch {outfile}", shell=True)
+        if return_code == 1:
+            raise Exception(f"sbatch Failed")
+
+    if dictionary['workload_manager']['high_priority_settings']['use']==True:
+        with open(outfile_priority, 'w') as fh:
+            fh.writelines("#!/bin/bash\n")
+            fh.writelines(f"#SBATCH --account={account}\n")
+            fh.writelines(f"#SBATCH --job-name={job_name}\n")
+            fh.writelines(f"#SBATCH --nodes={nodes}\n")
+            fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
+            fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
+            fh.writelines(f"#SBATCH --time={time}\n")
+            fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
             fh.writelines(f"#SBATCH --qos={dictionary['workload_manager']['high_priority_settings']['qos_group']}\n")
             fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['high_priority_settings']['partition']}\n")
-        else:
-            fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
-        fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
-        fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-        fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
-
-    return_code = sp.call(f"sbatch {outfile}", shell=True)
-    # if return_code == 1:
-    #     raise Exception(f"sbatch Failed")
+            fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
+            fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
+            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
+        return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
+        if return_code == 1:
+            raise Exception(f"sbatch Failed")
+    
 
 
 
@@ -973,6 +986,9 @@ def clean_inputs(date, dictionary):
     
     if os.path.isfile('worker.sh'):
         os.remove('worker.sh')
+        
+    if os.path.isfile('worker_priority.sh'):
+        os.remove('worker_priority.sh')
 
 # --------------------------------------------------
 def main():
