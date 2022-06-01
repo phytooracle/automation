@@ -16,7 +16,7 @@ modules:
     command: singularity run 3d_preprocessing.simg -l gcp_season_11.txt -o alignment -i ${INPUT_DIR}
     distribution_level: wq
     file_level: 
-    #input_dir: [scanner3DTop]
+    # input_dir: [scanner3DTop]
     input_file: -west_0.ply
     inputs: [$FILE_metadata.json,
              $FILE__Top-heading-east_0_g.png,
@@ -45,6 +45,7 @@ workload_manager:
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
+    use: True
     partition: standard
 
   job_name: po_season11_3d
