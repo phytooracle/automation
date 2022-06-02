@@ -29,3 +29,4 @@ makeflow.failed.*
 season*gcp*.txt
 __pycache__
 alignment/*
+scanf
