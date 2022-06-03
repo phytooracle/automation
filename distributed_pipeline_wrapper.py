@@ -303,15 +303,9 @@ def download_irods_input_file(irods_path):
     
     if any(x in tarball_filename for x in gzip_extensions):
 #     if gzip_extension in tarball_filename:
-        if args.hpc:
-            pre_command = f"module load pigz"
-            sp.call(pre_command, shell=True)
 
-        if args.pigz:
-            command = f"tar -I pigz -ztf {tarball_filename}"
+        command = f"tar -ztf {tarball_filename}"
 
-        else:
-            command = f"tar -ztf {tarball_filename}"
     else:
         command = f"tar -tf {tarball_filename}"
         
@@ -331,8 +325,12 @@ def download_irods_input_file(irods_path):
         #cmd1 = f'iget -fPVT {irods_path}'
 
         if '.gz' in tarball_filename: 
-            cmd2 = f'tar -xzvf {tarball_filename}'
-            cmd3 = f'rm {tarball_filename}'
+            if args.hpc:
+                pre_command = f"module load pigz"
+                sp.call(pre_command, shell=True)
+
+            if args.pigz:
+                command = f"module load pigz && tar -I pigz -ztf {tarball_filename}"
 
         else: 
             cmd2 = f'tar -xvf {tarball_filename}'
