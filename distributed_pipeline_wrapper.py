@@ -325,6 +325,9 @@ def download_irods_input_file(irods_path):
         #cmd1 = f'iget -fPVT {irods_path}'
 
         if '.gz' in tarball_filename: 
+            cmd2 = f'tar -xzvf {tarball_filename}'
+            cmd3 = f'rm {tarball_filename}'
+            
             if args.hpc:
                 pre_command = f"module load pigz"
                 sp.call(pre_command, shell=True)
