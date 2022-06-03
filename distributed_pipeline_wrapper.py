@@ -344,7 +344,7 @@ def download_irods_input_file(irods_path):
             print('>>>>>>Using data transfer node.')
             cwd = os.getcwd()
             # sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd2}' '&& {cmd3}' '&& exit'", shell=True)
-            sp.call(f"cd {cwd} && {cmd2} && {cmd3}")
+            sp.call(f"cd {cwd} && {cmd2} && {cmd3}", shell=True)
         else: 
             sp.call(cmd2, shell=True)
             sp.call(cmd3, shell=True)
