@@ -330,7 +330,7 @@ def download_irods_input_file(irods_path):
                 sp.call(pre_command, shell=True)
 
             if args.pigz:
-                command = f"module load pigz && tar -I pigz -ztf {tarball_filename}"
+                command = f"tar -I pigz -ztf {tarball_filename}"
 
         else: 
             cmd2 = f'tar -xvf {tarball_filename}'
