@@ -16,6 +16,9 @@ import shutil
 import glob
 import tarfile
 import multiprocessing
+import re
+from datetime import datetime
+import numpy as np
 
 # Our libraries...
 import server_utils
@@ -36,9 +39,9 @@ def get_args():
     parser.add_argument('-d',
                         '--date',
                         help='Date to process',
-                        nargs='+',
-                        type=str,
-                        required=True)
+                        nargs='*',
+                        type=str)
+                        # required=True)
 
     # Season 12 and on should have a value for experiment set (e.g. sorghum, sunflower)
     # For Season 11 it should be left '' (so no experiment dir is created)
@@ -990,6 +993,47 @@ def clean_inputs(date, dictionary):
     if os.path.isfile('worker_priority.sh'):
         os.remove('worker_priority.sh')
 
+
+# --------------------------------------------------
+def return_date_list(level_0_list):
+    date_list = []
+    for item in level_0_list:
+        try:
+            match = re.search(r'\d{4}-\d{2}-\d{2}', item)
+            if match:
+                date = str(datetime.strptime(match.group(), '%Y-%m-%d').date())
+                date_list.append(date)
+        except:
+            pass
+            
+    return date_list
+
+
+# --------------------------------------------------
+def get_process_date_list(dictionary):
+    basename = dictionary['paths']['cyverse']['basename']
+    input_level = dictionary['paths']['cyverse']['input']['level']
+
+    try:
+        pre, input_num = input_level.split('_')
+        output_level = '_'.join([pre, str(int(input_num) + 1)])
+
+    except ValueError:
+        print('Error')
+    
+    input_path = os.path.join(basename, dictionary['tags']['season_name'], input_level, dictionary['tags']['sensor'])
+    output_path = os.path.join(basename, dictionary['tags']['season_name'], output_level, dictionary['tags']['sensor'])
+    
+    level_0_list, level_1_list = [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {input_path}').readlines()][1:]] \
+                                ,[os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {output_path}').readlines()][1:]]
+
+    level_0_dates, level_1_dates = return_date_list(level_0_list) \
+                                , return_date_list(level_1_list)       
+    process_list = np.setdiff1d(level_0_dates, level_1_dates)
+    
+    return process_list
+
+
 # --------------------------------------------------
 def main():
     """Run distributed data processing here"""
@@ -997,81 +1041,85 @@ def main():
     args = get_args()
     cctools_path = download_cctools(cctools_version=args.cctools_version)
 
+    with open(args.yaml, 'r') as stream:
+        global dictionary
+        dictionary = yaml.safe_load(stream)
+    
+    if not args.date:
+        args.date = get_process_date_list(dictionary)
+
     for date in args.date:
         
-        with open(args.yaml, 'r') as stream:
-            global dictionary
-            dictionary = yaml.safe_load(stream)
-            build_containers(dictionary)
+        build_containers(dictionary)
 
-            if args.uploadonly:
-                upload_outputs(date, dictionary)
-                return
-
-            server_utils.hpc = args.hpc
-                
-            # Figure out what we need to DL
-            # + a single file with a prefix and suffix and randum numbers in it?
-            # + a directory full of files?
-            try:
-                # if 'input_dir' exists in YAML...
-                print("Using input dir (not file)")
-                dir_name = dictionary['paths']['cyverse']['input']['input_dir']
-                if len(dir_name) < 1:
-                    raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
-                                       Found: {matching_files}")
-                download_irods_input_dir(dictionary, date, args)
-            except KeyError:
-                # else...
-                print("Using input file (not dir)")
-                irods_path = get_irods_input_path(dictionary, date, args)
-                dir_name = download_irods_input_file(irods_path)
-
-            #if dictionary['tags']['sensor']=='scanner3DTop':
-                #get_required_files_3d(dictionary=dictionary, date=date)
-            get_support_files(dictionary=dictionary, date=date)
-            
-            if args.hpc:
-                kill_workers(dictionary['workload_manager']['job_name'])
-
-                launch_workers(cctools_path = cctools_path,
-                        account=dictionary['workload_manager']['account'], 
-                        # partition=dictionary['workload_manager']['partition'], 
-                        job_name=dictionary['workload_manager']['job_name'], 
-                        nodes=dictionary['workload_manager']['nodes'], 
-                        #number_tasks=dictionary['workload_manager']['number_tasks'], 
-                        #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
-                        time=dictionary['workload_manager']['time_minutes'], 
-                        mem_per_core=dictionary['workload_manager']['mem_per_core'], 
-                        manager_name=dictionary['workload_manager']['manager_name'], 
-                        number_worker_array=dictionary['workload_manager']['number_worker_array'], 
-                        cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                        worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
-                        # qos_group=dictionary['workload_manager']['qos_group'])
-
-            global seg_model_name, det_model_name
-            seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
-
-            for k, v in dictionary['modules'].items():
-                
-                if 'input_dir' in v.keys():
-                    dir_name = os.path.join(*v['input_dir'])
-
-                files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
-                write_file_list(files_list)
-                json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
-                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log')
-                if not args.noclean:
-                    print(f"Cleaning directory")
-                    clean_directory()
-        
-            kill_workers(dictionary['workload_manager']['job_name'])
-            tar_outputs(date, dictionary)
-            create_pipeline_logs(date)
+        if args.uploadonly:
             upload_outputs(date, dictionary)
+            return
+
+        server_utils.hpc = args.hpc
+            
+        # Figure out what we need to DL
+        # + a single file with a prefix and suffix and randum numbers in it?
+        # + a directory full of files?
+        try:
+            # if 'input_dir' exists in YAML...
+            print("Using input dir (not file)")
+            dir_name = dictionary['paths']['cyverse']['input']['input_dir']
+            if len(dir_name) < 1:
+                raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
+                                    Found: {matching_files}")
+            download_irods_input_dir(dictionary, date, args)
+        except KeyError:
+            # else...
+            print("Using input file (not dir)")
+            irods_path = get_irods_input_path(dictionary, date, args)
+            dir_name = download_irods_input_file(irods_path)
+
+        #if dictionary['tags']['sensor']=='scanner3DTop':
+            #get_required_files_3d(dictionary=dictionary, date=date)
+        get_support_files(dictionary=dictionary, date=date)
+        
+        if args.hpc:
+            kill_workers(dictionary['workload_manager']['job_name'])
+
+            launch_workers(cctools_path = cctools_path,
+                    account=dictionary['workload_manager']['account'], 
+                    # partition=dictionary['workload_manager']['partition'], 
+                    job_name=dictionary['workload_manager']['job_name'], 
+                    nodes=dictionary['workload_manager']['nodes'], 
+                    #number_tasks=dictionary['workload_manager']['number_tasks'], 
+                    #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
+                    time=dictionary['workload_manager']['time_minutes'], 
+                    mem_per_core=dictionary['workload_manager']['mem_per_core'], 
+                    manager_name=dictionary['workload_manager']['manager_name'], 
+                    number_worker_array=dictionary['workload_manager']['number_worker_array'], 
+                    cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
+                    worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
+                    # qos_group=dictionary['workload_manager']['qos_group'])
+
+        global seg_model_name, det_model_name
+        seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
+
+        for k, v in dictionary['modules'].items():
+            
+            if 'input_dir' in v.keys():
+                dir_name = os.path.join(*v['input_dir'])
+
+            files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
+            write_file_list(files_list)
+            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
+            run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log')
             if not args.noclean:
-                print(f"Cleaning inputs")
-                clean_inputs(date, dictionary)        
+                print(f"Cleaning directory")
+                clean_directory()
+    
+        kill_workers(dictionary['workload_manager']['job_name'])
+        tar_outputs(date, dictionary)
+        create_pipeline_logs(date)
+        upload_outputs(date, dictionary)
+        if not args.noclean:
+            print(f"Cleaning inputs")
+            clean_inputs(date, dictionary)        
 
 
 # --------------------------------------------------
