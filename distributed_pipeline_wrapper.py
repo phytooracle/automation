@@ -36,6 +36,11 @@ def get_args():
                         help='Add flag if running on an HPC system.',
                         action='store_true')
 
+    parser.add_argument('-p',
+                        '--pigz',
+                        help='Use pigz for decompression of tar.gz files.',
+                        action='store_true')
+
     parser.add_argument('-d',
                         '--date',
                         help='Date to process',
@@ -298,7 +303,15 @@ def download_irods_input_file(irods_path):
     
     if any(x in tarball_filename for x in gzip_extensions):
 #     if gzip_extension in tarball_filename:
-        command = f"tar -ztf {tarball_filename}"
+        if args.hpc:
+            pre_command = f"module load pigz"
+            sp.call(pre_command, shell=True)
+
+        if args.pigz:
+            command = f"tar -I pigz -ztf {tarball_filename}"
+
+        else:
+            command = f"tar -ztf {tarball_filename}"
     else:
         command = f"tar -tf {tarball_filename}"
         
