@@ -36,11 +36,6 @@ def get_args():
                         help='Add flag if running on an HPC system.',
                         action='store_true')
 
-    parser.add_argument('-p',
-                        '--pigz',
-                        help='Use pigz for decompression of tar.gz files.',
-                        action='store_true')
-
     parser.add_argument('-d',
                         '--date',
                         help='Date to process',
