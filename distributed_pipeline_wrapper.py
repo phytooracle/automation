@@ -66,7 +66,7 @@ def get_args():
                         '--local_cores',
                         help='Percentage of cores to use for local processing',
                         type=float,
-                        default=0.70)
+                        default=1.0)#0.70)
 
     parser.add_argument('-y',
                         '--yaml',
@@ -337,7 +337,7 @@ def download_irods_input_file(irods_path):
             cwd = os.getcwd()
             # sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd2}' '&& {cmd3}' '&& exit'", shell=True)
             sp.call(f"cd {cwd} && {cmd2} && {cmd3}", shell=True)
-            
+
         else: 
             sp.call(cmd2, shell=True)
             sp.call(cmd3, shell=True)
