@@ -328,10 +328,10 @@ def download_irods_input_file(irods_path):
             cmd2 = f'tar -xzvf {tarball_filename}'
             cmd3 = f'rm {tarball_filename}'
             
-            if args.hpc and args.pigz:
-                'Module loading and loading pigz.'
-                cmd2 = f"module load pigz && tar -I pigz -xvf {tarball_filename}"
-                cmd3 = f'rm {tarball_filename}'
+            # if args.hpc and args.pigz:
+            #     'Module loading and loading pigz.'
+            #     cmd2 = f"module load pigz && tar -I pigz -xvf {tarball_filename}"
+            #     cmd3 = f'rm {tarball_filename}'
 
             if args.pigz:
                 cmd2 = f"tar -I pigz -xvf {tarball_filename}"
@@ -342,7 +342,11 @@ def download_irods_input_file(irods_path):
             cmd3 = f'rm {tarball_filename}'
         
         if args.hpc: 
-            print('>>>>>>Using data transfer node.')
+            if args.pigz:
+                cmd = 'module load pigz'
+                sp.call(cmd, shell=True)
+
+            # print('>>>>>>Using data transfer node.')
             cwd = os.getcwd()
             # sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd2}' '&& {cmd3}' '&& exit'", shell=True)
             sp.call(f"cd {cwd} && {cmd2} && {cmd3}", shell=True)
