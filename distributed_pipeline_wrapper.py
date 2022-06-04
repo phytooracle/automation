@@ -790,7 +790,7 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --disable-cache $@'
 
     if args.hpc:
-        arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --disable-cache --send-environment --working-dir {cwd} $@' 
+        arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --disable-cache --send-environment --working-dir {cwd} --shared-fs {cwd} $@' 
     
     cmd1 = ' '.join([cctools, arguments])
     sp.call(cmd1, shell=True)
