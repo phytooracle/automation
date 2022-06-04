@@ -342,10 +342,10 @@ def download_irods_input_file(irods_path):
             cmd3 = f'rm {tarball_filename}'
         
         if args.hpc: 
-            if args.pigz:
-                'Module loading pigz.'
-                cmd = 'module load pigz'
-                sp.call(cmd, shell=True)
+            # if args.pigz:
+            #     'Module loading pigz.'
+            #     cmd = 'module load pigz'
+            #     sp.call(cmd, shell=True)
 
             # print('>>>>>>Using data transfer node.')
             cwd = os.getcwd()
