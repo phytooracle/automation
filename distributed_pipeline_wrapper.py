@@ -334,6 +334,7 @@ def download_irods_input_file(irods_path):
             #     cmd3 = f'rm {tarball_filename}'
 
             if args.pigz:
+                '>>>INFO: Using pigz.'
                 cmd2 = f"module load pigz; tar -I pigz -xvf {tarball_filename}"
                 cmd3 = f'rm {tarball_filename}'
 
