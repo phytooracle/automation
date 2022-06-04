@@ -58,7 +58,7 @@ workload_manager:
   #mem_per_core: 32
   mem_per_core: 5
   manager_name: po_s11_3D
-  worker_timeout_seconds: 900   # 86400
+  worker_timeout_seconds: 300 #900 86400
 
 paths:
   models:
