@@ -329,6 +329,7 @@ def download_irods_input_file(irods_path):
             cmd3 = f'rm {tarball_filename}'
             
             if args.hpc and args.pigz:
+                'Module loading and loading pigz.'
                 cmd2 = f"module load pigz && tar -I pigz -xvf {tarball_filename}"
                 cmd3 = f'rm {tarball_filename}'
 
