@@ -605,7 +605,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --account={account}\n")
             fh.writelines(f"#SBATCH --job-name={job_name}\n")
             fh.writelines(f"#SBATCH --nodes={nodes}\n")
-            fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
+            fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker) + 1}\n")
             fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
             fh.writelines(f"#SBATCH --time={time}\n")
             fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
@@ -613,7 +613,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
             fh.writelines(f"cd {cwd}\n")
-            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --workdir {cwd} --memory {mem_per_core*cores_per_worker*1000}\n")
+            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd} 
         return_code = sp.call(f"sbatch {outfile}", shell=True)
         if return_code == 1:
             raise Exception(f"sbatch Failed")
@@ -633,7 +633,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
             fh.writelines(f"cd {cwd}\n")
-            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --workdir {cwd} --memory {mem_per_core*cores_per_worker*1000}\n")
+            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd}
         return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
         if return_code == 1:
             raise Exception(f"sbatch Failed")
