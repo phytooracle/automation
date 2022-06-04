@@ -612,7 +612,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-            fh.writelines(f"cd {cwd}")
+            fh.writelines(f"cd {cwd}\n")
             fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --workdir {cwd} --memory {mem_per_core*cores_per_worker*1000}\n")
         return_code = sp.call(f"sbatch {outfile}", shell=True)
         if return_code == 1:
@@ -632,7 +632,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['high_priority_settings']['partition']}\n")
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-            fh.writelines(f"cd {cwd}")
+            fh.writelines(f"cd {cwd}\n")
             fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --workdir {cwd} --memory {mem_per_core*cores_per_worker*1000}\n")
         return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
         if return_code == 1:
