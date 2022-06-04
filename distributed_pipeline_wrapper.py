@@ -943,6 +943,11 @@ def clean_directory():
         for direc in dir_list:
             shutil.rmtree(direc)
 
+    worker_list = glob.glob('./worker-*')
+    if worker_list:
+        for worker in worker_list:
+            shutil.rmtree(worker)
+
 
 # --------------------------------------------------
 def clean_inputs(date, dictionary):
