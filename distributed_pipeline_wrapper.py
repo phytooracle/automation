@@ -343,6 +343,7 @@ def download_irods_input_file(irods_path):
         
         if args.hpc: 
             if args.pigz:
+                'Module loading pigz.'
                 cmd = 'module load pigz'
                 sp.call(cmd, shell=True)
 
