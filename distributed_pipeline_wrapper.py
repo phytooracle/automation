@@ -114,32 +114,67 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
     cwd = os.getcwd()
     home = os.path.expanduser('~')
     
-    cctools_file = '-'.join(['cctools', cctools_version, architecture, sys_os])
-    
-    if not os.path.isdir(os.path.join(home, cctools_file)):
-        print(f'Downloading {cctools_file}.')
-        cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
-        cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
-        sp.call(cmd1, shell=True)
-        os.chdir(home)
-        file = tarfile.open(f'{cctools_file}.tar.gz')
-        file.extractall('.')
-        file.close()
-        os.remove(f'{cctools_file}.tar.gz')
+        # builds from latest stable source if not on a centos system
+    if platform.linux_distribution()[0] != 'CentOS Linux':
+        cctools_file = 'cctools-stable-source'
+        if not os.path.isdir(os.path.join(home, 'cctools')):
+            print(f'Downloading {cctools_file}.')
+            cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
+            print(cctools_url)
+            cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
+            sp.call(cmd1, shell=True)
+            os.chdir(home)
+            cmd2 = f'mkdir non_centos_cctools && tar xzvf {cctools_file}.tar.gz -C non_centos_cctools'
+            sp.call(cmd2, shell = True)
+            os.chdir('non_centos_cctools')
 
-        try:
-            shutil.move('-'.join(['cctools', cctools_version, architecture, sys_os+'.tar.gz', 'dir']), '-'.join(['cctools', cctools_version, architecture, sys_os]))
+            print('Building cctools from source...')
 
-        except:
-            pass
+            os.chdir(glob.glob('./*')[0])
 
-        os.chdir(cwd)
-        print(f'Download complete. CCTools version {cctools_version} is ready!')
+            cmd3 = './configure --prefix $HOME/cctools && make && make install'
+            sp.call(cmd3, shell = True)
 
+
+
+            os.remove(os.path.join(home, f'{cctools_file}.tar.gz'))
+            
+            print(f'Download complete. CCTools is ready!')
+
+        else:
+            print('Required CCTools version already exists.')
+
+        return 'cctools/'
+
+    # builds from centos specific package if on centos
     else:
-        print('Required CCTools version already exists.')
 
-    return '-'.join(['cctools', cctools_version, architecture, sys_os])
+        cctools_file = '-'.join(['cctools', cctools_version, architecture, sys_os])
+    
+        if not os.path.isdir(os.path.join(home, cctools_file)):
+            print(f'Downloading {cctools_file}.')
+            cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
+            cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
+            sp.call(cmd1, shell=True)
+            os.chdir(home)
+            file = tarfile.open(f'{cctools_file}.tar.gz')
+            file.extractall('.')
+            file.close()
+            os.remove(f'{cctools_file}.tar.gz')
+
+            try:
+                shutil.move('-'.join(['cctools', cctools_version, architecture, sys_os+'.tar.gz', 'dir']), '-'.join(['cctools', cctools_version, architecture, sys_os]))
+
+            except:
+                pass
+
+            os.chdir(cwd)
+            print(f'Download complete. CCTools version {cctools_version} is ready!')
+
+        else:
+            print('Required CCTools version already exists.')
+
+        return '-'.join(['cctools', cctools_version, architecture, sys_os])
 
 
 def build_irods_path_to_sensor_from_yaml(yaml_dictionary):
