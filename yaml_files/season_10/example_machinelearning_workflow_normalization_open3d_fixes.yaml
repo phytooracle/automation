@@ -125,6 +125,7 @@ paths:
       level: level_2
       prefix: #scanner3DTop-
       suffix: __*segmentation_pointclouds_plants.tar
+      input_dir: individual_plants_out
     output: 
       level: level_3
   
