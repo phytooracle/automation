@@ -123,8 +123,8 @@ paths:
     input: 
       necessary_files: [level_0/necessary_files/gcp_season_10.txt]
       level: level_2
-      prefix: scanner3DTop-
-      suffix: __*.tar.gz
+      prefix: #scanner3DTop-
+      suffix: __*segmentation_pointclouds_plants.tar
     output: 
       level: level_3
   
