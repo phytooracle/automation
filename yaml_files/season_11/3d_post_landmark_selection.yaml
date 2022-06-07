@@ -54,33 +54,33 @@ modules:
              postprocessing_out/west_downsampled/$SUBDIR-west.ply]
     outputs: [$BASENAME_individual_plants.tar]
 
-#  4: 
-#    container: 
-#      simg_name: slack_notifications.simg
-#      dockerhub_path: docker://phytooracle/slack_notifications:latest
-#    command: tar -xvf ${SUBDIR}_individual_plants.tar && rm ${SUBDIR}_individual_plants.tar 
-#    distribution_level: local
-#    file_level: 
-#    input_dir: [postprocessing_out, west]
-#    input_file: -west.ply
-#    inputs: [$BASENAME_individual_plants.tar]
-#    outputs: []
-#
-#  5: 
-#    container: 
-#      simg_name: 3d_individual_plant_registration.simg
-#      dockerhub_path: docker://phytooracle/3d_individual_plant_registration:multiway_registration
-#    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_individual_plant_registration.simg -i individual_plants_out/ -p ${PLANT_NAME} -r individual_plants_out/plant_reports/${PLANT_NAME} -o individual_plants_out/segmentation_pointclouds/${PLANT_NAME}
-#    distribution_level: wq
-#    file_level: subdir
-#    input_dir: [individual_plants_out, west]
-#    input_file: _cropped.ply
-#    inputs: [individual_plants_out/west/$PLANT_NAME,
-#             individual_plants_out/west_downsampled/$PLANT_NAME,
-#             individual_plants_out/east/$PLANT_NAME,
-#             individual_plants_out/east_downsampled/$PLANT_NAME]
-#    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
-#
+  3: 
+    container: 
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+    command: tar -xvf ${SUBDIR}_individual_plants.tar && rm ${SUBDIR}_individual_plants.tar 
+    distribution_level: local
+    file_level: 
+    input_dir: [postprocessing_out, west]
+    input_file: -west.ply
+    inputs: [$BASENAME_individual_plants.tar]
+    outputs: []
+
+  4: 
+    container: 
+      simg_name: 3d_individual_plant_registration.simg
+      dockerhub_path: docker://phytooracle/3d_individual_plant_registration:multiway_registration
+    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_individual_plant_registration.simg -i individual_plants_out/ -p ${PLANT_NAME} -r individual_plants_out/plant_reports/${PLANT_NAME} -o individual_plants_out/segmentation_pointclouds/${PLANT_NAME}
+    distribution_level: wq
+    file_level: subdir
+    input_dir: [individual_plants_out, west]
+    input_file: _cropped.ply
+    inputs: [individual_plants_out/west/$PLANT_NAME,
+             individual_plants_out/west_downsampled/$PLANT_NAME,
+             individual_plants_out/east/$PLANT_NAME,
+             individual_plants_out/east_downsampled/$PLANT_NAME]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+
 #  6:
 #    container:
 #      simg_name: heatmap_ml_based_cropping.simg
@@ -149,11 +149,11 @@ workload_manager:
   account: dukepauli
 
   high_priority_settings:
-    use: False
+    use: True
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
-    use: True
+    use: False
     partition: standard
 
   job_name: po_season11_3d_post
