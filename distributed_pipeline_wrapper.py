@@ -16,6 +16,10 @@ import shutil
 import glob
 import tarfile
 import multiprocessing
+import re
+from datetime import datetime
+import numpy as np
+import platform
 
 # Our libraries...
 import server_utils
@@ -36,9 +40,9 @@ def get_args():
     parser.add_argument('-d',
                         '--date',
                         help='Date to process',
-                        nargs='+',
-                        type=str,
-                        required=True)
+                        nargs='*',
+                        type=str)
+                        # required=True)
 
     # Season 12 and on should have a value for experiment set (e.g. sorghum, sunflower)
     # For Season 11 it should be left '' (so no experiment dir is created)
@@ -58,7 +62,7 @@ def get_args():
                         '--local_cores',
                         help='Percentage of cores to use for local processing',
                         type=float,
-                        default=0.70)
+                        default=1.0)#0.70)
 
     parser.add_argument('-y',
                         '--yaml',
@@ -114,32 +118,67 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
     cwd = os.getcwd()
     home = os.path.expanduser('~')
     
-    cctools_file = '-'.join(['cctools', cctools_version, architecture, sys_os])
-    
-    if not os.path.isdir(os.path.join(home, cctools_file)):
-        print(f'Downloading {cctools_file}.')
-        cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
-        cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
-        sp.call(cmd1, shell=True)
-        os.chdir(home)
-        file = tarfile.open(f'{cctools_file}.tar.gz')
-        file.extractall('.')
-        file.close()
-        os.remove(f'{cctools_file}.tar.gz')
+        # builds from latest stable source if not on a centos system
+    if platform.linux_distribution()[0] != 'CentOS Linux':
+        cctools_file = 'cctools-stable-source'
+        if not os.path.isdir(os.path.join(home, 'cctools')):
+            print(f'Downloading {cctools_file}.')
+            cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
+            print(cctools_url)
+            cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
+            sp.call(cmd1, shell=True)
+            os.chdir(home)
+            cmd2 = f'mkdir non_centos_cctools && tar xzvf {cctools_file}.tar.gz -C non_centos_cctools'
+            sp.call(cmd2, shell = True)
+            os.chdir('non_centos_cctools')
 
-        try:
-            shutil.move('-'.join(['cctools', cctools_version, architecture, sys_os+'.tar.gz', 'dir']), '-'.join(['cctools', cctools_version, architecture, sys_os]))
+            print('Building cctools from source...')
 
-        except:
-            pass
+            os.chdir(glob.glob('./*')[0])
 
-        os.chdir(cwd)
-        print(f'Download complete. CCTools version {cctools_version} is ready!')
+            cmd3 = './configure --prefix $HOME/cctools && make && make install'
+            sp.call(cmd3, shell = True)
 
+
+
+            os.remove(os.path.join(home, f'{cctools_file}.tar.gz'))
+            
+            print(f'Download complete. CCTools is ready!')
+
+        else:
+            print('Required CCTools version already exists.')
+
+        return 'cctools/'
+
+    # builds from centos specific package if on centos
     else:
-        print('Required CCTools version already exists.')
 
-    return '-'.join(['cctools', cctools_version, architecture, sys_os])
+        cctools_file = '-'.join(['cctools', cctools_version, architecture, sys_os])
+    
+        if not os.path.isdir(os.path.join(home, cctools_file)):
+            print(f'Downloading {cctools_file}.')
+            cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
+            cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
+            sp.call(cmd1, shell=True)
+            os.chdir(home)
+            file = tarfile.open(f'{cctools_file}.tar.gz')
+            file.extractall('.')
+            file.close()
+            os.remove(f'{cctools_file}.tar.gz')
+
+            try:
+                shutil.move('-'.join(['cctools', cctools_version, architecture, sys_os+'.tar.gz', 'dir']), '-'.join(['cctools', cctools_version, architecture, sys_os]))
+
+            except:
+                pass
+
+            os.chdir(cwd)
+            print(f'Download complete. CCTools version {cctools_version} is ready!')
+
+        else:
+            print('Required CCTools version already exists.')
+
+        return '-'.join(['cctools', cctools_version, architecture, sys_os])
 
 
 def build_irods_path_to_sensor_from_yaml(yaml_dictionary):
@@ -295,7 +334,9 @@ def download_irods_input_file(irods_path):
     
     if any(x in tarball_filename for x in gzip_extensions):
 #     if gzip_extension in tarball_filename:
+
         command = f"tar -ztf {tarball_filename}"
+
     else:
         command = f"tar -tf {tarball_filename}"
         
@@ -323,10 +364,11 @@ def download_irods_input_file(irods_path):
             cmd3 = f'rm {tarball_filename}'
         
         if args.hpc: 
-            print('>>>>>>Using data transfer node.')
+            # print('>>>>>>Using data transfer node.')
             cwd = os.getcwd()
-            sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd2}' '&& {cmd3}' '&& exit'", shell=True)
-            
+            # sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd2}' '&& {cmd3}' '&& exit'", shell=True)
+            sp.call(f"cd {cwd} && {cmd2} && {cmd3}", shell=True)
+
         else: 
             sp.call(cmd2, shell=True)
             sp.call(cmd3, shell=True)
@@ -571,7 +613,7 @@ def get_model_files(seg_model_path, det_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, outfile='worker.sh', outfile_priority='worker_priority.sh'):
+def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, cwd, outfile='worker.sh', outfile_priority='worker_priority.sh'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -599,14 +641,15 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --account={account}\n")
             fh.writelines(f"#SBATCH --job-name={job_name}\n")
             fh.writelines(f"#SBATCH --nodes={nodes}\n")
-            fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
+            fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker) + 1}\n")
             fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
             fh.writelines(f"#SBATCH --time={time}\n")
             fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
             fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
+            # fh.writelines(f"cd {cwd}\n")
+            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd} 
         return_code = sp.call(f"sbatch {outfile}", shell=True)
         if return_code == 1:
             raise Exception(f"sbatch Failed")
@@ -625,7 +668,8 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['high_priority_settings']['partition']}\n")
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
+            # fh.writelines(f"cd {cwd}\n")
+            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd}
         return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
         if return_code == 1:
             raise Exception(f"sbatch Failed")
@@ -665,6 +709,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     args = get_args()
     files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
     timeout = 'timeout 1h '
+    cwd = os.getcwd()
 
     if inputs:
         if sensor=='scanner3DTop':
@@ -685,7 +730,8 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                             manager_name=dictionary['workload_manager']['manager_name'], 
                             number_worker_array=dictionary['workload_manager']['number_worker_array'], 
                             cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                            worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
+                            worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'],
+                            cwd=cwd)
                             # qos_group=dictionary['workload_manager']['qos_group'])
 
                 subdir_list = []
@@ -763,7 +809,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
 
 
 # --------------------------------------------------
-def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, retries=3, port=0, out_log='dall.log'):
+def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retries=3, port=0, out_log='dall.log'):
     '''
     Create a JSON file for Makeflow distributed computing framework. 
 
@@ -779,7 +825,11 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, retries=3
     home = os.path.expanduser('~')
     cctools = os.path.join(home, cctools_path, 'bin', 'makeflow')
     cctools = os.path.join(home, cctools)
-    arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --disable-cache $@'
+    arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' # --disable-cache $@'
+
+    if args.hpc:
+        arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --shared-fs {cwd}' #--disable-cache $@' 
+    
     cmd1 = ' '.join([cctools, arguments])
     sp.call(cmd1, shell=True)
 
@@ -931,6 +981,11 @@ def clean_directory():
         for direc in dir_list:
             shutil.rmtree(direc)
 
+    worker_list = glob.glob('./worker-*')
+    if worker_list:
+        for worker in worker_list:
+            shutil.rmtree(worker)
+
 
 # --------------------------------------------------
 def clean_inputs(date, dictionary):
@@ -994,6 +1049,47 @@ def clean_inputs(date, dictionary):
     if os.path.isfile('worker_priority.sh'):
         os.remove('worker_priority.sh')
 
+
+# --------------------------------------------------
+def return_date_list(level_0_list):
+    date_list = []
+    for item in level_0_list:
+        try:
+            match = re.search(r'\d{4}-\d{2}-\d{2}', item)
+            if match:
+                date = str(datetime.strptime(match.group(), '%Y-%m-%d').date())
+                date_list.append(date)
+        except:
+            pass
+            
+    return date_list
+
+
+# --------------------------------------------------
+def get_process_date_list(dictionary):
+    basename = dictionary['paths']['cyverse']['basename']
+    input_level = dictionary['paths']['cyverse']['input']['level']
+
+    try:
+        pre, input_num = input_level.split('_')
+        output_level = '_'.join([pre, str(int(input_num) + 1)])
+
+    except ValueError:
+        print('Error')
+    
+    input_path = os.path.join(basename, dictionary['tags']['season_name'], input_level, dictionary['tags']['sensor'])
+    output_path = os.path.join(basename, dictionary['tags']['season_name'], output_level, dictionary['tags']['sensor'])
+    
+    level_0_list, level_1_list = [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {input_path}').readlines()][1:]] \
+                                ,[os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {output_path}').readlines()][1:]]
+
+    level_0_dates, level_1_dates = return_date_list(level_0_list) \
+                                , return_date_list(level_1_list)       
+    process_list = np.setdiff1d(level_0_dates, level_1_dates)
+    
+    return process_list
+
+
 # --------------------------------------------------
 def main():
     """Run distributed data processing here"""
@@ -1001,11 +1097,16 @@ def main():
     args = get_args()
     cctools_path = download_cctools(cctools_version=args.cctools_version)
 
+    with open(args.yaml, 'r') as stream:
+        global dictionary
+        dictionary = yaml.safe_load(stream)
+    
+    if not args.date:
+        args.date = get_process_date_list(dictionary)
+
     for date in args.date:
-        
-        with open(args.yaml, 'r') as stream:
-            global dictionary
-            dictionary = yaml.safe_load(stream)
+        cwd = os.getcwd()
+        try:
             build_containers(dictionary)
 
             if args.uploadonly:
@@ -1023,7 +1124,7 @@ def main():
                 dir_name = dictionary['paths']['cyverse']['input']['input_dir']
                 if len(dir_name) < 1:
                     raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
-                                       Found: {matching_files}")
+                                        Found: {matching_files}")
                 download_irods_input_dir(dictionary, date, args)
             except KeyError:
                 # else...
@@ -1050,7 +1151,8 @@ def main():
                         manager_name=dictionary['workload_manager']['manager_name'], 
                         number_worker_array=dictionary['workload_manager']['number_worker_array'], 
                         cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                        worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'])
+                        worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'], 
+                        cwd=cwd)
                         # qos_group=dictionary['workload_manager']['qos_group'])
 
             global seg_model_name, det_model_name
@@ -1064,7 +1166,7 @@ def main():
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
-                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log')
+                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
                 if not args.noclean:
                     print(f"Cleaning directory")
                     clean_directory()
@@ -1075,7 +1177,9 @@ def main():
             upload_outputs(date, dictionary)
             if not args.noclean:
                 print(f"Cleaning inputs")
-                clean_inputs(date, dictionary)        
+                clean_inputs(date, dictionary) 
+        except:
+            pass       
 
 
 # --------------------------------------------------
