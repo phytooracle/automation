@@ -1,6 +1,7 @@
 testing.ipynb
 *.tar.gz
 *.tgz
+*.tar
 gcp*.txt
 *clustering*.csv
 *.log
@@ -30,3 +31,5 @@ season*gcp*.txt
 __pycache__
 alignment/*
 scanf
+postprocessing_out/
+individual_plants_out/
