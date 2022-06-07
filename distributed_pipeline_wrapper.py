@@ -1119,20 +1119,21 @@ def main():
             # + a single file with a prefix and suffix and randum numbers in it?
             # + a directory full of files?
             try:
-                # Try downloading file first...
-                print("Using input file (not dir)")
-                irods_path = get_irods_input_path(dictionary, date, args)
-                print(irods_path)
-                dir_name = download_irods_input_file(irods_path)
-                print(dir_name)
-            except KeyError:
-                # else if 'input_dir' exists in YAML...
+                # if 'input_dir' exists in YAML...
                 print("Using input dir (not file)")
                 dir_name = dictionary['paths']['cyverse']['input']['input_dir']
                 if len(dir_name) < 1:
                     raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
                                         Found: {matching_files}")
                 download_irods_input_dir(dictionary, date, args)
+
+            except KeyError:
+                # Try downloading file first...
+                print("Using input file (not dir)")
+                irods_path = get_irods_input_path(dictionary, date, args)
+                print(irods_path)
+                dir_name = download_irods_input_file(irods_path)
+                print(dir_name)
 
             #if dictionary['tags']['sensor']=='scanner3DTop':
                 #get_required_files_3d(dictionary=dictionary, date=date)
