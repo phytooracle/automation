@@ -1122,7 +1122,9 @@ def main():
                 # Try downloading file first...
                 print("Using input file (not dir)")
                 irods_path = get_irods_input_path(dictionary, date, args)
+                print(irods_path)
                 dir_name = download_irods_input_file(irods_path)
+                print(dir_name)
             except KeyError:
                 # else if 'input_dir' exists in YAML...
                 print("Using input dir (not file)")
