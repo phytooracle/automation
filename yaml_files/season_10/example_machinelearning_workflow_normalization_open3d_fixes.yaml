@@ -125,7 +125,7 @@ paths:
       necessary_files: [level_0/necessary_files/gcp_season_10.txt]
       level: level_2
       prefix: #scanner3DTop-
-      suffix: _segmentation_pointclouds.tar #__*segmentation_pointclouds_plants.tar
+      suffix: _segmentation_pointclouds_plants.tar #__*segmentation_pointclouds_plants.tar
       input_dir: individual_plants_out
     output: 
       level: level_3
