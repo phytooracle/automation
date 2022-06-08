@@ -181,7 +181,7 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
         return '-'.join(['cctools', cctools_version, architecture, sys_os])
 
 
-def build_irods_path_to_sensor_from_yaml(yaml_dictionary):
+def build_irods_path_to_sensor_from_yaml(yaml_dictionary, args):
     """
     Every path (level zero or otherwise) starts the same:
     .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
@@ -199,6 +199,17 @@ def build_irods_path_to_sensor_from_yaml(yaml_dictionary):
             cyverse_datalevel,
             sensor
     )
+
+    experiment = args.experiment
+
+    # If level is greater than level zero, then we need to add
+    # two directories: .../expirment/date
+    # for example: level_1/scanner3DTop/sunflower/2222-22-22
+    if cyverse_datalevel > 'level_0':
+        path = os.path.join(
+                             path,
+                             (experiment if experiment else "")
+        )
 
     return path
 
@@ -219,7 +230,7 @@ def download_irods_input_dir(dictionary, date, args):
     server_utils.make_dir(input_dir)
 
     # Step (1)
-    sensor_path = build_irods_path_to_sensor_from_yaml(dictionary)
+    sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
     irods_input_dir_path = os.path.join(sensor_path, date, input_dir) 
     files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_input_dir_path)
     file_paths = [os.path.join(irods_input_dir_path, x) for x in files_in_dir]
@@ -235,7 +246,7 @@ def download_irods_input_dir(dictionary, date, args):
     return
 
 # --------------------------------------------------
-def get_irods_input_path(dictionary, date, args):
+def find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir):
     """
     Get IRODS path to download
     
@@ -251,24 +262,7 @@ def get_irods_input_path(dictionary, date, args):
     prefix            = dictionary['paths']['cyverse']['input']['prefix']
     suffix            = dictionary['paths']['cyverse']['input']['suffix']
 
-    irods_path = build_irods_path_to_sensor_from_yaml(dictionary)
-
-    # If level is greater than level zero, then we need to add
-    # two directories: .../expirment/date
-    # for example: level_1/scanner3DTop/sunflower/2222-22-22
-    if cyverse_datalevel > 'level_0':
-        irods_output_path = os.path.join(
-                                         irods_output_path,
-                                         (experiment if experiment else "")
-        )
-
-    # Get a list of all of the files found within irods_path
-    sp_ls = sp.run(["ils", irods_path], stdout=sp.PIPE).stdout
-    # split output of ils,
-    # strip leading white space,
-    # and ignore first entry (it's the dir path)...
-    all_files_in_dir = [x.strip() for x in sp_ls.decode('utf-8').splitlines()][1:]
-
+    all_files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_dl_dir)
     # Now lets see if our file is in all_files_in_dir
     pattern = (prefix if prefix else "") + date + (suffix if suffix else "")
     import pathlib
@@ -282,15 +276,15 @@ def get_irods_input_path(dictionary, date, args):
                            Found: {matching_files}")
 
 
-    irods_path = os.path.join(
-                    irods_path,
+    file_dl_path = os.path.join(
+                    irods_dl_dir,
                     matching_files[0]
     )
     
-    print(f"get_irods_input_path() found a file: {irods_path}")
+    print(f"get_irods_input_path() found a file: {file_dl_path}")
 
 
-    return irods_path
+    return file_dl_path
 
 
 # --------------------------------------------------
@@ -1111,26 +1105,40 @@ def main():
 
             if args.uploadonly:
                 upload_outputs(date, dictionary)
-                return
+#                 return
 
+#         except:
             server_utils.hpc = args.hpc
                 
             # Figure out what we need to DL
-            # + a single file with a prefix and suffix and randum numbers in it?
-            # + a directory full of files?
-            try:
-                # if 'input_dir' exists in YAML...
-                print("Using input dir (not file)")
+            # There are three scenarios...
+            # (1) No input_dir.  Use suffix and prefix.  Original method.
+            # (2) input_dir, but not suffix or prefix: DL all files from input_dir
+            # (3) both...  add input_dir to irods_path and continue as (1)
+             
+            yaml_input_keys = dictionary['paths']['cyverse']['input'].keys()
+            # figure out if yaml has prefix and/or sufix keys...
+            irods_sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
+            if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
+                print("Found prefix or suffix.  Building irods_path...")
+                irods_dl_dir = os.path.join(irods_sensor_path, date) 
+                #irods_path = get_irods_input_path(dictionary, date, args)
+                print(irods_dl_dir)
+                if 'input_dir' in yaml_input_keys:
+                    _dir = dictionary['paths']['cyverse']['input']['input_dir']
+                    irods_dl_dir = os.path.join(irods_dl_dir, _dir)
+                    print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
+                    print(irods_dl_dir)
+                file_to_dl = find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir)
+                dir_name = download_irods_input_file(file_to_dl)
+            elif 'input_dir' in input_keys:
+                print("Using input dir")
                 dir_name = dictionary['paths']['cyverse']['input']['input_dir']
                 if len(dir_name) < 1:
-                    raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
-                                        Found: {matching_files}")
+                    raise ValueError(f"input_dir shouldn't be empty.  Remove it.")
                 download_irods_input_dir(dictionary, date, args)
-            except KeyError:
-                # else...
-                print("Using input file (not dir)")
-                irods_path = get_irods_input_path(dictionary, date, args)
-                dir_name = download_irods_input_file(irods_path)
+            else:
+                raise Exception(f"Couldn't figure out what to do with yaml input")
 
             #if dictionary['tags']['sensor']=='scanner3DTop':
                 #get_required_files_3d(dictionary=dictionary, date=date)
