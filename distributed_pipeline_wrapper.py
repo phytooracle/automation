@@ -1105,7 +1105,7 @@ def main():
 
             if args.uploadonly:
                 upload_outputs(date, dictionary)
-                return
+#                 return
 
         except:
             server_utils.hpc = args.hpc
