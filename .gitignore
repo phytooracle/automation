@@ -33,3 +33,4 @@ alignment/*
 scanf
 postprocessing_out/
 individual_plants_out/
+segmentation_pointclouds/
