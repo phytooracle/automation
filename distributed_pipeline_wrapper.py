@@ -1107,7 +1107,7 @@ def main():
                 upload_outputs(date, dictionary)
 #                 return
 
-        except:
+#         except:
             server_utils.hpc = args.hpc
                 
             # Figure out what we need to DL
