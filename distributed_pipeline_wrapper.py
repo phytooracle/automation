@@ -1187,7 +1187,11 @@ def main():
                 print(f"Cleaning inputs")
                 clean_inputs(date, dictionary) 
         except:
-            pass       
+            print(f"Cleaning directory")
+            clean_directory()
+            kill_workers(dictionary['workload_manager']['job_name'])
+            clean_inputs(date, dictionary)
+#             pass       
 
 
 # --------------------------------------------------
