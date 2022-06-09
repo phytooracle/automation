@@ -74,26 +74,26 @@ modules:
     outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
     
 workload_manager:
-  account: dukepauli
+  account: ericlyons
 
   high_priority_settings:
     use: True
-    qos_group: user_qos_dukepauli
+    qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
     use: True
     partition: standard
 
-  job_name: po_season10_3d
+  job_name: phytooracle_worker
   nodes: 1                  # Just do one.  (each array is on a distinct node)
   number_worker_array: 333 #94      # This is number of arrays (workers)
-  cores_per_worker: 6       # This is how many cores (cpu/gpu) per array, used to increase tot mem
+  cores_per_worker: 20 #28       # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
   port: 6022
   #mem_per_core: 32
   mem_per_core: 5
-  manager_name: po_s11_3D
+  manager_name: phytooracle_manager
   worker_timeout_seconds: 300 #900 86400
 
 # workload_manager:
