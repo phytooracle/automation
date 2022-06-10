@@ -835,7 +835,6 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
         arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --shared-fs {cwd}' #--disable-cache $@' 
     
     cmd1 = ' '.join([cctools, arguments])
-    print(cmd1)
     sp.call(cmd1, shell=True)
 
 
