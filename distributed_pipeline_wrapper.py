@@ -83,6 +83,11 @@ def get_args():
                         action='store_true',
                        )
 
+    parser.add_argument('-r',
+                        '--reverse',
+                        help='Reverse processing date list.',
+                        action='store_true')
+
     return parser.parse_args()
 
 
@@ -1061,6 +1066,8 @@ def return_date_list(level_0_list):
 
 # --------------------------------------------------
 def get_process_date_list(dictionary):
+
+    args= get_args()
     basename = dictionary['paths']['cyverse']['basename']
     input_level = dictionary['paths']['cyverse']['input']['level']
 
@@ -1080,7 +1087,10 @@ def get_process_date_list(dictionary):
     level_0_dates, level_1_dates = return_date_list(level_0_list) \
                                 , return_date_list(level_1_list)       
     process_list = np.setdiff1d(level_0_dates, level_1_dates)
-    
+
+    if args.reverse:
+        process_list.reverse()
+        
     return process_list
 
 
