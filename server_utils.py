@@ -7,6 +7,18 @@ import tarfile
 
 hpc = False
 
+def distro_name():
+    pairs = {}
+    with open("/etc/os-release") as myfile:
+        for line in myfile:
+            if '=' in line:
+                name, var = line.partition("=")[::2]
+                pairs[name] = var.strip().replace("\"","")
+    if "NAME" in pairs:
+        return pairs['NAME']
+    else:
+        raise Exception(f"Can't determine distro from /etc/os-release")
+
 def run_filexfer_node_commands(cmds):
     global hpc
     print(':: Using data transfer node.')
