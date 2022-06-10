@@ -6,6 +6,12 @@ PhytoOracle (PO) Automation is general-use, distributed computing pipeline for p
 
 PO's distributed framework, leveraging [CCTools' Makeflow and Workqueue](https://cctools.readthedocs.io/en/stable/), allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```).
 
+## Required Dependencies
+  * Linux-based computer, cluster, or server
+  * [Singularity](https://github.com/apptainer/singularity/blob/master/INSTALL.md)
+  * [iRODS](https://emmanuelgonz.github.io/posts/2022/01/irods-setup/)
+  * [Python](https://www.python.org/downloads/)
+
 ## YAML File
 For more information on YAML file key/value pairs, [click here](https://github.com/phytooracle/automation/blob/main/docs/yaml.md).
 
