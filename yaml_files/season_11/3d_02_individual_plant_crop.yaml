@@ -82,11 +82,11 @@ modules:
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
 
 workload_manager:
-  account: dukepauli
+  account: ericlyons
 
   high_priority_settings:
     use: True
-    qos_group: user_qos_dukepauli
+    qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
     use: False
