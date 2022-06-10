@@ -1101,16 +1101,17 @@ def get_process_date_list(dictionary):
 
 
 # --------------------------------------------------
-def slack_notification(message):
+def slack_notification(message, date):
 
+    sensor = dictionary['tags']['sensor']
     if 'slack_notifications' in dictionary['tags'].keys():
-
+        
         if dictionary['tags']['slack_notifications']['use']==True:
 
             simg = dictionary['tags']['slack_notifications']['container']['simg_name']
             dockerhub_path = dictionary['tags']['slack_notifications']['container']['dockerhub_path']
             channel = dictionary['tags']['slack_notifications']['channel']
-
+            message = ' | '.join([' '.join([date, sensor]), message])
             if not os.path.isfile(simg):
                 print(f'Building {simg}.')
                 sp.call(f"singularity build {simg} {dockerhub_path}", shell=True)
@@ -1134,8 +1135,8 @@ def main():
 
     for date in args.date:
         cwd = os.getcwd()
-        sensor = dictionary['tags']['sensor']
-        slack_notification(message=f"[{sensor} {date}] | Processing starting.")
+        
+        slack_notification(message=f"Processing starting.", date=date)
 
         try:
             build_containers(dictionary)
@@ -1208,7 +1209,7 @@ def main():
                 if 'input_dir' in v.keys():
                     dir_name = os.path.join(*v['input_dir'])
 
-                slack_notification(message=f"[{sensor} {date}] | Processing step {k}/{len(dictionary['modules'])} running.")
+                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} running.", date=date)
 
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
@@ -1219,13 +1220,15 @@ def main():
                     print(f"Cleaning directory")
                     clean_directory()
 
-                slack_notification(message=f"[{sensor} {date}] | Processing step {k}/{len(dictionary['modules'])} complete.")
+                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.", date=date)
 
-            slack_notification(message=f"[{sensor} {date}] | Processing complete.")
+            slack_notification(message=f"Processing complete.", date=date)
             kill_workers(dictionary['workload_manager']['job_name'])
             tar_outputs(date, dictionary)
             create_pipeline_logs(date)
+            slack_notification(message=f"Uploading data.", date=date)
             upload_outputs(date, dictionary)
+            slack_notification(message=f"Upload complete.", date=date)
 
             if not args.noclean:
                 print(f"Cleaning inputs")
