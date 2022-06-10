@@ -1110,7 +1110,7 @@ def slack_notification(message, date):
             simg = dictionary['tags']['slack_notifications']['container']['simg_name']
             dockerhub_path = dictionary['tags']['slack_notifications']['container']['dockerhub_path']
             channel = dictionary['tags']['slack_notifications']['channel']
-            season = ' '.join(['Season', str(dictionary['tags']['season'])])
+            season = ''.join(['Season', str(dictionary['tags']['season'])])
             description = ''.join(['[', ' '.join([season, sensor, date]), ']'])
 
             message = ' | '.join([description, message])
