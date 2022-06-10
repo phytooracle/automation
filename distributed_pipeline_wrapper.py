@@ -1135,7 +1135,7 @@ def main():
     for date in args.date:
         cwd = os.getcwd()
         
-        slack_notification(message=f"Processing starting.", date=date)
+        slack_notification(message=f"Starting data processing.", date=date)
 
         try:
             build_containers(dictionary)
@@ -1152,7 +1152,8 @@ def main():
             # (1) No input_dir.  Use suffix and prefix.  Original method.
             # (2) input_dir, but not suffix or prefix: DL all files from input_dir
             # (3) both...  add input_dir to irods_path and continue as (1)
-             
+
+            slack_notification(message=f"Downloading raw data.", date=date)
             yaml_input_keys = dictionary['paths']['cyverse']['input'].keys()
             # figure out if yaml has prefix and/or sufix keys...
             irods_sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
@@ -1180,7 +1181,8 @@ def main():
             #if dictionary['tags']['sensor']=='scanner3DTop':
                 #get_required_files_3d(dictionary=dictionary, date=date)
             get_support_files(dictionary=dictionary, date=date)
-            
+            slack_notification(message=f"Downloading raw data complete.", date=date)
+
             if args.hpc:
                 kill_workers(dictionary['workload_manager']['job_name'])
 
@@ -1208,7 +1210,7 @@ def main():
                 if 'input_dir' in v.keys():
                     dir_name = os.path.join(*v['input_dir'])
 
-                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} running.", date=date)
+                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])}.", date=date)
 
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
@@ -1221,13 +1223,18 @@ def main():
 
                 slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.", date=date)
 
-            slack_notification(message=f"Processing complete.", date=date)
+            slack_notification(message=f"All processing steps complete.", date=date)
+
             kill_workers(dictionary['workload_manager']['job_name'])
+
+            slack_notification(message=f"Archiving data.", date=date)
             tar_outputs(date, dictionary)
+            slack_notification(message=f"Archiving data complete.", date=date)
+
             create_pipeline_logs(date)
             slack_notification(message=f"Uploading data.", date=date)
             upload_outputs(date, dictionary)
-            slack_notification(message=f"Upload complete.", date=date)
+            slack_notification(message=f"Uploading data complete.", date=date)
 
             if not args.noclean:
                 print(f"Cleaning inputs")
