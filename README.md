@@ -4,7 +4,7 @@ PhytoOracle (PO) Automation is general-use, distributed computing pipeline for p
 
 <p align="center"><img src="docs/gantry_wsj.jpg" height="300"></p>
 
-PO's distributed framework, leveraging CCTools' Makeflow and Workqueue, allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```).
+PO's distributed framework, leveraging [CCTools' Makeflow and Workqueue](https://cctools.readthedocs.io/en/stable/), allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```).
 
 ## YAML File
 For more information on YAML file key/value pairs, [click here](https://github.com/phytooracle/automation/blob/main/docs/yaml.md).
