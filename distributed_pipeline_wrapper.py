@@ -1094,6 +1094,7 @@ def get_process_date_list(dictionary):
     process_list = np.setdiff1d(level_0_dates, level_1_dates)
 
     if args.reverse:
+        process_list = process_list.tolist()
         process_list.reverse()
         
     return process_list
