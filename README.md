@@ -15,7 +15,7 @@ For more information on arguments/flags, [click here](https://github.com/phytoor
 ## Running the pipeline
 The script ```distributed_pipeline_wrapper.py``` is used to run the pipeline. This script downloads and extracts bundled test data, runs containers, and bundles output data.
 
-### Running on Cloud cluster
+### Running on Cloud server
 On your Cloud VM, run the following command:
 ```
 ./distributed_pipeline_wrapper.py -d 2020-02-14 -y yaml_files/example_machinelearning_workflow.yaml
