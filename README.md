@@ -1,12 +1,13 @@
-# PhytoOracle | Modular, Scalable Phenomic Data Processing Pipeline
-This is our general-use, distributed computing pipeline for phenomic data. The pipeline can be run on local or HPC resources--it is important to note that **Singularity is required** when using this pipeline on HPC systems. 
+# <p align="center"><b>PhytoOracle | Modular, Scalable Phenomic Data Processing Pipeline</b></p>
+<p align="center"><img src="docs/IMG_0102.PNG" height="200"></p>
+PhytoOracle (PO) Automation is general-use, distributed computing pipeline for phenomic data. PO can be run on local or HPC resources--it is important to note that **Singularity is required** when using this pipeline on HPC systems. 
 
 This distributed framework allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. Additionally, this pipeline can be run locally (see Modules section below). The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```).
 ## YAML File
 For more information on YAML file key/value pairs, [click here](https://github.com/phytooracle/automation/blob/main/docs/yaml.md).
 
 ## Arguments/Flags
-For more information on arguments/flags, [click here]().
+For more information on arguments/flags, [click here](https://github.com/phytooracle/automation/blob/main/docs/arguments.md).
 
 ## Running the pipeline
 The script ```distributed_pipeline_wrapper.py``` is used to run the pipeline. This script downloads and extracts bundled test data, runs containers, and bundles output data.
