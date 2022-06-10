@@ -1,21 +1,15 @@
 # PhytoOracle | Modular, Scalable Phenomic Data Processing Pipeline
 This is our general-use, distributed computing pipeline for phenomic data. The pipeline can be run on local or HPC resources--it is important to note that **Singularity is required** when using this pipeline on HPC systems. 
 
-This distributed framework allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. Additionally, this pipeline can be run locally (see Modules section below). The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```). For more information on YAML key/value pairs, (click here)[]
+This distributed framework allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. Additionally, this pipeline can be run locally (see Modules section below). The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```).
+## YAML File
+For more information on YAML file key/value pairs, [click here](https://github.com/phytooracle/automation/blob/main/docs/yaml.md).
 
+## Arguments/Flags
+For more information on arguments/flags, [click here]().
 
 ## Running the pipeline
 The script ```distributed_pipeline_wrapper.py``` is used to run the pipeline. This script downloads and extracts bundled test data, runs containers, and bundles output data.
-
-### Flags 
-* Required
-  * -d, --date | Test date/s to process (in YYYY-MM-DD format, i.e."2020-01-22")
-  * -y, --yaml | YAML file to use for processing
-* Optional
-  * -hpc, --hpc | Download data using UA HPC data transfer node
-  * -l, --local_cores | Number of cores to use for local processing 
-  * -sm, --seg_model | Segmentation model file path on CyVerse DataStore
-  * -dm, --det_model | Detection model file path on CyVerse DataStore
 
 ### Running on Cloud cluster
 On your Cloud VM, run the following command:
@@ -40,15 +34,15 @@ Data will be downloaded and workflows will be launched. You view progress inform
 ./shell_scripts/mf_monitor.sh 1
 ```
 
-#### Running on HPC cluster | non-interactive job submission
+#### Non-interactive SLURM job submission
 To submit a date for processing in a non-interactive node, run:
 ```shell
-sbatch shell_scripts/slurm_submission.sh <scan_date> <yaml_file>
+sbatch shell_scripts/slurm_submission.sh <yaml_file>
 ```
 
 For example: 
 ```shell
-sbatch shell_scripts/slurm_submission.sh 2020-01-27 yaml_files/example_machinelearning_workflow.yaml
+sbatch shell_scripts/slurm_submission.sh yaml_files/example_machinelearning_workflow.yaml
 ```
 
 Make sure to change the account, partition as needed in the YAML file. 
