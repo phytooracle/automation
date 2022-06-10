@@ -1118,7 +1118,8 @@ def main():
 
     for date in args.date:
         cwd = os.getcwd()
-        slack_notification(message=f"Processing of {date} starting.")
+        sensor = dictionary['tags']['sensor']
+        slack_notification(message=f"[{sensor} {date}] | Processing starting.")
 
         try:
             build_containers(dictionary)
@@ -1191,7 +1192,7 @@ def main():
                 if 'input_dir' in v.keys():
                     dir_name = os.path.join(*v['input_dir'])
 
-                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} running.")
+                slack_notification(message=f"[{sensor} {date}] | Processing step {k}/{len(dictionary['modules'])} running.")
 
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
@@ -1202,9 +1203,9 @@ def main():
                     print(f"Cleaning directory")
                     clean_directory()
 
-                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.")
+                slack_notification(message=f"[{sensor} {date}] | Processing step {k}/{len(dictionary['modules'])} complete.")
 
-            slack_notification(message=f"Processing of {date} complete.")
+            slack_notification(message=f"[{sensor} {date}] | Processing complete.")
             kill_workers(dictionary['workload_manager']['job_name'])
             tar_outputs(date, dictionary)
             create_pipeline_logs(date)
