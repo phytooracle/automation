@@ -1085,6 +1085,24 @@ def get_process_date_list(dictionary):
 
 
 # --------------------------------------------------
+def slack_notification(message):
+
+    if 'slack_notifications' in dictionary['tags'].keys():
+
+        if dictionary['tags']['slack_notifications']['use']==True:
+
+            simg = dictionary['tags']['slack_notifications']['container']['simg_name']
+            dockerhub_path = dictionary['tags']['slack_notifications']['container']['dockerhub_path']
+            channel = dictionary['tags']['slack_notifications']['channel']
+
+            if not os.path.isfile(simg):
+                print(f'Building {simg}.')
+                sp.call(f"singularity build {simg} {dockerhub_path}", shell=True)
+
+            sp.call(f"singularity run {simg} -m {message} -c {channel}")
+
+
+# --------------------------------------------------
 def main():
     """Run distributed data processing here"""
 
@@ -1100,6 +1118,8 @@ def main():
 
     for date in args.date:
         cwd = os.getcwd()
+        slack_notification(message=f"Processing of {date} beginning.")
+        
         try:
             build_containers(dictionary)
 
@@ -1171,21 +1191,29 @@ def main():
                 if 'input_dir' in v.keys():
                     dir_name = os.path.join(*v['input_dir'])
 
+                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} running.")
+
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
                 run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
+
                 if not args.noclean:
                     print(f"Cleaning directory")
                     clean_directory()
-        
+
+                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.")
+
+            slack_notification(message=f"Processing of {date} complete.")
             kill_workers(dictionary['workload_manager']['job_name'])
             tar_outputs(date, dictionary)
             create_pipeline_logs(date)
             upload_outputs(date, dictionary)
+
             if not args.noclean:
                 print(f"Cleaning inputs")
                 clean_inputs(date, dictionary) 
+
         except:
             print(f"Cleaning directory")
             clean_directory()
