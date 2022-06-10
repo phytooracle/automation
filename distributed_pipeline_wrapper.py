@@ -118,8 +118,8 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
     cwd = os.getcwd()
     home = os.path.expanduser('~')
     
-        # builds from latest stable source if not on a centos system
-    if platform.linux_distribution()[0] != 'CentOS Linux':
+    # builds from latest stable source if not on a centos system
+    if server_utils.distro_name() != 'CentOS Linux':
         cctools_file = 'cctools-stable-source'
         if not os.path.isdir(os.path.join(home, 'cctools')):
             print(f'Downloading {cctools_file}.')
