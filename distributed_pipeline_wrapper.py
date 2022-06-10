@@ -1131,7 +1131,7 @@ def main():
                     print(irods_dl_dir)
                 file_to_dl = find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir)
                 dir_name = download_irods_input_file(file_to_dl)
-            elif 'input_dir' in input_keys:
+            elif 'input_dir' in yaml_input_keys:
                 print("Using input dir")
                 dir_name = dictionary['paths']['cyverse']['input']['input_dir']
                 if len(dir_name) < 1:
@@ -1187,10 +1187,12 @@ def main():
                 print(f"Cleaning inputs")
                 clean_inputs(date, dictionary) 
         except:
-            print(f"Cleaning directory")
-            clean_directory()
+            if not args.noclean:
+                print(f"Cleaning directory")
+                clean_directory()
             kill_workers(dictionary['workload_manager']['job_name'])
-            clean_inputs(date, dictionary)
+            if not args.noclean:
+                clean_inputs(date, dictionary)
 #             pass       
 
 
