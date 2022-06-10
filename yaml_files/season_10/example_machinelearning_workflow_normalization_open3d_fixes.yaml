@@ -63,7 +63,7 @@ workload_manager:
   account: ericlyons
 
   high_priority_settings:
-    use: True
+    use: False
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
