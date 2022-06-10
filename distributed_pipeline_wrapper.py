@@ -1118,8 +1118,8 @@ def main():
 
     for date in args.date:
         cwd = os.getcwd()
-        slack_notification(message=f"Processing of {date} beginning.")
-        
+        slack_notification(message=f"Processing of {date} starting.")
+
         try:
             build_containers(dictionary)
 
