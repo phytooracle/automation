@@ -1099,7 +1099,7 @@ def slack_notification(message):
                 print(f'Building {simg}.')
                 sp.call(f"singularity build {simg} {dockerhub_path}", shell=True)
             print('Sending message.')
-            sp.call(f"singularity run {simg} -m {message} -c {channel}", shell=True)
+            sp.call(f'singularity run {simg} -m "{message}" -c "{channel}"', shell=True)
 
 
 # --------------------------------------------------
