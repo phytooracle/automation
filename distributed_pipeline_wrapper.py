@@ -83,6 +83,16 @@ def get_args():
                         action='store_true',
                        )
 
+    parser.add_argument('-r',
+                        '--reverse',
+                        help='Reverse processing date list.',
+                        action='store_true')
+    
+    parser.add_argument('-sfs',
+                        '--shared_file_system',
+                        help='Shared filesystem.',
+                        action='store_false')
+
     return parser.parse_args()
 
 
@@ -821,7 +831,7 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     cctools = os.path.join(home, cctools)
     arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' # --disable-cache $@'
 
-    if args.hpc:
+    if args.hpc or args.shared_file_system:
         arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --shared-fs {cwd}' #--disable-cache $@' 
     
     cmd1 = ' '.join([cctools, arguments])
@@ -1061,6 +1071,8 @@ def return_date_list(level_0_list):
 
 # --------------------------------------------------
 def get_process_date_list(dictionary):
+
+    args= get_args()
     basename = dictionary['paths']['cyverse']['basename']
     input_level = dictionary['paths']['cyverse']['input']['level']
 
@@ -1080,8 +1092,34 @@ def get_process_date_list(dictionary):
     level_0_dates, level_1_dates = return_date_list(level_0_list) \
                                 , return_date_list(level_1_list)       
     process_list = np.setdiff1d(level_0_dates, level_1_dates)
-    
+
+    if args.reverse:
+        process_list.reverse()
+        
     return process_list
+
+
+# --------------------------------------------------
+def slack_notification(message, date):
+
+    sensor = dictionary['tags']['sensor']
+    if 'slack_notifications' in dictionary['tags'].keys():
+        
+        if dictionary['tags']['slack_notifications']['use']==True:
+
+            simg = dictionary['tags']['slack_notifications']['container']['simg_name']
+            dockerhub_path = dictionary['tags']['slack_notifications']['container']['dockerhub_path']
+            channel = dictionary['tags']['slack_notifications']['channel']
+            season = ''.join(['Season', str(dictionary['tags']['season'])])
+            description = ''.join(['[', ' '.join([season, sensor, date]), ']'])
+
+            message = ' | '.join([description, message])
+
+            if not os.path.isfile(simg):
+                print(f'Building {simg}.')
+                sp.call(f"singularity build {simg} {dockerhub_path}", shell=True)
+            print('Sending message.')
+            sp.call(f'singularity run {simg} -m "{message}" -c "{channel}"', shell=True)
 
 
 # --------------------------------------------------
@@ -1100,6 +1138,9 @@ def main():
 
     for date in args.date:
         cwd = os.getcwd()
+        
+        slack_notification(message=f"Starting data processing.", date=date)
+
         try:
             build_containers(dictionary)
 
@@ -1115,7 +1156,8 @@ def main():
             # (1) No input_dir.  Use suffix and prefix.  Original method.
             # (2) input_dir, but not suffix or prefix: DL all files from input_dir
             # (3) both...  add input_dir to irods_path and continue as (1)
-             
+
+            slack_notification(message=f"Downloading raw data.", date=date)
             yaml_input_keys = dictionary['paths']['cyverse']['input'].keys()
             # figure out if yaml has prefix and/or sufix keys...
             irods_sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
@@ -1143,7 +1185,8 @@ def main():
             #if dictionary['tags']['sensor']=='scanner3DTop':
                 #get_required_files_3d(dictionary=dictionary, date=date)
             get_support_files(dictionary=dictionary, date=date)
-            
+            slack_notification(message=f"Downloading raw data complete.", date=date)
+
             if args.hpc:
                 kill_workers(dictionary['workload_manager']['job_name'])
 
@@ -1171,21 +1214,36 @@ def main():
                 if 'input_dir' in v.keys():
                     dir_name = os.path.join(*v['input_dir'])
 
+                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])}.", date=date)
+
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
                 run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
+
                 if not args.noclean:
                     print(f"Cleaning directory")
                     clean_directory()
-        
+
+                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.", date=date)
+
+            slack_notification(message=f"All processing steps complete.", date=date)
+
             kill_workers(dictionary['workload_manager']['job_name'])
+
+            slack_notification(message=f"Archiving data.", date=date)
             tar_outputs(date, dictionary)
+            slack_notification(message=f"Archiving data complete.", date=date)
+
             create_pipeline_logs(date)
+            slack_notification(message=f"Uploading data.", date=date)
             upload_outputs(date, dictionary)
+            slack_notification(message=f"Uploading data complete.", date=date)
+
             if not args.noclean:
                 print(f"Cleaning inputs")
                 clean_inputs(date, dictionary) 
+
         except:
             if not args.noclean:
                 print(f"Cleaning directory")

@@ -7,6 +7,14 @@ tags:
   sensor: scanner3DTop 
   season: 10
   season_name: season_10_lettuce_yr_2020
+  slack_notifications: 
+    use: True
+    channel: gantry_data_updates
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+
+
 
 modules:
   1:
@@ -55,7 +63,7 @@ workload_manager:
   account: ericlyons
 
   high_priority_settings:
-    use: True
+    use: False
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
