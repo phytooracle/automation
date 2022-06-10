@@ -21,13 +21,13 @@ For more information on arguments/flags, [click here](https://github.com/phytoor
 ## Running the pipeline
 The script ```distributed_pipeline_wrapper.py``` is used to run the pipeline. This script downloads and extracts bundled test data, runs containers, and bundles output data.
 
-### Running on Cloud server
-On your Cloud VM, run the following command:
+### Running on local computers/servers
+On your computer/server, run the following command:
 ```
 ./distributed_pipeline_wrapper.py -d 2020-02-14 -y yaml_files/example_machinelearning_workflow.yaml
 ```
 
-### Running on HPC cluster | interactive job submission
+### Running on HPC clusters
 #### Interactive node
 The pipeline can use a data transfer node to download data, which speeds up processing. You must first launch an interactive node using the following command on UA HPC Puma: 
 ```
@@ -55,4 +55,4 @@ For example:
 sbatch shell_scripts/slurm_submission.sh yaml_files/example_machinelearning_workflow.yaml
 ```
 
-Make sure to change the account, partition as needed in the YAML file. 
+Make sure to change the `account` and `partition` values as needed in the YAML file. 
