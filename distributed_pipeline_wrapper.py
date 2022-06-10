@@ -1110,7 +1110,10 @@ def slack_notification(message, date):
             simg = dictionary['tags']['slack_notifications']['container']['simg_name']
             dockerhub_path = dictionary['tags']['slack_notifications']['container']['dockerhub_path']
             channel = dictionary['tags']['slack_notifications']['channel']
-            message = ' | '.join([' '.join([date, sensor]), message])
+            season = ' '.join(['Season', dictionary['tags']['season']])
+        
+            message = ' | '.join([' '.join([season, sensor, date]), message])
+
             if not os.path.isfile(simg):
                 print(f'Building {simg}.')
                 sp.call(f"singularity build {simg} {dockerhub_path}", shell=True)
