@@ -20,6 +20,7 @@ import re
 from datetime import datetime
 import numpy as np
 import platform
+import socket
 
 # Our libraries...
 import server_utils
@@ -1113,7 +1114,10 @@ def slack_notification(message, date):
             channel = dictionary['tags']['slack_notifications']['channel']
             season = ''.join(['Season', str(dictionary['tags']['season'])])
             user = os.getlogin()
-            description = ''.join(['[', ' '.join([season, sensor, date, user]), ']'])
+            host_name = socket.gethostname()
+            user_host = '@'.join([user, host_name])
+
+            description = ''.join(['[', ' '.join([season, sensor, date, user_host]), ']'])
             
             message = ' | '.join([description, message])
 
