@@ -1113,7 +1113,7 @@ def slack_notification(message, date):
             dockerhub_path = dictionary['tags']['slack_notifications']['container']['dockerhub_path']
             channel = dictionary['tags']['slack_notifications']['channel']
             season = ''.join(['Season', str(dictionary['tags']['season'])])
-            user = os.getlogin()
+            user = os.environ['LOGNAME']
             host_name = socket.gethostname()
             user_host = '@'.join([user, host_name])
 
