@@ -1112,8 +1112,9 @@ def slack_notification(message, date):
             dockerhub_path = dictionary['tags']['slack_notifications']['container']['dockerhub_path']
             channel = dictionary['tags']['slack_notifications']['channel']
             season = ''.join(['Season', str(dictionary['tags']['season'])])
-            description = ''.join(['[', ' '.join([season, sensor, date]), ']'])
-
+            user = os.getlogin()
+            description = ''.join(['[', ' '.join([season, sensor, date, user]), ']'])
+            
             message = ' | '.join([description, message])
 
             if not os.path.isfile(simg):
