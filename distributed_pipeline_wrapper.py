@@ -1247,17 +1247,21 @@ def main():
             slack_notification(message=f"Uploading data complete.", date=date)
 
             if not args.noclean:
+                slack_notification(message=f"Cleaning inputs.", date=date)
                 print(f"Cleaning inputs")
                 clean_inputs(date, dictionary) 
+                slack_notification(message=f"Cleaning inputs complete.", date=date)
 
         except:
+            slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
             if not args.noclean:
+                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs.", date=date)
                 print(f"Cleaning directory")
                 clean_directory()
+                clean_inputs(date, dictionary)  
+                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs complete.", date=date)
+
             kill_workers(dictionary['workload_manager']['job_name'])
-            if not args.noclean:
-                clean_inputs(date, dictionary)
-#             pass       
 
 
 # --------------------------------------------------
