@@ -1135,7 +1135,6 @@ def create_mf_monitor(cctools_path, outfile='./shell_scripts/mf_monitor.sh'):
                 fh.writelines("#!/bin/bash\n")
                 fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
                 fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-                # fh.writelines("export PYTHONPATH=${PYTHONPATH}:${HOME}/" + f"{os.path.join(cctools_path, 'lib/python2.4/site-packages')}\n")
                 fh.writelines("makeflow_monitor wf_file_${1}.json.makeflowlog")
     
 
