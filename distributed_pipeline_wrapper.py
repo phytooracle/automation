@@ -1152,9 +1152,7 @@ def main():
 
             if args.uploadonly:
                 upload_outputs(date, dictionary)
-#                 return
 
-#         except:
             server_utils.hpc = args.hpc
                 
             # Figure out what we need to DL
@@ -1165,6 +1163,7 @@ def main():
 
             slack_notification(message=f"Downloading raw data.", date=date)
             yaml_input_keys = dictionary['paths']['cyverse']['input'].keys()
+
             # figure out if yaml has prefix and/or sufix keys...
             irods_sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
             if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
@@ -1188,8 +1187,6 @@ def main():
             else:
                 raise Exception(f"Couldn't figure out what to do with yaml input")
 
-            #if dictionary['tags']['sensor']=='scanner3DTop':
-                #get_required_files_3d(dictionary=dictionary, date=date)
             get_support_files(dictionary=dictionary, date=date)
             slack_notification(message=f"Downloading raw data complete.", date=date)
 
@@ -1198,11 +1195,8 @@ def main():
 
                 launch_workers(cctools_path = cctools_path,
                         account=dictionary['workload_manager']['account'], 
-                        # partition=dictionary['workload_manager']['partition'], 
                         job_name=dictionary['workload_manager']['job_name'], 
                         nodes=dictionary['workload_manager']['nodes'], 
-                        #number_tasks=dictionary['workload_manager']['number_tasks'], 
-                        #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'],
                         time=dictionary['workload_manager']['time_minutes'], 
                         mem_per_core=dictionary['workload_manager']['mem_per_core'], 
                         manager_name=dictionary['workload_manager']['manager_name'], 
@@ -1210,7 +1204,6 @@ def main():
                         cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
                         worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'], 
                         cwd=cwd)
-                        # qos_group=dictionary['workload_manager']['qos_group'])
 
             global seg_model_name, det_model_name
             seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
