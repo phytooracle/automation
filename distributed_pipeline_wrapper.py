@@ -1161,6 +1161,36 @@ def create_wq_status(cctools_path, outfile='./shell_scripts/wq_status.sh'):
 
 
 # --------------------------------------------------
+def move_outputs(scan_date, dictionary):
+
+    '''
+    Bundles outputs for upload to the CyVerse DataStore.
+
+    Input:
+        - scan_date: Date of the scan
+        - dictionary: Dictionary variable (YAML file)
+    
+    Output: 
+        - Tar files containing all output data
+    '''
+
+    cwd = os.getcwd()
+
+    for item in dictionary['paths']['pipeline_outpath']:
+
+        # if os.path.isdir(item):
+        #     os.chdir(item)
+
+        outdir = item
+        path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
+
+        if not os.path.isdir(os.path.join(path, scan_date, outdir)):
+            os.makedirs(os.path.join(path, scan_date, outdir))
+        
+        shutil.move(item, os.path.join(path, scan_date, outdir))
+
+
+# --------------------------------------------------
 def main():
     """Run distributed data processing here"""
 
@@ -1265,17 +1295,24 @@ def main():
                 slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.", date=date)
 
             slack_notification(message=f"All processing steps complete.", date=date)
-
             kill_workers(dictionary['workload_manager']['job_name'])
 
-            slack_notification(message=f"Archiving data.", date=date)
-            tar_outputs(date, dictionary)
-            slack_notification(message=f"Archiving data complete.", date=date)
+            if 'upload_directories' in dictionary['paths']['cyverse'].keys():
 
-            create_pipeline_logs(date)
-            slack_notification(message=f"Uploading data.", date=date)
-            upload_outputs(date, dictionary)
-            slack_notification(message=f"Uploading data complete.", date=date)
+                if dictionary['paths']['cyverse']['upload_directories']['use']==True:
+                    slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
+                    move_outputs(date, dictionary)
+                    slack_notification(message=f"Moving data complete.", date=date)
+
+            else:
+                slack_notification(message=f"Archiving data.", date=date)
+                tar_outputs(date, dictionary)
+                slack_notification(message=f"Archiving data complete.", date=date)
+
+                create_pipeline_logs(date)
+                slack_notification(message=f"Uploading data.", date=date)
+                upload_outputs(date, dictionary)
+                slack_notification(message=f"Uploading data complete.", date=date)
 
             if not args.noclean:
                 slack_notification(message=f"Cleaning inputs.", date=date)
