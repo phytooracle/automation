@@ -1129,11 +1129,33 @@ def slack_notification(message, date):
 
 
 # --------------------------------------------------
+def create_mf_monitor(cctools_path, outfile='./shell_scripts/mf_monitor.sh'):
+
+    with open(outfile, 'w') as fh:
+                fh.writelines("#!/bin/bash\n")
+                fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
+                fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
+                fh.writelines("makeflow_monitor wf_file_${1}.json.makeflowlog")
+    
+
+# --------------------------------------------------
+def create_wq_status(cctools_path, outfile='./shell_scripts/wq_status.sh'):
+
+    with open(outfile, 'w') as fh:
+                fh.writelines("#!/bin/bash\n")
+                fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
+                fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
+                fh.writelines("watch -n 1 work_queue_status")
+
+
+# --------------------------------------------------
 def main():
     """Run distributed data processing here"""
 
     args = get_args()
     cctools_path = download_cctools(cctools_version=args.cctools_version)
+    create_mf_monitor(cctools_path)
+    create_wq_status(cctools_path)
 
     with open(args.yaml, 'r') as stream:
         global dictionary
