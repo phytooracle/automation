@@ -79,6 +79,11 @@ def get_args():
                         action='store_true',
                        )
 
+    parser.add_argument('--archiveonly',
+                        help='just archive and exit (for testing)',
+                        action='store_true',
+                       )
+
     parser.add_argument('--uploadonly',
                         help='just do cyverse ul and exit (for testing)',
                         action='store_true',
@@ -869,11 +874,18 @@ def tar_outputs(scan_date, dictionary):
             if not os.path.isdir(_full_v):
                 print(f"Skipping the tarring of '{_full_v}' from yaml paths:outpath_subdirs because it was not found")
                 continue
-            file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{v}.tar') 
-            print(f'Creating {file_path}.')
-            if not os.path.isfile(file_path):
-                with tarfile.open(file_path, 'w') as tar:
-                    tar.add(v, recursive=True)
+            if v == 'plant_reports':
+                # This is a hack created by Nathan.
+                src_dir = os.path.join(cwd, outdir, v)
+                dest_dir = os.path.join(cwd, scan_date, outdir, v)
+                print(f"Copying plant_reports")
+                shutil.copytree(src_dir, dest_dir)
+            else:
+                file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{v}.tar') 
+                print(f'Creating {file_path}.')
+                if not os.path.isfile(file_path):
+                    with tarfile.open(file_path, 'w') as tar:
+                        tar.add(v, recursive=True)
 
     os.chdir(cwd)
 
@@ -1174,6 +1186,10 @@ def main():
 
             if args.uploadonly:
                 upload_outputs(date, dictionary)
+                return
+            if args.archiveonly:
+                tar_outputs(date, dictionary)
+                return
 
             server_utils.hpc = args.hpc
                 
