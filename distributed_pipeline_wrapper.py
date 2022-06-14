@@ -1213,7 +1213,7 @@ def move_outputs(scan_date, dictionary):
         fh.writelines(f"#SBATCH --mem-per-cpu={dictionary['workload_manager']['mem_per_core']}GB\n")
         fh.writelines(f"#SBATCH --time={dictionary['workload_manager']['time_minutes']}\n")
         fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
-        fh.writelines(f"ssh filexfer 'cd {path}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {scan_date}' '&& exit'")
+        fh.writelines(f"ssh filexfer 'cd {path}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {scan_date}' 'rm -r {scan_date}' '&& exit'")
     
     return_code = sp.call(f"sbatch {scan_date}_upload.sh", shell=True)
 
@@ -1221,10 +1221,6 @@ def move_outputs(scan_date, dictionary):
         raise Exception(f"sbatch Failed")
 
     
-    
-
-
-
 # --------------------------------------------------
 def main():
     """Run distributed data processing here"""
