@@ -1212,10 +1212,12 @@ def move_outputs(scan_date, dictionary):
         fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
         fh.writelines(f"ssh filexfer 'cd {path}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {scan_date}' '&& exit'")
     
-    return_code = sp.call(f"sbatch {scan_date}_upload.sh'", shell=True)
-    
+    return_code = sp.call(f"sbatch {scan_date}_upload.sh", shell=True)
+
     if return_code == 1:
         raise Exception(f"sbatch Failed")
+
+    os.remove(f"{scan_date}_upload.sh")
     
 
 
