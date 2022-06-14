@@ -124,11 +124,11 @@ workload_manager:
 
   job_name: po_season11_3d_post
   nodes: 1                  # Just do one.  (each array is on a distinct node)
-  number_worker_array: 28 #94      # This is number of arrays (workers)
-  cores_per_worker: 32       # This is how many cores (cpu/gpu) per array, used to increase tot mem
+  number_worker_array: 300 #94      # This is number of arrays (workers)
+  cores_per_worker: 20 #32       # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
-  port: 6022
+  port: 0
   #mem_per_core: 32
   mem_per_core: 5
   manager_name: s11_3D_post
@@ -141,6 +141,9 @@ paths:
   pipeline_outpath: [individual_plants_out]
   outpath_subdirs: [segmentation_pointclouds, plant_reports]
   cyverse: 
+    upload_directories:
+      use: True
+      temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
     basename: /iplant/home/shared/phytooracle/
     input: 
       necessary_files: [level_3/stereoTop/season_11_clustering.csv, level_0/necessary_files/gcp_season_11.txt]
