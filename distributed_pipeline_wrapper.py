@@ -1325,16 +1325,15 @@ def main():
             slack_notification(message=f"All processing steps complete.", date=date)
             kill_workers(dictionary['workload_manager']['job_name'])
 
-            if 'upload_directories' in dictionary['paths']['cyverse'].keys():
+            if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
+                
+                slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
+                move_outputs(date, dictionary)
+                slack_notification(message=f"Moving data complete.", date=date)
 
-                if dictionary['paths']['cyverse']['upload_directories']['use']==True:
-                    slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
-                    move_outputs(date, dictionary)
-                    slack_notification(message=f"Moving data complete.", date=date)
-
-                    # slack_notification(message=f"Uploading data.", date=date)
-                    # upload_outputs(date, dictionary)
-                    # slack_notification(message=f"Uploading data complete.", date=date)
+                # slack_notification(message=f"Uploading data.", date=date)
+                # upload_outputs(date, dictionary)
+                # slack_notification(message=f"Uploading data complete.", date=date)
 
             else:
                 slack_notification(message=f"Archiving data.", date=date)
