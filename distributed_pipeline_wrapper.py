@@ -1191,6 +1191,8 @@ def move_outputs(scan_date, dictionary):
         
         shutil.move(item, os.path.join(path, scan_date, outdir))
 
+    create_pipeline_logs(date)
+    
     irods_output_path = get_irods_data_path(dictionary)
     print(irods_output_path)
 
@@ -1326,7 +1328,7 @@ def main():
             kill_workers(dictionary['workload_manager']['job_name'])
 
             if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
-                
+
                 slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
                 move_outputs(date, dictionary)
                 slack_notification(message=f"Moving data complete.", date=date)
