@@ -1304,6 +1304,10 @@ def main():
                     move_outputs(date, dictionary)
                     slack_notification(message=f"Moving data complete.", date=date)
 
+                    # slack_notification(message=f"Uploading data.", date=date)
+                    # upload_outputs(date, dictionary)
+                    # slack_notification(message=f"Uploading data complete.", date=date)
+
             else:
                 slack_notification(message=f"Archiving data.", date=date)
                 tar_outputs(date, dictionary)

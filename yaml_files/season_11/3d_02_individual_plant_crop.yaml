@@ -135,6 +135,9 @@ paths:
   pipeline_outpath: [individual_plants_out]
   outpath_subdirs: [segmentation_pointclouds, plant_reports]
   cyverse: 
+    upload_directories:
+      use: True
+      temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
     basename: /iplant/home/shared/phytooracle/
     input: 
       necessary_files: [level_3/stereoTop/season_11_clustering.csv, level_0/necessary_files/gcp_season_11.txt]
