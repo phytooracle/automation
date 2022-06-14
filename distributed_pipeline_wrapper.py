@@ -1200,7 +1200,24 @@ def move_outputs(scan_date, dictionary):
         shutil.move(item, os.path.join(path, scan_date, outdir))
 
     irods_output_path = get_irods_data_path(dictionary)
-    sp.call(f"ssh filexfer 'cd {path}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {scan_date}' '&& exit'", shell=True)
+
+    with open(f'{scan_date}_upload.sh', 'w') as fh:
+        fh.writelines("#!/bin/bash\n")
+        fh.writelines(f"#SBATCH --account={dictionary['workload_manager']['account']}\n")
+        fh.writelines(f"#SBATCH --job-name=phytooracle_upload\n")
+        fh.writelines(f"#SBATCH --nodes=1\n")
+        fh.writelines(f"#SBATCH --ntasks=1\n")
+        fh.writelines(f"#SBATCH --mem-per-cpu={dictionary['workload_manager']['mem_per_core']}GB\n")
+        fh.writelines(f"#SBATCH --time={dictionary['workload_manager']['time_minutes']}\n")
+        fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
+        fh.writelines(f"ssh filexfer 'cd {path}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {scan_date}' '&& exit'")
+    
+    return_code = sp.call(f"sbatch {scan_date}_upload.sh'", shell=True)
+    
+    if return_code == 1:
+        raise Exception(f"sbatch Failed")
+    
+
 
 
 # --------------------------------------------------
