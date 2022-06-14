@@ -969,7 +969,6 @@ def upload_outputs(date, dictionary):
     irods_output_path = get_irods_data_path(dictionary)
     
     cwd = os.getcwd()
-    print(cwd)
 
     if args.hpc: 
         print(':: Using data transfer node.')
@@ -1203,9 +1202,11 @@ def move_outputs(scan_date, dictionary):
         shutil.move(item, os.path.join(path, scan_date, outdir))
 
     irods_output_path = get_irods_data_path(dictionary)
+    print(irods_output_path)
 
     print('Saving upload file.')
     with open(f'upload.sh', 'w') as fh:
+
         fh.writelines("#!/bin/bash\n")
         fh.writelines(f"#SBATCH --account={dictionary['workload_manager']['account']}\n")
         fh.writelines(f"#SBATCH --job-name=phytooracle_upload\n")
