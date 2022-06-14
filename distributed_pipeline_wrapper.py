@@ -1191,8 +1191,8 @@ def move_outputs(scan_date, dictionary):
         
         shutil.move(item, os.path.join(path, scan_date, outdir))
 
-    create_pipeline_logs(date)
-    
+    create_pipeline_logs(scan_date)
+
     irods_output_path = get_irods_data_path(dictionary)
     print(irods_output_path)
 
