@@ -1076,8 +1076,8 @@ def clean_inputs(date, dictionary):
     if os.path.isfile('worker_priority.sh'):
         os.remove('worker_priority.sh')
 
-    if os.path.isfile(f"{date}_upload.sh"):
-        os.remove(f"{date}_upload.sh")
+    # if os.path.isfile(f"{date}_upload.sh"):
+    #     os.remove(f"{date}_upload.sh")
 
 
 # --------------------------------------------------
