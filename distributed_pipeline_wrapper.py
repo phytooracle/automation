@@ -1180,10 +1180,7 @@ def move_outputs(scan_date, dictionary):
     path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
 
     for item in dictionary['paths']['pipeline_outpath']:
-
-        # if os.path.isdir(item):
-        #     os.chdir(item)
-
+        print(item)
         outdir = item
         
         if not os.path.isdir(os.path.join(cwd, scan_date, outdir)):
