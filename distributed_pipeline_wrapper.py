@@ -1175,16 +1175,6 @@ def create_wq_status(cctools_path, outfile='./shell_scripts/wq_status.sh'):
 # --------------------------------------------------
 def move_outputs(scan_date, dictionary):
 
-    '''
-    Bundles outputs for upload to the CyVerse DataStore.
-
-    Input:
-        - scan_date: Date of the scan
-        - dictionary: Dictionary variable (YAML file)
-    
-    Output: 
-        - Tar files containing all output data
-    '''
     print('Moving outputs')
     cwd = os.getcwd()
     path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
