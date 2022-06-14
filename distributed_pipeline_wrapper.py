@@ -918,17 +918,8 @@ def create_pipeline_logs(scan_date):
 
 
 # --------------------------------------------------
-def upload_outputs(date, dictionary):
-    '''
-    Uploads bundled data to the CyVerse path ('paths/cyverse/output/basename' value) specified in the YAML file.
+def get_irods_data_path(dictionary):
 
-    Input:
-        - date: Date of the scan
-        - dictionary: Dictionary variable (YAML file)
-    
-    Output: 
-        - Uploaded data on CyVerse DataStore
-    '''  
     args= get_args()
     #root = dictionary['paths']['cyverse']['output']['basename']
     #subdir = dictionary['paths']['cyverse']['output']['subdir']
@@ -957,6 +948,25 @@ def upload_outputs(date, dictionary):
                                          irods_output_path,
                                          (experiment if experiment else "")
         )
+
+    return irods_output_path
+
+
+# --------------------------------------------------
+def upload_outputs(date, dictionary):
+    '''
+    Uploads bundled data to the CyVerse path ('paths/cyverse/output/basename' value) specified in the YAML file.
+
+    Input:
+        - date: Date of the scan
+        - dictionary: Dictionary variable (YAML file)
+    
+    Output: 
+        - Uploaded data on CyVerse DataStore
+    '''  
+    args= get_args()
+
+    irods_output_path = get_irods_data_path(dictionary)
     
     cwd = os.getcwd()
     print(cwd)
@@ -1188,6 +1198,9 @@ def move_outputs(scan_date, dictionary):
             os.makedirs(os.path.join(path, scan_date, outdir))
         
         shutil.move(item, os.path.join(path, scan_date, outdir))
+
+    irods_output_path = get_irods_data_path(dictionary)
+    sp.call(f"ssh filexfer 'cd {path}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {scan_date}' '&& exit'", shell=True)
 
 
 # --------------------------------------------------
