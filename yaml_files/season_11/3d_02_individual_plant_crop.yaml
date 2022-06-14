@@ -78,7 +78,7 @@ modules:
       dockerhub_path: docker://phytooracle/3d_individual_plant_registration:multiway_registration
     command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_individual_plant_registration.simg -i individual_plants_out/ -p ${PLANT_NAME} -r individual_plants_out/plant_reports/${PLANT_NAME} -o individual_plants_out/segmentation_pointclouds/${PLANT_NAME}
     distribution_level: wq
-    file_level: subdir
+    file_level: #subdir
     input_dir: [individual_plants_out, west]
     input_file: _cropped.ply
     inputs: [individual_plants_out/west/$PLANT_NAME,
@@ -125,7 +125,7 @@ workload_manager:
   job_name: po_season11_3d_post
   nodes: 1                  # Just do one.  (each array is on a distinct node)
   number_worker_array: 28 #94      # This is number of arrays (workers)
-  cores_per_worker: 32       # This is how many cores (cpu/gpu) per array, used to increase tot mem
+  cores_per_worker: 1 #32       # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
   port: 6022
