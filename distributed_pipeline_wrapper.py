@@ -1076,6 +1076,9 @@ def clean_inputs(date, dictionary):
     if os.path.isfile('worker_priority.sh'):
         os.remove('worker_priority.sh')
 
+    if os.path.isfile(f"{date}_upload.sh"):
+        os.remove(f"{date}_upload.sh")
+
 
 # --------------------------------------------------
 def return_date_list(level_0_list):
@@ -1217,7 +1220,7 @@ def move_outputs(scan_date, dictionary):
     if return_code == 1:
         raise Exception(f"sbatch Failed")
 
-    os.remove(f"{scan_date}_upload.sh")
+    
     
 
 
