@@ -1186,8 +1186,9 @@ def move_outputs(scan_date, dictionary):
     Output: 
         - Tar files containing all output data
     '''
-
+    print('Moving outputs')
     cwd = os.getcwd()
+    path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
 
     for item in dictionary['paths']['pipeline_outpath']:
 
@@ -1195,8 +1196,7 @@ def move_outputs(scan_date, dictionary):
         #     os.chdir(item)
 
         outdir = item
-        path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
-
+        
         if not os.path.isdir(os.path.join(path, scan_date, outdir)):
             os.makedirs(os.path.join(path, scan_date, outdir))
         
@@ -1204,6 +1204,7 @@ def move_outputs(scan_date, dictionary):
 
     irods_output_path = get_irods_data_path(dictionary)
 
+    print('Saving upload file.')
     with open(f'upload.sh', 'w') as fh:
         fh.writelines("#!/bin/bash\n")
         fh.writelines(f"#SBATCH --account={dictionary['workload_manager']['account']}\n")
@@ -1213,7 +1214,12 @@ def move_outputs(scan_date, dictionary):
         fh.writelines(f"#SBATCH --mem-per-cpu={dictionary['workload_manager']['mem_per_core']}GB\n")
         fh.writelines(f"#SBATCH --time={dictionary['workload_manager']['time_minutes']}\n")
         fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
-        fh.writelines(f"ssh filexfer 'cd {path}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {scan_date}' 'rm -r {scan_date}' '&& exit'")
+        fh.writelines("ssh filexfer\n")
+        fh.writelines(f"cd {path}\n") 
+        fh.writelines(f"imkdir -p {irods_output_path}\n") 
+        fh.writelines(f"icd {irods_output_path}\n") 
+        fh.writelines(f"iput -rfKPVT {scan_date}\n")
+        fh.writelines(f"rm -r {scan_date}")
     
     return_code = sp.call(f"sbatch upload.sh", shell=True)
 
