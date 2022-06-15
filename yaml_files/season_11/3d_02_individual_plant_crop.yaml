@@ -96,7 +96,7 @@ modules:
     distribution_level: wq
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: final.ply
+    input_file: combined_multiway_registered.ply
     inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply,
@@ -106,10 +106,7 @@ modules:
              individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg,
              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif]
-             #individual_plants_out/plant_reports/$PLANT_NAME]
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registe.gif]
-    #outputs: [individual_plants_out/plant_reports/$PLANT_NAME/75_ML_compare.gif,
-    #individual_plants_out/plant_reports/$PLANT_NAME/segmentation_dbscan_compare.gif]
 
 workload_manager:
   account: ericlyons
