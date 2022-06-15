@@ -3,7 +3,7 @@ tags:
   pipeline: season10_scanner3DTop
   description: final
   notes: Processing of Season 10 scanner3DTop data using the machine learning (ML)-based cropping approach. This approach using a Faster RCNN object detection model to localize plants in 2D.
-  runby: Travis Simmons
+  runby: Pauli lab member
   sensor: scanner3DTop 
   season: 10
   season_name: season_10_lettuce_yr_2020
@@ -74,7 +74,7 @@ workload_manager:
   cores_per_worker: 20
   time_minutes: 1440
   retries: 1
-  port: 6022
+  port: 0
   mem_per_core: 5
   manager_name: phytooracle_manager
   worker_timeout_seconds: 900
