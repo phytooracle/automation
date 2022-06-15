@@ -150,4 +150,4 @@ paths:
       level: level_1
       input_dir: alignment
     output: 
-      level: level_1
+      level: level_2
