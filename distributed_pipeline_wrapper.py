@@ -1202,7 +1202,7 @@ def move_outputs(scan_date, dictionary):
     with open(f'upload.sh', 'w') as fh:
 
         fh.writelines("#!/bin/bash\n")
-        fh.writelines(f"#SBATCH --account={dictionary['workload_manager']['account']}\n")
+        fh.writelines(f"#SBATCH --account={dictionary['paths']['cyverse']['upload_directories']['upload_account']}\n")
         fh.writelines(f"#SBATCH --job-name=phytooracle_upload\n")
         fh.writelines(f"#SBATCH --nodes=1\n")
         fh.writelines(f"#SBATCH --ntasks=1\n")
