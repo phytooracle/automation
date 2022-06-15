@@ -121,15 +121,14 @@ workload_manager:
 
   job_name: phytooracle_worker
   nodes: 1                  # Just do one.  (each array is on a distinct node)
-  number_worker_array: 300 #94      # This is number of arrays (workers)
-  cores_per_worker: 20 #32       # This is how many cores (cpu/gpu) per array, used to increase tot mem
+  number_worker_array: 333  # This is number of arrays (workers)
+  cores_per_worker: 20      # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
   port: 0
-  #mem_per_core: 32
   mem_per_core: 5
   manager_name: phytooracle_manager
-  worker_timeout_seconds: 900   # 86400
+  worker_timeout_seconds: 900
 
 paths:
   models:
