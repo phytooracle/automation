@@ -1183,10 +1183,10 @@ def move_outputs(scan_date, dictionary):
         print(item)
         outdir = item
         
-        if not os.path.isdir(os.path.join(cwd, scan_date, outdir)):
-            os.makedirs(os.path.join(cwd, scan_date, outdir))
+        if not os.path.isdir(os.path.join(cwd, scan_date)):
+            os.makedirs(os.path.join(cwd, scan_date))
         
-        shutil.move(item, os.path.join(cwd, scan_date, outdir))
+        shutil.move(item, os.path.join(cwd, scan_date))
 
     create_pipeline_logs(scan_date)
 
