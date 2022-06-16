@@ -4,7 +4,7 @@ tags:
   description: TPM
   notes: Processing of 2019 cotton RNA-Seq TPM data and spectral data for gene expression prediction.
   runby: Emmanuel Miguel Gonzalez
-  sensor: scanner3DTop #rnaseq_hyperspectral 
+  sensor: rnaseq_hyperspectral 
   season: 2019 cotton
   season_name: 2019_cotton
   slack_notifications: 
