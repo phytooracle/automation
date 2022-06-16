@@ -806,7 +806,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                 "inputs"  : [#file, 
                                             container, 
                                             seg_model_name, 
-                                            det_model_name] + [input.replace('$FILE', file)]
+                                            det_model_name] + [input.replace('$FILE', file) for input in inputs]
 
                         } for file in  files_list
                     ]
