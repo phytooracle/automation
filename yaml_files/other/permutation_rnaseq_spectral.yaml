@@ -68,6 +68,7 @@ paths:
 
     basename: /iplant/home/shared/phytooracle/
     input: 
+      necessary_files: [level_3/stereoTop/season_11_clustering.csv, level_0/necessary_files/gcp_season_11.txt]
       prefix: 
       suffix: _rnaseq_spectra.tar
       level: level_1
