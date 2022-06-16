@@ -98,15 +98,15 @@ modules:
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
     inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
-             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply,
-             individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg,
-             individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
-             individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif]
-    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registe.gif]
+        #individual_plants_out/segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
+        #individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply,
+        #individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
+        #individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
+        #individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply,
+        #individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg,
+        #individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
+        #individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif]
+    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
 
 workload_manager:
   account: ericlyons
