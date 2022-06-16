@@ -72,6 +72,13 @@ def get_args():
                         type=str,
                         required=True)
 
+    parser.add_argument('-wm',
+                        '--workload_manager_yaml',
+                        help='YAML file specifying workload_manager arguments',
+                        metavar='str',
+                        type=str,
+                        required=False)
+
     parser.add_argument('--noclean',
                         help='Do not rm results locally',
                         #metavar='noclean',
@@ -1231,10 +1238,16 @@ def main():
     create_mf_monitor(cctools_path)
     create_wq_status(cctools_path)
 
+
     with open(args.yaml, 'r') as stream:
         global dictionary
         dictionary = yaml.safe_load(stream)
-    
+
+    if "workload_manager_yaml" in args:
+        with open(args.workload_manager_yaml, 'r') as stream:
+            workload_managaer_dictionary = yaml.safe_load(stream)
+        dictionary['workload_manager'] = workload_managaer_dictionary['workload_manager']
+
     if not args.date:
         args.date = get_process_date_list(dictionary)
 
