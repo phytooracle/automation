@@ -4,9 +4,9 @@ tags:
   description: TPM
   notes: Processing of 2019 cotton RNA-Seq TPM data and spectral data for gene expression prediction.
   runby: Emmanuel Miguel Gonzalez
-  sensor: scanner3DTop 
-  season: 10
-  season_name: season_11_sorghum_yr_2020
+  sensor: rnaseq_hyperspectral 
+  season: 2019-cotton
+  season_name: 2019_cotton
   slack_notifications: 
     use: True
     channel: gantry_test #gantry_data_updates
@@ -32,17 +32,17 @@ modules:
               plsr_outputs_update_permutation_updated/permutation/$UUID]
 
 workload_manager:
-  account: lyons-lab
+  account: frost_lab
   
   high_priority_settings:
-    use: True
+    use: False
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: False
+    use: True
     partition: standard
     
-  job_name: phytooracle_worker
+  job_name: phytooracle_worker_rna_seq
   nodes: 1                  # Just do one.  (each array is on a distinct node)
   number_worker_array: 500 #94      # This is number of arrays (workers)
   cores_per_worker: 1       # This is how many cores (cpu/gpu) per array, used to increase tot mem
@@ -70,6 +70,7 @@ paths:
     input: 
       prefix: 
       suffix: _rnaseq_spectra.tar
+      level: level_1
       input_dir: raw_data
     output: 
-      level: level_1
+      level: level_2
