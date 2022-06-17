@@ -1081,16 +1081,14 @@ def move_outputs(scan_date, dictionary):
     cwd = os.getcwd()
     path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
 
-    for item in dictionary['paths']['pipeline_outpath']:
+    for item in dictionary['paths']['cyverse']['upload_directories']['directories_to_move']:
 
-        if item in dictionary['paths']['cyverse']['upload_directories']['directories_to_move']:
-
-            outdir = item
-            
-            if not os.path.isdir(os.path.join(cwd, scan_date)):
-                os.makedirs(os.path.join(cwd, scan_date))
-            
-            shutil.move(item, os.path.join(cwd, scan_date))
+        outdir = item
+        
+        if not os.path.isdir(os.path.join(cwd, scan_date)):
+            os.makedirs(os.path.join(cwd, scan_date))
+        
+        shutil.move(item, os.path.join(cwd, scan_date))
 
     # create_pipeline_logs(scan_date)
 
