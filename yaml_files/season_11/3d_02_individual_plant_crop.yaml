@@ -138,7 +138,7 @@ paths:
   outpath_subdirs: [segmentation_pointclouds, plant_reports]
   cyverse: 
     upload_directories:
-      use: True
+      use: False
       temp_directory: /xdisk/dukepauli/equant/output
       upload_account: dukepauli
     basename: /iplant/home/shared/phytooracle/
