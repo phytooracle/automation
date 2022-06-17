@@ -1150,9 +1150,10 @@ def main():
         dictionary = yaml.safe_load(stream)
 
     if "workload_manager_yaml" in args:
-        with open(args.workload_manager_yaml, 'r') as stream:
-            workload_managaer_dictionary = yaml.safe_load(stream)
-        dictionary['workload_manager'] = workload_managaer_dictionary['workload_manager']
+        if args.workload_manager_yaml is not None:
+            with open(args.workload_manager_yaml, 'r') as stream:
+                workload_managaer_dictionary = yaml.safe_load(stream)
+            dictionary['workload_manager'] = workload_managaer_dictionary['workload_manager']
 
     if not args.date:
         args.date = get_process_date_list(dictionary)
