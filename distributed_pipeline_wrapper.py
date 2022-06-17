@@ -1082,46 +1082,48 @@ def move_outputs(scan_date, dictionary):
     path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
 
     for item in dictionary['paths']['pipeline_outpath']:
-        print(item)
-        outdir = item
-        
-        if not os.path.isdir(os.path.join(cwd, scan_date)):
-            os.makedirs(os.path.join(cwd, scan_date))
-        
-        shutil.move(item, os.path.join(cwd, scan_date))
 
-    create_pipeline_logs(scan_date)
+        if item in dictionary['paths']['cyverse']['upload_directories']['directories_to_move']:
+
+            outdir = item
+            
+            if not os.path.isdir(os.path.join(cwd, scan_date)):
+                os.makedirs(os.path.join(cwd, scan_date))
+            
+            shutil.move(item, os.path.join(cwd, scan_date))
+
+    # create_pipeline_logs(scan_date)
 
     if not os.path.isdir(os.path.join(path)):
         os.makedirs(os.path.join(path))
 
-    shutil.move(os.path.join(cwd, scan_date), os.path.join(path))
+    shutil.move(os.path.join(cwd, scan_date, item), os.path.join(path, scan_date))
 
-    irods_output_path = get_irods_data_path(dictionary)
-    print(irods_output_path)
+    # irods_output_path = get_irods_data_path(dictionary)
+    # print(irods_output_path)
 
-    print('Saving upload file.')
-    with open(f'upload.sh', 'w') as fh:
+    # print('Saving upload file.')
+    # with open(f'upload.sh', 'w') as fh:
 
-        fh.writelines("#!/bin/bash\n")
-        fh.writelines(f"#SBATCH --account={dictionary['paths']['cyverse']['upload_directories']['upload_account']}\n")
-        fh.writelines(f"#SBATCH --job-name=phytooracle_upload\n")
-        fh.writelines(f"#SBATCH --nodes=1\n")
-        fh.writelines(f"#SBATCH --ntasks=1\n")
-        fh.writelines(f"#SBATCH --mem-per-cpu={dictionary['workload_manager']['mem_per_core']}GB\n")
-        fh.writelines(f"#SBATCH --time={dictionary['workload_manager']['time_minutes']}\n")
-        fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
-        fh.writelines("ssh filexfer\n")
-        fh.writelines(f"cd {path}\n") 
-        fh.writelines(f"imkdir -p {irods_output_path}\n") 
-        fh.writelines(f"icd {irods_output_path}\n") 
-        fh.writelines(f"iput -rfKPVT {scan_date}\n")
-        fh.writelines(f"rm -r {scan_date}")
+    #     fh.writelines("#!/bin/bash\n")
+    #     fh.writelines(f"#SBATCH --account={dictionary['paths']['cyverse']['upload_directories']['upload_account']}\n")
+    #     fh.writelines(f"#SBATCH --job-name=phytooracle_upload\n")
+    #     fh.writelines(f"#SBATCH --nodes=1\n")
+    #     fh.writelines(f"#SBATCH --ntasks=1\n")
+    #     fh.writelines(f"#SBATCH --mem-per-cpu={dictionary['workload_manager']['mem_per_core']}GB\n")
+    #     fh.writelines(f"#SBATCH --time={dictionary['workload_manager']['time_minutes']}\n")
+    #     fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
+    #     fh.writelines("ssh filexfer\n")
+    #     fh.writelines(f"cd {path}\n") 
+    #     fh.writelines(f"imkdir -p {irods_output_path}\n") 
+    #     fh.writelines(f"icd {irods_output_path}\n") 
+    #     fh.writelines(f"iput -rfKPVT {scan_date}\n")
+    #     fh.writelines(f"rm -r {scan_date}")
     
-    return_code = sp.call(f"sbatch upload.sh", shell=True)
+    # return_code = sp.call(f"sbatch upload.sh", shell=True)
 
-    if return_code == 1:
-        raise Exception(f"sbatch Failed")
+    # if return_code == 1:
+    #     raise Exception(f"sbatch Failed")
 
 
 def handle_date_failure(args, date, dictionary):
@@ -1256,9 +1258,21 @@ def main():
 
         slack_notification(message=f"All processing steps complete.", date=date)
         kill_workers(dictionary['workload_manager']['job_name'])
+        
+        # Archive output directories
+        slack_notification(message=f"Archiving data.", date=date)
+        tar_outputs(date, dictionary)
+        slack_notification(message=f"Archiving data complete.", date=date)
 
+        # Upload data
+        create_pipeline_logs(date)
+        slack_notification(message=f"Uploading data.", date=date)
+        upload_outputs(date, dictionary)
+        slack_notification(message=f"Uploading data complete.", date=date)
+
+        # Move directories if specified in the processing YAML
         if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
-
+            
             slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
             move_outputs(date, dictionary)
             slack_notification(message=f"Moving data complete.", date=date)
@@ -1267,15 +1281,15 @@ def main():
             # upload_outputs(date, dictionary)
             # slack_notification(message=f"Uploading data complete.", date=date)
 
-        else:
-            slack_notification(message=f"Archiving data.", date=date)
-            tar_outputs(date, dictionary)
-            slack_notification(message=f"Archiving data complete.", date=date)
+        # else:
+        #     slack_notification(message=f"Archiving data.", date=date)
+        #     tar_outputs(date, dictionary)
+        #     slack_notification(message=f"Archiving data complete.", date=date)
 
-            create_pipeline_logs(date)
-            slack_notification(message=f"Uploading data.", date=date)
-            upload_outputs(date, dictionary)
-            slack_notification(message=f"Uploading data complete.", date=date)
+        #     create_pipeline_logs(date)
+        #     slack_notification(message=f"Uploading data.", date=date)
+        #     upload_outputs(date, dictionary)
+        #     slack_notification(message=f"Uploading data complete.", date=date)
 
         if not args.noclean:
             slack_notification(message=f"Cleaning inputs.", date=date)

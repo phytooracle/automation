@@ -139,6 +139,7 @@ paths:
   cyverse: 
     upload_directories:
       use: False
+      directories_to_move: [plant_reports]
       temp_directory: /xdisk/dukepauli/equant/output
       upload_account: dukepauli
     basename: /iplant/home/shared/phytooracle/
