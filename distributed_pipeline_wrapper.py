@@ -1080,22 +1080,21 @@ def move_outputs(scan_date, dictionary):
     print('Moving outputs')
     cwd = os.getcwd()
     path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
+    
+    
 
     for item in dictionary['paths']['cyverse']['upload_directories']['directories_to_move']:
-
-        outdir = item
+        if os.path.isdir(os.path.join( dictionary['paths']['pipeline_outpath'], dictionary['paths']['cyverse']['upload_directories']['directories_to_move'])):
         
-        if not os.path.isdir(os.path.join(cwd, scan_date)):
-            os.makedirs(os.path.join(cwd, scan_date))
-        
-        shutil.move(item, os.path.join(cwd, scan_date))
+            if not os.path.isdir(os.path.join(cwd, scan_date)):
+                os.makedirs(os.path.join(cwd, scan_date))
+            
+            shutil.move(item, os.path.join(cwd, scan_date))
 
-    # create_pipeline_logs(scan_date)
+            if not os.path.isdir(os.path.join(path, scan_date, dictionary['paths']['pipeline_outpath'])):
+                os.makedirs(os.path.join(path, scan_date, dictionary['paths']['pipeline_outpath']))
 
-    if not os.path.isdir(os.path.join(path, scan_date)):
-        os.makedirs(os.path.join(path, scan_date))
-
-    shutil.move(os.path.join(cwd, scan_date, item), os.path.join(path, scan_date))
+            shutil.move(os.path.join(cwd, scan_date, dictionary['paths']['pipeline_outpath'], item), os.path.join(path, scan_date, dictionary['paths']['pipeline_outpath']))
 
     # irods_output_path = get_irods_data_path(dictionary)
     # print(irods_output_path)
