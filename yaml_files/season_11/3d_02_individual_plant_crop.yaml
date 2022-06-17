@@ -8,7 +8,7 @@ tags:
   season: 11
   season_name: season_11_sorghum_yr_2020
   slack_notifications: 
-    use: True
+    use: False
     channel: gantry_data_updates
     container:
       simg_name: slack_notifications.simg
@@ -139,8 +139,8 @@ paths:
   cyverse: 
     upload_directories:
       use: True
-      temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
-      upload_account: frost_lab
+      temp_directory: /xdisk/dukepauli/equant/output
+      upload_account: dukepauli
     basename: /iplant/home/shared/phytooracle/
     input: 
       necessary_files: [level_3/stereoTop/season_11_clustering.csv, level_0/necessary_files/gcp_season_11.txt]

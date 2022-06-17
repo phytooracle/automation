@@ -292,11 +292,13 @@ def find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir):
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
 
     if len(matching_files) < 1:
-        raise ValueError(f"Could not find appropriate tarball for date: {date}\n \
+        print (f"WARNING Could not find appropriate tarball for date: {date}\n \
                            Found: {matching_files}")
+        return None
     if len(matching_files) > 1:
-        raise ValueError(f"Found too many tarballs for date: {date}\n \
+        print (f"WARNING Found too many tarballs for date: {date}\n \
                            Found: {matching_files}")
+        return None
 
 
     file_dl_path = os.path.join(
@@ -1228,6 +1230,17 @@ def move_outputs(scan_date, dictionary):
     if return_code == 1:
         raise Exception(f"sbatch Failed")
 
+
+def handle_date_failure(args, date, dictionary):
+    slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
+    if not args.noclean:
+        slack_notification(message=f"PIPELINE ERROR. Cleaning inputs.", date=date)
+        print(f"Cleaning directory")
+        clean_directory()
+        clean_inputs(date, dictionary)  
+        slack_notification(message=f"PIPELINE ERROR. Cleaning inputs complete.", date=date)
+
+    kill_workers(dictionary['workload_manager']['job_name'])
     
 # --------------------------------------------------
 def main():
@@ -1256,128 +1269,136 @@ def main():
         
         slack_notification(message=f"Starting data processing.", date=date)
 
-        try:
-            build_containers(dictionary)
+#        try:
+        build_containers(dictionary)
 
-            if args.uploadonly:
-                upload_outputs(date, dictionary)
-                return
-            if args.archiveonly:
-                tar_outputs(date, dictionary)
-                return
+        if args.uploadonly:
+            upload_outputs(date, dictionary)
+            return
+        if args.archiveonly:
+            tar_outputs(date, dictionary)
+            return
 
-            server_utils.hpc = args.hpc
-                
-            # Figure out what we need to DL
-            # There are three scenarios...
-            # (1) No input_dir.  Use suffix and prefix.  Original method.
-            # (2) input_dir, but not suffix or prefix: DL all files from input_dir
-            # (3) both...  add input_dir to irods_path and continue as (1)
+        server_utils.hpc = args.hpc
+            
+        ###############################################
+        # Figure out what we need to DL
+        # There are three scenarios...
+        # (1) No input_dir.  Use suffix and prefix.  Original method.
+        # (2) input_dir, but not suffix or prefix: DL all files from input_dir
+        # (3) both...  add input_dir to irods_path and continue as (1)
 
-            slack_notification(message=f"Downloading raw data.", date=date)
-            yaml_input_keys = dictionary['paths']['cyverse']['input'].keys()
+        slack_notification(message=f"Downloading raw data.", date=date)
+        yaml_input_keys = dictionary['paths']['cyverse']['input'].keys()
 
-            # figure out if yaml has prefix and/or sufix keys...
-            irods_sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
-            if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
-                print("Found prefix or suffix.  Building irods_path...")
-                irods_dl_dir = os.path.join(irods_sensor_path, date) 
-                #irods_path = get_irods_input_path(dictionary, date, args)
+        # figure out if yaml has prefix and/or sufix keys...
+        cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
+        irods_sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
+        if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
+            print("Found prefix or suffix.  Building irods_path...")
+            irods_dl_dir = irods_sensor_path
+            print(irods_dl_dir)
+            if 'input_dir' in yaml_input_keys:
+                _dir = dictionary['paths']['cyverse']['input']['input_dir']
+                irods_dl_dir = os.path.join(irods_dl_dir, _dir)
+                print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
                 print(irods_dl_dir)
-                if 'input_dir' in yaml_input_keys:
-                    _dir = dictionary['paths']['cyverse']['input']['input_dir']
-                    irods_dl_dir = os.path.join(irods_dl_dir, _dir)
-                    print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
-                    print(irods_dl_dir)
-                file_to_dl = find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir)
-                dir_name = download_irods_input_file(file_to_dl)
-            elif 'input_dir' in yaml_input_keys:
-                print("Using input dir")
-                dir_name = dictionary['paths']['cyverse']['input']['input_dir']
-                if len(dir_name) < 1:
-                    raise ValueError(f"input_dir shouldn't be empty.  Remove it.")
-                download_irods_input_dir(dictionary, date, args)
-            else:
-                raise Exception(f"Couldn't figure out what to do with yaml input")
+            file_to_dl = find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir)
+            if file_to_dl is None:
+                handle_date_failure(args, date, dictionary)
+                continue
+            dir_name = download_irods_input_file(file_to_dl)
+        elif 'input_dir' in yaml_input_keys:
+            print("Using input dir")
+            dir_name = dictionary['paths']['cyverse']['input']['input_dir']
+            if len(dir_name) < 1:
+                raise ValueError(f"input_dir shouldn't be empty.  Remove it.")
+            download_irods_input_dir(dictionary, date, args)
+        else:
+            raise Exception(f"Couldn't figure out what to do with yaml input")
 
-            get_support_files(dictionary=dictionary, date=date)
-            slack_notification(message=f"Downloading raw data complete.", date=date)
+        get_support_files(dictionary=dictionary, date=date)
+        slack_notification(message=f"Downloading raw data complete.", date=date)
 
-            if args.hpc:
-                kill_workers(dictionary['workload_manager']['job_name'])
+        ###########################################################
+        ### All files should be found, DL'd and unarchived by here.
+        ###########################################################
 
-                launch_workers(cctools_path = cctools_path,
-                        account=dictionary['workload_manager']['account'], 
-                        job_name=dictionary['workload_manager']['job_name'], 
-                        nodes=dictionary['workload_manager']['nodes'], 
-                        time=dictionary['workload_manager']['time_minutes'], 
-                        mem_per_core=dictionary['workload_manager']['mem_per_core'], 
-                        manager_name=dictionary['workload_manager']['manager_name'], 
-                        number_worker_array=dictionary['workload_manager']['number_worker_array'], 
-                        cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                        worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'], 
-                        cwd=cwd)
-
-            global seg_model_name, det_model_name
-            seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
-
-            for k, v in dictionary['modules'].items():
-                
-                if 'input_dir' in v.keys():
-                    dir_name = os.path.join(*v['input_dir'])
-
-                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])}.", date=date)
-
-                files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
-                write_file_list(files_list)
-                json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
-                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
-
-                if not args.noclean:
-                    print(f"Cleaning directory")
-                    clean_directory()
-
-                slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.", date=date)
-
-            slack_notification(message=f"All processing steps complete.", date=date)
+        if args.hpc:
             kill_workers(dictionary['workload_manager']['job_name'])
 
-            if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
+            launch_workers(cctools_path = cctools_path,
+                    account=dictionary['workload_manager']['account'], 
+                    job_name=dictionary['workload_manager']['job_name'], 
+                    nodes=dictionary['workload_manager']['nodes'], 
+                    time=dictionary['workload_manager']['time_minutes'], 
+                    mem_per_core=dictionary['workload_manager']['mem_per_core'], 
+                    manager_name=dictionary['workload_manager']['manager_name'], 
+                    number_worker_array=dictionary['workload_manager']['number_worker_array'], 
+                    cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
+                    worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'], 
+                    cwd=cwd)
 
-                slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
-                move_outputs(date, dictionary)
-                slack_notification(message=f"Moving data complete.", date=date)
+        global seg_model_name, det_model_name
+        seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
 
-                # slack_notification(message=f"Uploading data.", date=date)
-                # upload_outputs(date, dictionary)
-                # slack_notification(message=f"Uploading data complete.", date=date)
+        for k, v in dictionary['modules'].items():
+            
+            if 'input_dir' in v.keys():
+                dir_name = os.path.join(*v['input_dir'])
 
-            else:
-                slack_notification(message=f"Archiving data.", date=date)
-                tar_outputs(date, dictionary)
-                slack_notification(message=f"Archiving data complete.", date=date)
+            slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])}.", date=date)
 
-                create_pipeline_logs(date)
-                slack_notification(message=f"Uploading data.", date=date)
-                upload_outputs(date, dictionary)
-                slack_notification(message=f"Uploading data complete.", date=date)
+            files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
+            write_file_list(files_list)
+            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
+            run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
 
             if not args.noclean:
-                slack_notification(message=f"Cleaning inputs.", date=date)
-                print(f"Cleaning inputs")
-                clean_inputs(date, dictionary) 
-                slack_notification(message=f"Cleaning inputs complete.", date=date)
-
-        except:
-            slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
-            if not args.noclean:
-                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs.", date=date)
                 print(f"Cleaning directory")
                 clean_directory()
-                clean_inputs(date, dictionary)  
-                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs complete.", date=date)
 
-            kill_workers(dictionary['workload_manager']['job_name'])
+            slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.", date=date)
+
+        slack_notification(message=f"All processing steps complete.", date=date)
+        kill_workers(dictionary['workload_manager']['job_name'])
+
+        if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
+
+            slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
+            move_outputs(date, dictionary)
+            slack_notification(message=f"Moving data complete.", date=date)
+
+            # slack_notification(message=f"Uploading data.", date=date)
+            # upload_outputs(date, dictionary)
+            # slack_notification(message=f"Uploading data complete.", date=date)
+
+        else:
+            slack_notification(message=f"Archiving data.", date=date)
+            tar_outputs(date, dictionary)
+            slack_notification(message=f"Archiving data complete.", date=date)
+
+            create_pipeline_logs(date)
+            slack_notification(message=f"Uploading data.", date=date)
+            upload_outputs(date, dictionary)
+            slack_notification(message=f"Uploading data complete.", date=date)
+
+        if not args.noclean:
+            slack_notification(message=f"Cleaning inputs.", date=date)
+            print(f"Cleaning inputs")
+            clean_inputs(date, dictionary) 
+            slack_notification(message=f"Cleaning inputs complete.", date=date)
+
+#        except:
+#            slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
+#            if not args.noclean:
+#                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs.", date=date)
+#                print(f"Cleaning directory")
+#                clean_directory()
+#                clean_inputs(date, dictionary)  
+#                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs complete.", date=date)
+#
+#            kill_workers(dictionary['workload_manager']['job_name'])
 
 
 # --------------------------------------------------
