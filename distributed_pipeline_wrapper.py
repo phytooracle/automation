@@ -1268,6 +1268,7 @@ def main():
 
         server_utils.hpc = args.hpc
             
+        ###############################################
         # Figure out what we need to DL
         # There are three scenarios...
         # (1) No input_dir.  Use suffix and prefix.  Original method.
@@ -1278,11 +1279,11 @@ def main():
         yaml_input_keys = dictionary['paths']['cyverse']['input'].keys()
 
         # figure out if yaml has prefix and/or sufix keys...
+        cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
         irods_sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
         if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
             print("Found prefix or suffix.  Building irods_path...")
-            irods_dl_dir = os.path.join(irods_sensor_path, date) 
-            #irods_path = get_irods_input_path(dictionary, date, args)
+            irods_dl_dir = irods_sensor_path
             print(irods_dl_dir)
             if 'input_dir' in yaml_input_keys:
                 _dir = dictionary['paths']['cyverse']['input']['input_dir']
@@ -1305,6 +1306,10 @@ def main():
 
         get_support_files(dictionary=dictionary, date=date)
         slack_notification(message=f"Downloading raw data complete.", date=date)
+
+        ###########################################################
+        ### All files should be found, DL'd and unarchived by here.
+        ###########################################################
 
         if args.hpc:
             kill_workers(dictionary['workload_manager']['job_name'])
