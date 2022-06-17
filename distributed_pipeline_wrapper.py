@@ -456,41 +456,6 @@ def write_file_list(input_list, out_path='file.txt'):
     textfile.close()
 
 
-# --------------------------------------------------
-def download_level_1_data(irods_path):
-    '''
-    Downloads previously processed level_1 ouputs on CyVerse DataStore for continued data processing.
-
-    Input:
-        - irods_path: Path to the level_1 data on the CyVerse DataStore
-    
-    Output: 
-        - Downloaded level_1 outputs in the current working directory
-    '''
-    args = get_args()
-    file_name = os.path.basename(irods_path)
-    direc = irods_path.split('/')[-1]
-
-    cmd1 = f'iget -rfPVT {irods_path}'
-    cwd = os.getcwd()
-
-    if '.gz' in file_name: 
-        cmd2 = 'ls *.tar.gz | xargs -I {} tar -xzvf {}'
-        cmd3 = f'rm *.tar.gz'
-
-    else: 
-        cmd2 = 'ls *.tar | xargs -I {} tar -xvf {}'
-        cmd3 = f'rm *.tar'
-    
-    if args.hpc: 
-        print('>>>>>>Using data transfer node.')
-        sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd1}' '&& cd {os.path.join(cwd, direc)}' '&& {cmd2}' '&& {cmd3}' '&& exit'", shell=True)
-    else: 
-        sp.call(cmd1, shell=True)
-        sp.call(f"cd {os.path.join(cwd, direc)}")
-        sp.call(cmd2, shell=True)
-        sp.call(cmd3, shell=True)
-
 
 # --------------------------------------------------
 def get_support_files(dictionary, date):
@@ -524,79 +489,7 @@ def get_support_files(dictionary, date):
         else:
             print(f"FOUND")
 
-    # transformation.json
 
-#    if 'transfromation.json' in requested_input_files_from_yaml:
-#        if not os.path.isfile('transfromation.json'):
-#            level_1 = dictionary['paths']['cyverse']['input']['basename'].replace('level_0', 'level_1')
-#            get_transformation_file(os.path.join(level_1, date), cwd)
-#
-#    # clustering csv
-#
-#    if 'stereoTop_full_season_clustering.csv' in requested_input_files_from_yaml:
-#        if not os.path.isfile('stereoTop_full_season_clustering.csv'):
-#            get_season_detections('stereoTop_full_season_clustering.csv')
-#
-#    # gcp
-#
-#    expected_gcp_filename = f"gcp_season_{season}.txt"
-#    if expected_gcp_filename in requested_input_files_from_yaml:
-#        if not os.path.isfile(expected_gcp_filename):
-#            get_gcp_file(expected_gcp_filename)
-
-
-
-
-# --------------------------------------------------
-def get_transformation_file(irods_path, cwd):
-    '''
-    Downloads the date-specific transformation JSON file for post-processing of 3D data.
-
-    Input:
-        - irods_path: Path to the transformation file on CyVerse DataStore
-        - cwd: Current working directory
-    
-    Output: 
-        - Downloaded transformation file in the current working directory
-    '''
-    cmd1 = f'iget -KPVT {os.path.join(irods_path, "preprocessing", "transfromation.json")}'
-    sp.call(cmd1, shell=True)
-    
-    if not os.path.isfile(os.path.join(cwd, 'transfromation.json')):
-        cmd2 = f'iget -KPVT {os.path.join(irods_path, "alignment", "transfromation.json")}'
-        sp.call(cmd2, shell=True)
-
-
-# --------------------------------------------------
-def get_bundle_dir(irods_path):
-    '''
-    Downloads the date-specific bundle/ directory containing bundles for distributed processing.
-
-    Input:
-        - irods_path: Path to the bundle/ directory on CyVerse DataStore
-    
-    Output: 
-        - Downloaded bundle/ directory in the current working directory
-    '''
-    cmd1 = f'iget -rKPVT {os.path.join(irods_path, "logs", "bundle")}'
-
-    sp.call(cmd1, shell=True)
-
-
-# --------------------------------------------------
-def get_bundle_json(irods_path):
-    '''
-    Downloads the date-specific bundle JSON file for distributed processing.
-
-    Input:
-        - irods_path: Path to the bundle JSON file on CyVerse DataStore 
-    
-    Output: 
-        - Downloaded bundle JSON file in the current working directory
-    '''
-    cmd1 = f'iget -KPVT {os.path.join(irods_path, "logs", "bundle_list.json")}'
-
-    sp.call(cmd1, shell=True)
 
 # --------------------------------------------------
 def get_season_name():
