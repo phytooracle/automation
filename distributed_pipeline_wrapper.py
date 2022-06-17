@@ -1079,50 +1079,26 @@ def move_outputs(scan_date, dictionary):
 
     print('Moving outputs')
     cwd = os.getcwd()
-    path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
-    
-    
+    temp_path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
+    dir_list = dictionary['paths']['cyverse']['upload_directories']['directories_to_move']
+    pipeline_out_path = dictionary['paths']['pipeline_outpath']
 
-    for item in dictionary['paths']['cyverse']['upload_directories']['directories_to_move']:
-        if os.path.isdir(os.path.join( dictionary['paths']['pipeline_outpath'], dictionary['paths']['cyverse']['upload_directories']['directories_to_move'])):
+    for item in dir_list:
+
+        if os.path.isdir(os.path.join(pipeline_out_path, item)):
         
             if not os.path.isdir(os.path.join(cwd, scan_date)):
                 os.makedirs(os.path.join(cwd, scan_date))
             
-            shutil.move(item, os.path.join(cwd, scan_date))
+            shutil.move(os.path.join(pipeline_out_path, item), os.path.join(cwd, scan_date, pipeline_out_path))
 
-            if not os.path.isdir(os.path.join(path, scan_date, dictionary['paths']['pipeline_outpath'])):
-                os.makedirs(os.path.join(path, scan_date, dictionary['paths']['pipeline_outpath']))
+            if not os.path.isdir(os.path.join(temp_path, scan_date, pipeline_out_path)):
+                os.makedirs(os.path.join(temp_path, scan_date, pipeline_out_path))
 
-            shutil.move(os.path.join(cwd, scan_date, dictionary['paths']['pipeline_outpath'], item), os.path.join(path, scan_date, dictionary['paths']['pipeline_outpath']))
-
-    # irods_output_path = get_irods_data_path(dictionary)
-    # print(irods_output_path)
-
-    # print('Saving upload file.')
-    # with open(f'upload.sh', 'w') as fh:
-
-    #     fh.writelines("#!/bin/bash\n")
-    #     fh.writelines(f"#SBATCH --account={dictionary['paths']['cyverse']['upload_directories']['upload_account']}\n")
-    #     fh.writelines(f"#SBATCH --job-name=phytooracle_upload\n")
-    #     fh.writelines(f"#SBATCH --nodes=1\n")
-    #     fh.writelines(f"#SBATCH --ntasks=1\n")
-    #     fh.writelines(f"#SBATCH --mem-per-cpu={dictionary['workload_manager']['mem_per_core']}GB\n")
-    #     fh.writelines(f"#SBATCH --time={dictionary['workload_manager']['time_minutes']}\n")
-    #     fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
-    #     fh.writelines("ssh filexfer\n")
-    #     fh.writelines(f"cd {path}\n") 
-    #     fh.writelines(f"imkdir -p {irods_output_path}\n") 
-    #     fh.writelines(f"icd {irods_output_path}\n") 
-    #     fh.writelines(f"iput -rfKPVT {scan_date}\n")
-    #     fh.writelines(f"rm -r {scan_date}")
-    
-    # return_code = sp.call(f"sbatch upload.sh", shell=True)
-
-    # if return_code == 1:
-    #     raise Exception(f"sbatch Failed")
+            shutil.move(os.path.join(cwd, scan_date, pipeline_out_path, item), os.path.join(temp_path, scan_date, pipeline_out_path))
 
 
+# --------------------------------------------------
 def handle_date_failure(args, date, dictionary):
     slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
     if not args.noclean:
@@ -1134,6 +1110,7 @@ def handle_date_failure(args, date, dictionary):
 
     kill_workers(dictionary['workload_manager']['job_name'])
     
+
 # --------------------------------------------------
 def main():
     """Run distributed data processing here"""
