@@ -776,18 +776,18 @@ def tar_outputs(scan_date, dictionary):
             if not os.path.isdir(_full_v):
                 print(f"Skipping the tarring of '{_full_v}' from yaml paths:outpath_subdirs because it was not found")
                 continue
-            if v == 'plant_reports':
-                # This is a hack created by Nathan.
-                src_dir = os.path.join(cwd, outdir, v)
-                dest_dir = os.path.join(cwd, scan_date, outdir, v)
-                print(f"Copying plant_reports")
-                shutil.copytree(src_dir, dest_dir)
-            else:
-                file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{v}.tar') 
-                print(f'Creating {file_path}.')
-                if not os.path.isfile(file_path):
-                    with tarfile.open(file_path, 'w') as tar:
-                        tar.add(v, recursive=True)
+            # if v == 'plant_reports':
+            #     # This is a hack created by Nathan.
+            #     src_dir = os.path.join(cwd, outdir, v)
+            #     dest_dir = os.path.join(cwd, scan_date, outdir, v)
+            #     print(f"Copying plant_reports")
+            #     shutil.copytree(src_dir, dest_dir)
+            # else:
+            file_path = os.path.join(cwd, scan_date, outdir, f'{scan_date}_{v}.tar') 
+            print(f'Creating {file_path}.')
+            if not os.path.isfile(file_path):
+                with tarfile.open(file_path, 'w') as tar:
+                    tar.add(v, recursive=True)
 
     os.chdir(cwd)
 
@@ -1079,51 +1079,28 @@ def move_outputs(scan_date, dictionary):
 
     print('Moving outputs')
     cwd = os.getcwd()
-    path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
+    temp_path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
+    dir_list = dictionary['paths']['cyverse']['upload_directories']['directories_to_move']
+    pipeline_out_path = dictionary['paths']['pipeline_outpath']
 
-    for item in dictionary['paths']['pipeline_outpath']:
-        print(item)
-        outdir = item
-        
-        if not os.path.isdir(os.path.join(cwd, scan_date)):
-            os.makedirs(os.path.join(cwd, scan_date))
-        
-        shutil.move(item, os.path.join(cwd, scan_date))
+    for out_path in pipeline_out_path:
 
-    create_pipeline_logs(scan_date)
+        for item in dir_list:
 
-    if not os.path.isdir(os.path.join(path)):
-        os.makedirs(os.path.join(path))
+            if os.path.isdir(os.path.join(cwd, out_path, item)):
+            
+                if not os.path.isdir(os.path.join(cwd, scan_date)):
+                    os.makedirs(os.path.join(cwd, scan_date))
+                
+                shutil.move(os.path.join(cwd, out_path, item), os.path.join(cwd, scan_date, out_path))
 
-    shutil.move(os.path.join(cwd, scan_date), os.path.join(path))
+                if not os.path.isdir(os.path.join(temp_path, scan_date, out_path)):
+                    os.makedirs(os.path.join(temp_path, scan_date, out_path))
 
-    irods_output_path = get_irods_data_path(dictionary)
-    print(irods_output_path)
-
-    print('Saving upload file.')
-    with open(f'upload.sh', 'w') as fh:
-
-        fh.writelines("#!/bin/bash\n")
-        fh.writelines(f"#SBATCH --account={dictionary['paths']['cyverse']['upload_directories']['upload_account']}\n")
-        fh.writelines(f"#SBATCH --job-name=phytooracle_upload\n")
-        fh.writelines(f"#SBATCH --nodes=1\n")
-        fh.writelines(f"#SBATCH --ntasks=1\n")
-        fh.writelines(f"#SBATCH --mem-per-cpu={dictionary['workload_manager']['mem_per_core']}GB\n")
-        fh.writelines(f"#SBATCH --time={dictionary['workload_manager']['time_minutes']}\n")
-        fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
-        fh.writelines("ssh filexfer\n")
-        fh.writelines(f"cd {path}\n") 
-        fh.writelines(f"imkdir -p {irods_output_path}\n") 
-        fh.writelines(f"icd {irods_output_path}\n") 
-        fh.writelines(f"iput -rfKPVT {scan_date}\n")
-        fh.writelines(f"rm -r {scan_date}")
-    
-    return_code = sp.call(f"sbatch upload.sh", shell=True)
-
-    if return_code == 1:
-        raise Exception(f"sbatch Failed")
+                shutil.move(os.path.join(cwd, scan_date, out_path, item), os.path.join(temp_path, scan_date, out_path))
 
 
+# --------------------------------------------------
 def handle_date_failure(args, date, dictionary):
     slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
     if not args.noclean:
@@ -1135,6 +1112,7 @@ def handle_date_failure(args, date, dictionary):
 
     kill_workers(dictionary['workload_manager']['job_name'])
     
+
 # --------------------------------------------------
 def main():
     """Run distributed data processing here"""
@@ -1256,9 +1234,21 @@ def main():
 
         slack_notification(message=f"All processing steps complete.", date=date)
         kill_workers(dictionary['workload_manager']['job_name'])
+        
+        # Archive output directories
+        slack_notification(message=f"Archiving data.", date=date)
+        tar_outputs(date, dictionary)
+        slack_notification(message=f"Archiving data complete.", date=date)
 
+        # Upload data
+        create_pipeline_logs(date)
+        slack_notification(message=f"Uploading data.", date=date)
+        upload_outputs(date, dictionary)
+        slack_notification(message=f"Uploading data complete.", date=date)
+
+        # Move directories if specified in the processing YAML
         if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
-
+            
             slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
             move_outputs(date, dictionary)
             slack_notification(message=f"Moving data complete.", date=date)
@@ -1267,15 +1257,15 @@ def main():
             # upload_outputs(date, dictionary)
             # slack_notification(message=f"Uploading data complete.", date=date)
 
-        else:
-            slack_notification(message=f"Archiving data.", date=date)
-            tar_outputs(date, dictionary)
-            slack_notification(message=f"Archiving data complete.", date=date)
+        # else:
+        #     slack_notification(message=f"Archiving data.", date=date)
+        #     tar_outputs(date, dictionary)
+        #     slack_notification(message=f"Archiving data complete.", date=date)
 
-            create_pipeline_logs(date)
-            slack_notification(message=f"Uploading data.", date=date)
-            upload_outputs(date, dictionary)
-            slack_notification(message=f"Uploading data complete.", date=date)
+        #     create_pipeline_logs(date)
+        #     slack_notification(message=f"Uploading data.", date=date)
+        #     upload_outputs(date, dictionary)
+        #     slack_notification(message=f"Uploading data complete.", date=date)
 
         if not args.noclean:
             slack_notification(message=f"Cleaning inputs.", date=date)
