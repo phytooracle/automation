@@ -8,7 +8,7 @@ tags:
   season: 11
   season_name: season_11_sorghum_yr_2020
   slack_notifications: 
-    use: False
+    use: True
     channel: gantry_data_updates
     container:
       simg_name: slack_notifications.simg
@@ -121,8 +121,8 @@ workload_manager:
 
   job_name: phytooracle_worker
   nodes: 1                  # Just do one.  (each array is on a distinct node)
-  number_worker_array: 333  # This is number of arrays (workers)
-  cores_per_worker: 20      # This is how many cores (cpu/gpu) per array, used to increase tot mem
+  number_worker_array: 500 #500  # This is number of arrays (workers)
+  cores_per_worker: 5      # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
   port: 0
@@ -138,10 +138,10 @@ paths:
   outpath_subdirs: [segmentation_pointclouds, plant_reports]
   cyverse: 
     upload_directories:
-      use: False
+      use: True
       directories_to_move: [plant_reports]
-      temp_directory: /xdisk/dukepauli/equant/output
-      upload_account: dukepauli
+      temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
+      #upload_account: frost_lab
     basename: /iplant/home/shared/phytooracle/
     input: 
       necessary_files: [level_3/stereoTop/season_11_clustering.csv, level_0/necessary_files/gcp_season_11.txt]
