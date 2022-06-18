@@ -1083,19 +1083,21 @@ def move_outputs(scan_date, dictionary):
     dir_list = dictionary['paths']['cyverse']['upload_directories']['directories_to_move']
     pipeline_out_path = dictionary['paths']['pipeline_outpath']
 
-    for item in dir_list:
+    for out_path in pipeline_out_path:
 
-        if os.path.isdir(os.path.join(cwd, pipeline_out_path, item)):
-        
-            if not os.path.isdir(os.path.join(cwd, scan_date)):
-                os.makedirs(os.path.join(cwd, scan_date))
+        for item in dir_list:
+
+            if os.path.isdir(os.path.join(cwd, out_path, item)):
             
-            shutil.move(os.path.join(cwd, pipeline_out_path, item), os.path.join(cwd, scan_date, pipeline_out_path))
+                if not os.path.isdir(os.path.join(cwd, scan_date)):
+                    os.makedirs(os.path.join(cwd, scan_date))
+                
+                shutil.move(os.path.join(cwd, out_path, item), os.path.join(cwd, scan_date, out_path))
 
-            if not os.path.isdir(os.path.join(temp_path, scan_date, pipeline_out_path)):
-                os.makedirs(os.path.join(temp_path, scan_date, pipeline_out_path))
+                if not os.path.isdir(os.path.join(temp_path, scan_date, out_path)):
+                    os.makedirs(os.path.join(temp_path, scan_date, out_path))
 
-            shutil.move(os.path.join(cwd, scan_date, pipeline_out_path, item), os.path.join(temp_path, scan_date, pipeline_out_path))
+                shutil.move(os.path.join(cwd, scan_date, out_path, item), os.path.join(temp_path, scan_date, out_path))
 
 
 # --------------------------------------------------
