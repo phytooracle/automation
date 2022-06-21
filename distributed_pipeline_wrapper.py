@@ -1172,7 +1172,7 @@ def main():
             print(irods_dl_dir)
             if 'input_dir' in yaml_input_keys:
                 _dir = dictionary['paths']['cyverse']['input']['input_dir']
-                irods_dl_dir = os.path.join(irods_dl_dir, _dir)
+                irods_dl_dir = os.path.join(irods_dl_dir, date, _dir)
                 print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
                 print(irods_dl_dir)
             file_to_dl = find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir)

@@ -5,10 +5,10 @@ tags:
   notes: Processing of 2019 cotton RNA-Seq TPM data and spectral data for gene expression prediction.
   runby: Emmanuel Miguel Gonzalez
   sensor: rnaseq_hyperspectral 
-  season: 2019 cotton
+  season: 2019_cotton
   season_name: 2019_cotton
   slack_notifications: 
-    use: True
+    use: False #True
     channel: gantry_test #gantry_data_updates
     container:
       simg_name: slack_notifications.simg
@@ -62,7 +62,7 @@ paths:
 
   cyverse: 
     upload_directories:
-      use: True
+      use: False #True
       temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
       upload_account: frost_lab
 
