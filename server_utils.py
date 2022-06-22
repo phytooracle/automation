@@ -42,7 +42,7 @@ def download_file_from_cyverse(irods_path):
     """
 
     global hpc
-    cmd = f'iget -KPVT {os.path.join(irods_path)}'
+    cmd = f'iget -KIPVT {os.path.join(irods_path)}'
 
     if hpc: 
         print(f"Using filexfer node to download file")
