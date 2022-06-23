@@ -606,7 +606,7 @@ def kill_workers(job_name):
 
     
 # --------------------------------------------------
-def generate_makeflow_json(cctools_path, level, files_list, command, container, inputs, outputs, date, sensor, n_rules=1, json_out_path='wf_file.json'):
+def generate_makeflow_json(cctools_path, level, files_list, command, container, inputs, outputs, date, sensor, dictionary, n_rules=1, json_out_path='wf_file.json'):
     '''
     Generate Makeflow JSON file to distribute tasks. 
 
@@ -622,6 +622,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
     timeout = 'timeout 1h '
     cwd = os.getcwd()
+    seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
 
     if args.shared_file_system:
         container = os.path.join(cwd, container)
@@ -1230,7 +1231,7 @@ def main():
 
             files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
             write_file_list(files_list)
-            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
+            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], dictionary=dictionary, json_out_path=f'wf_file_{k}.json')
             run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
 
             if not args.noclean:
