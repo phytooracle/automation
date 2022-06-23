@@ -630,6 +630,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
         det_model_name = os.path.join(cwd, det_model_name)
         inputs = [os.path.join(cwd, item) for item in inputs]
         files_list = [os.path.join(cwd, item) for item in files_list]
+        print(container, seg_model_name, det_model_name)
 
     if inputs:
         if sensor=='scanner3DTop':
@@ -747,8 +748,8 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     cctools = os.path.join(home, cctools)
     arguments = f'-T {batch_type} --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' # --skip-file-check --disable-cache $@'
 
-    if args.shared_file_system:
-        arguments = f'-T {batch_type} --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' #  --shared-fs {cwd} --skip-file-check --disable-cache $@' 
+    # if args.shared_file_system:
+        # arguments = f'-T {batch_type} --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' #  --shared-fs {cwd} --skip-file-check --disable-cache $@' 
     
     cmd1 = ' '.join([cctools, arguments])
     sp.call(cmd1, shell=True)
