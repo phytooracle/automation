@@ -749,7 +749,7 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     arguments = f'-T {batch_type} --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' # --skip-file-check --disable-cache $@'
 
     if args.shared_file_system:
-        arguments = f'-T {batch_type} --json {json_out_path} -a --shared-fs {cwd} -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' #   --skip-file-check --disable-cache $@' 
+        arguments = f'-T {batch_type} --json {json_out_path} -a --shared-fs {cwd} -X {cwd} -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' #   --skip-file-check --disable-cache $@' 
     
     cmd1 = ' '.join([cctools, arguments])
     sp.call(cmd1, shell=True)
