@@ -24,7 +24,7 @@ modules:
     file_level: 
     input_dir: [alignment, west_downsampled]
     input_file: -west.ply
-    # inputs: [alignment/east/$SUBDIR-east.ply,
+    inputs: [] #[alignment/east/$SUBDIR-east.ply,
     #          alignment/east_downsampled/$SUBDIR-east.ply, 
     #          alignment/merged/$SUBDIR-merged.ply,
     #          alignment/merged_downsampled/$SUBDIR-merged.ply,
