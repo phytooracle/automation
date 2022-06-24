@@ -8,7 +8,7 @@ tags:
   season: 11
   season_name: season_11_sorghum_yr_2020
   slack_notifications: 
-    use: True
+    use: False #True
     channel: gantry_data_updates
     container:
       simg_name: slack_notifications.simg
