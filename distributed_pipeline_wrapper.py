@@ -623,17 +623,14 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     timeout = 'timeout 1h '
     cwd = os.getcwd()
 
-    # Testing start
-    seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
+    # seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
 
-    if args.shared_file_system:
-        container = os.path.join(cwd, container)
-        seg_model_name = os.path.join(cwd, seg_model_name)
-        det_model_name = os.path.join(cwd, det_model_name)
-        inputs = [os.path.join(cwd, item) for item in inputs]
-        files_list = [os.path.join(cwd, item) for item in files_list]
-        print(container, seg_model_name, det_model_name)
-    # Testing end
+    # if args.shared_file_system:
+        # container = os.path.join(cwd, container)
+        # seg_model_name = os.path.join(cwd, seg_model_name)
+        # det_model_name = os.path.join(cwd, det_model_name)
+        # inputs = [os.path.join(cwd, item) for item in inputs]
+        # files_list = [os.path.join(cwd, item) for item in files_list]
 
     if inputs:
         if sensor=='scanner3DTop':
