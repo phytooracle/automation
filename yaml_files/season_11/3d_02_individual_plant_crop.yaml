@@ -24,15 +24,15 @@ modules:
     file_level: 
     input_dir: [alignment, west_downsampled]
     input_file: -west.ply
-    inputs: [] #alignment/east/$SUBDIR-east.ply,
-    #          alignment/east_downsampled/$SUBDIR-east.ply, 
-    #          alignment/merged/$SUBDIR-merged.ply,
-    #          alignment/merged_downsampled/$SUBDIR-merged.ply,
-    #          alignment/west/$SUBDIR-west.ply,
-    #          alignment/west_downsampled/$SUBDIR-west.ply,
-    #          alignment/transfromation.json,
-    #          season_11_clustering.csv,
-    #          gcp_season_11.txt]
+    inputs: [alignment/east/$SUBDIR-east.ply,
+             alignment/east_downsampled/$SUBDIR-east.ply, 
+             alignment/merged/$SUBDIR-merged.ply,
+             alignment/merged_downsampled/$SUBDIR-merged.ply,
+             alignment/west/$SUBDIR-west.ply,
+             alignment/west_downsampled/$SUBDIR-west.ply,
+             alignment/transfromation.json,
+             season_11_clustering.csv,
+             gcp_season_11.txt]
     outputs: [postprocessing_out/east/$SUBDIR-east.ply,
               postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
               postprocessing_out/merged/$SUBDIR-merged.ply,
