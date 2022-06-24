@@ -622,7 +622,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
     timeout = 'timeout 1h '
     cwd = os.getcwd()
-    command = command.replace('${CWD}', cwd)
+    # command = command.replace('${CWD}', cwd)
 
     # seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
 
