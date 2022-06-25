@@ -709,7 +709,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
             } 
 
     else: 
-        
+        print('No inputs specified. Assuming local.')
         jx_dict = {
             "rules": [
                         {
