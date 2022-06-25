@@ -41,26 +41,26 @@ modules:
               postprocessing_out/west/$SUBDIR-west.ply,
               postprocessing_out/west_downsampled/$SUBDIR-west.ply]
   
-  2: 
-    container: 
-      simg_name: 3d_crop_individual_plants.simg
-      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_11_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 11 -d ${DATE} && tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
-    distribution_level: wq
-    file_level: 
-    input_dir: [postprocessing_out, west_downsampled]
-    input_file: -west.ply
-    inputs: []
-    # inputs: [alignment/transfromation.json,
-    #          season_11_clustering.csv,
-    #          gcp_season_11.txt,
-    #          postprocessing_out/east/$SUBDIR-east.ply,
-    #          postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
-    #          postprocessing_out/merged/$SUBDIR-merged.ply,
-    #          postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
-    #          postprocessing_out/west/$SUBDIR-west.ply,
-    #          postprocessing_out/west_downsampled/$SUBDIR-west.ply]
-    outputs: [$BASENAME_individual_plants.tar]
+  # 2: 
+  #   container: 
+  #     simg_name: 3d_crop_individual_plants.simg
+  #     dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
+  #   command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_11_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 11 -d ${DATE} && tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
+  #   distribution_level: wq
+  #   file_level: 
+  #   input_dir: [postprocessing_out, west_downsampled]
+  #   input_file: -west.ply
+  #   inputs: [gcp_season_11.txt]
+  #   # inputs: [alignment/transfromation.json,
+  #   #          season_11_clustering.csv,
+  #   #          gcp_season_11.txt,
+  #   #          postprocessing_out/east/$SUBDIR-east.ply,
+  #   #          postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
+  #   #          postprocessing_out/merged/$SUBDIR-merged.ply,
+  #   #          postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
+  #   #          postprocessing_out/west/$SUBDIR-west.ply,
+  #   #          postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+  #   outputs: [$BASENAME_individual_plants.tar]
 
   # 3: 
   #   container: 
