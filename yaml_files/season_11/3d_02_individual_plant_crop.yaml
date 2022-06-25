@@ -91,18 +91,18 @@ modules:
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
               individual_plants_out/plant_reports/$PLANT_NAME]
 
-  # 5:
-  #   container: 
-  #     simg_name: 3d_segmentation_dashboard_assets.simg
-  #     dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
-  #   command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_segmentation_dashboard_assets.simg -i ${CWD}/${PLANT_PATH} -plant ${PLANT_NAME} -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
-  #   distribution_level: wq
-  #   file_level: 
-  #   input_dir: [individual_plants_out, segmentation_pointclouds]
-  #   input_file: combined_multiway_registered.ply
-  #   inputs: []
-  #   # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
-  #   outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
+  5:
+    container: 
+      simg_name: 3d_segmentation_dashboard_assets.simg
+      dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt 3d_segmentation_dashboard_assets.simg -i ${CWD}/${PLANT_PATH} -plant ${PLANT_NAME} -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: combined_multiway_registered.ply
+    inputs: [gcp_season_11.txt]
+    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
 
 workload_manager:
   account: ericlyons
