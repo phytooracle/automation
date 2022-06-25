@@ -83,7 +83,7 @@ modules:
     file_level: subdir
     input_dir: [individual_plants_out, west]
     input_file: _cropped.ply
-    inputs: []
+    inputs: [gcp_season_11.txt]
     # inputs: [individual_plants_out/west/$PLANT_NAME,
     #          individual_plants_out/west_downsampled/$PLANT_NAME,
     #          individual_plants_out/east/$PLANT_NAME,
