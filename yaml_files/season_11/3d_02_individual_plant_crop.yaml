@@ -62,17 +62,17 @@ modules:
     #          postprocessing_out/west_downsampled/$SUBDIR-west.ply]
     outputs: [$BASENAME_individual_plants.tar]
 
-  # 3: 
-  #   container: 
-  #     simg_name: slack_notifications.simg
-  #     dockerhub_path: docker://phytooracle/slack_notifications:latest
-  #   command: tar -xvf ${CWD}/${SUBDIR}_individual_plants.tar && rm ${CWD}/${SUBDIR}_individual_plants.tar 
-  #   distribution_level: local
-  #   file_level: 
-  #   input_dir: [postprocessing_out, west]
-  #   input_file: -west.ply
-  #   inputs: [$BASENAME_individual_plants.tar]
-  #   outputs: []
+  3: 
+    container: 
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+    command: tar -xvf ${CWD}/${SUBDIR}_individual_plants.tar && rm ${CWD}/${SUBDIR}_individual_plants.tar 
+    distribution_level: local
+    file_level: 
+    input_dir: [postprocessing_out, west]
+    input_file: -west.ply
+    inputs: [$BASENAME_individual_plants.tar]
+    outputs: []
 
   # 4: 
   #   container: 
