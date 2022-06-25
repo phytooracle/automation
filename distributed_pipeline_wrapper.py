@@ -687,7 +687,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                     "inputs"  : [container, 
                                                 seg_model_name, 
                                                 det_model_name] + [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date)\
-                                                                        .replace('$FILE', file) for input in inputs]
+                                                                        .replace('$FILE', file).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for input in inputs]
 
                                 } for file in  files_list
                             ]
