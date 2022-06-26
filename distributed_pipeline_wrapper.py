@@ -638,23 +638,23 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
             
             if level == 'subdir':
                 
-                if args.hpc:
-                    kill_workers(dictionary['workload_manager']['job_name'])
-                    launch_workers(cctools_path=cctools_path,
-                            account=dictionary['workload_manager']['account'], 
-                            # partition=dictionary['workload_manager']['partition'], 
-                            job_name=dictionary['workload_manager']['job_name'], 
-                            nodes=dictionary['workload_manager']['nodes'], 
-                            #number_tasks=dictionary['workload_manager']['number_tasks'], 
-                            #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
-                            time=dictionary['workload_manager']['time_minutes'], 
-                            mem_per_core=dictionary['workload_manager']['mem_per_core'], 
-                            manager_name=dictionary['workload_manager']['manager_name'], 
-                            number_worker_array=dictionary['workload_manager']['number_worker_array'], 
-                            cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                            worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'],
-                            cwd=cwd)
-                            # qos_group=dictionary['workload_manager']['qos_group'])
+                # if args.hpc:
+                #     kill_workers(dictionary['workload_manager']['job_name'])
+                #     launch_workers(cctools_path=cctools_path,
+                #             account=dictionary['workload_manager']['account'], 
+                #             # partition=dictionary['workload_manager']['partition'], 
+                #             job_name=dictionary['workload_manager']['job_name'], 
+                #             nodes=dictionary['workload_manager']['nodes'], 
+                #             #number_tasks=dictionary['workload_manager']['number_tasks'], 
+                #             #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
+                #             time=dictionary['workload_manager']['time_minutes'], 
+                #             mem_per_core=dictionary['workload_manager']['mem_per_core'], 
+                #             manager_name=dictionary['workload_manager']['manager_name'], 
+                #             number_worker_array=dictionary['workload_manager']['number_worker_array'], 
+                #             cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
+                #             worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'],
+                #             cwd=cwd)
+                #             # qos_group=dictionary['workload_manager']['qos_group'])
 
                 subdir_list = []
                 for item in files_list:
@@ -669,9 +669,10 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                 {
                                     "command" : timeout + command.replace('${FILE}', file).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${DET_MODEL_PATH}', det_model_name).replace('${PLANT_NAME}', file),
                                     "outputs" : [out.replace('$PLANT_NAME', file) for out in outputs],
-                                    "inputs"  : [container, 
-                                                seg_model_name, 
-                                                det_model_name] + [input.replace('$PLANT_NAME', file) for input in inputs if os.path.isdir(input.replace('$PLANT_NAME', file))]
+                                    "inputs"  : [input.replace('$PLANT_NAME', file) for input in inputs if os.path.isdir(input.replace('$PLANT_NAME', file))]
+                                                # [container, 
+                                                # seg_model_name, 
+                                                # det_model_name] + 
 
                                 } for file in  subdir_list
                             ]
@@ -687,7 +688,6 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                     "outputs" : [out.replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
                                     "inputs"  : [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date)\
                                                                         .replace('$FILE', file).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for input in inputs]
-
                                                 # [container, 
                                                 # seg_model_name, 
                                                 # det_model_name] + 
