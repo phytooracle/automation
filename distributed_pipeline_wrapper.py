@@ -1113,6 +1113,10 @@ def move_outputs(scan_date, dictionary):
                 if not os.path.isdir(os.path.join(temp_path, scan_date, out_path)):
                     os.makedirs(os.path.join(temp_path, scan_date, out_path))
 
+                if os.path.isdir(os.path.join(temp_path, scan_date)):
+                    os.makedirs(os.path.join(temp_path, 'previously_processed'))
+                    shutil.move(os.path.join(temp_path, scan_date), os.path.join(temp_path, 'previously_processed'))
+
                 shutil.move(os.path.join(cwd, scan_date, out_path, item), os.path.join(temp_path, scan_date, out_path))
 
 
