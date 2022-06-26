@@ -71,7 +71,8 @@ modules:
     file_level: 
     input_dir: [postprocessing_out, west]
     input_file: -west.ply
-    inputs: [$BASENAME_individual_plants.tar]
+    inputs: [gcp_season_11.txt] 
+    # inputs: [$BASENAME_individual_plants.tar]
     outputs: []
 
   4: 
