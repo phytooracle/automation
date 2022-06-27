@@ -25,7 +25,7 @@ def run_filexfer_node_commands(cmds):
     _a = [f"'&& {x}'" for x in cmds]
     command_string = " ".join(_a)
     cwd = os.getcwd()
-    sp.call(f"ssh filexfer 'cd {cwd}' '{command_string}' '&& exit'", shell=True)
+    sp.call(f"ssh filexfer 'cd {cwd}' {command_string} '&& exit'", shell=True)
 
 def make_dir(dir_path_to_make):
     cmd = f'mkdir -p {dir_path_to_make}'
