@@ -31,25 +31,26 @@ You can specify any number of modules. Each module runs a single container and g
   * [outputs] | List of output files per task. If an output is not included here, it will be deleted after processing.
 
 ## Workload manager (SLURM)
-* [account] | Account to use for remote workers on an HPC system 
-* [high_priority_settings]
-  * [use] | Use high priority hours (True/False)
-  * [qos_group] | QOS group to use for high priority hours (i.e. user_qos_dukepauli)
-  * [partition] | Type of compute hours to use (i.e. "high_priority")
-* [standard_settings]
-  * [use] | Use standard hours (True/False)
-  * [parition] | Type of compute hours to use (i.e. "standard")
-* [job_name] | Name of the worker SLURM array jobs
-* [nodes] | Number of nodes to request in a single job submission (i.e. "1")
-* [number_worker_array] | Number of workers to run in a single job submission (i.e. "100", "300") 
-* [cores_per_worker] | Number of cores to request for each worker (i.e. "1", "5", "10")
-* [alt_cores_per_worker] | Alternate number of cores to request for each worker, this alternate number is used when the level of distribution changes (i.e. when moving from image distribution to plant level)
-* [time_minutes] | Maximum run time (minutes) for the job submission
-* [retries] | Number of times to retry processing of a failed task
-* [port] | Port number to use for the manager-worker framework. Port value of 0 indicates no preference, randomly select a port
-* [mem_per_core] | Amount of memory (GB) to request for each worker (i.e. "5" for Puma, "6" for Ocelote and El Gato)
-* [mananger_name] | Name of the workflow manager
-* [worker_timeout_seconds] | Maxmimum idle run time (seconds) for worker (i.e. "900" seconds)
+* [workload_manager] | Specifications for manager/worker nodes on an HPC system.
+  * [account] | Account to use for remote workers on an HPC system 
+  * [high_priority_settings]
+    * [use] | Use high priority hours (True/False)
+    * [qos_group] | QOS group to use for high priority hours (i.e. user_qos_dukepauli)
+    * [partition] | Type of compute hours to use (i.e. "high_priority")
+  * [standard_settings]
+    * [use] | Use standard hours (True/False)
+    * [parition] | Type of compute hours to use (i.e. "standard")
+  * [job_name] | Name of the worker SLURM array jobs
+  * [nodes] | Number of nodes to request in a single job submission (i.e. "1")
+  * [number_worker_array] | Number of workers to run in a single job submission (i.e. "100", "300") 
+  * [cores_per_worker] | Number of cores to request for each worker (i.e. "1", "5", "10")
+  * [alt_cores_per_worker] | Alternate number of cores to request for each worker, this alternate number is used when the level of distribution changes (i.e. when moving from image distribution to plant level)
+  * [time_minutes] | Maximum run time (minutes) for the job submission
+  * [retries] | Number of times to retry processing of a failed task
+  * [port] | Port number to use for the manager-worker framework. Port value of 0 indicates no preference, randomly select a port
+  * [mem_per_core] | Amount of memory (GB) to request for each worker (i.e. "5" for Puma, "6" for Ocelote and El Gato)
+  * [mananger_name] | Name of the workflow manager
+  * [worker_timeout_seconds] | Maxmimum idle run time (seconds) for worker (i.e. "900" seconds)
 
 ## Paths 
 * [paths]
