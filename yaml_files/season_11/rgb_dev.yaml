@@ -1,12 +1,18 @@
-
+---
 tags:
-  pipeline: season10_rgb
+  pipeline: season11_stereoTop
   description: dev
-  notes: Processing of Season 10 stereoTopRGB data
-  runby: Travis Simmons
-  sensor: stereoTopRGB
-  season: 10
-  season_dir_name: season_10_lettuce_yr_2020
+  notes: Post landmark selection processing of Season 11 stereoTop data
+  runby: Unspecified Paulilab member
+  sensor: stereoTop
+  season: 11
+  season_name: season_11_sorghum_yr_2020
+  slack_notifications: 
+    use: True
+    channel: gantry_data_updates
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
 
 modules:
   1:
@@ -106,8 +112,9 @@ paths:
   
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
-      necessary_files: [level_0/season10_multi_latlon_geno.geojson]
+
     input: 
+      necessary_files: [level_0/season10_multi_latlon_geno.geojson]
       level: level_0
       input_dir: []
     output:
