@@ -106,6 +106,12 @@ def get_args():
                         help='Shared filesystem.',
                         action='store_false')
 
+    parser.add_argument('-t',
+                        '--timeout',
+                        help='Command timeout in units minute.',
+                        type=float,
+                        default=0.5)
+
     return parser.parse_args()
 
 
@@ -620,7 +626,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     '''
     args = get_args()
     files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
-    timeout = 'timeout 0.5h '
+    timeout = f'timeout {args.timeout}h '
     cwd = os.getcwd()
     command = command.replace('${CWD}', cwd)
 
