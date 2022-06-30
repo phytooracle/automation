@@ -110,7 +110,7 @@ def get_args():
                         '--timeout',
                         help='Command timeout in units minute.',
                         type=float,
-                        default=0.5)
+                        default=1)#0.5)
 
     return parser.parse_args()
 
