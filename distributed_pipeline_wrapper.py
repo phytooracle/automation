@@ -436,6 +436,21 @@ def get_file_list(directory, level, match_string='.ply'):
         plant_names = [os.path.join(directory, plant_name, 'null.ply') for plant_name in plant_names]
         files_list = plant_names
 
+    if level == 'whole_subdir':
+        files_list = []
+        for root, dirs, files in os.walk(directory, topdown=False):
+            for d in dirs:
+                files_list.append(d)
+    
+    if level == 'dir':
+        files_list = [directory]
+    
+
+
+    if len(files_list) == 0:
+        print('---------------------------no files found---------------------------------------')
+
+
     return files_list
 
 
@@ -623,6 +638,8 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     timeout = 'timeout 1h '
     cwd = os.getcwd()
 
+
+
     # seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
 
     # if args.shared_file_system:
@@ -691,7 +708,33 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                 } for file in  files_list
                             ]
                 } 
+        if sensor == 'ps2Top':
+                print(files_list)
+                jx_dict = {
+                    "rules": [
+                                {
+                                    "command" : timeout + command\
+                                        .replace('${FILE}', file)\
+                                        .replace('${M_DATA_FILE}', file.replace(file[-15:], 'metadata.json'))\
+                                        .replace('${FILE_DIR}', os.path.dirname(file)),
 
+                                    "outputs" : [out\
+                                        .replace('$FILE_BASE', os.path.basename(file).replace('.bin', ''))\
+                                        .replace('$SEG', os.path.basename(file).replace('.tif', '_segmentation.csv'))\
+                                        .replace('$FILE', file)\
+                                         for out in outputs],
+
+                                    "inputs"  : [container, 
+                                                seg_model_name, 
+                                                det_model_name] + [input\
+                                                    .replace('$FILE', file)\
+                                                    .replace('$M_DATA_FILE', file.replace(file[-15:], 'metadata.json'))\
+                                                    .replace('$FILE_DIR', os.path.dirname(file))\
+                                                        for input in inputs]
+
+                                } for file in  files_list
+                            ]
+                }
         else: 
             jx_dict = {
                 "rules": [
