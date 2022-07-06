@@ -1,12 +1,18 @@
-
+---
 tags:
-  pipeline: season10_psii
+  pipeline: season11_ps2Top
   description: dev
-  notes: Processing of Season 10 ps2Top data
-  runby: Travis Simmons
-  sensor: ps2Top
-  season: 10
-  season_name: season_10_lettuce_yr_2020
+  notes: Post landmark selection processing of Season 11 ps2Top data
+  runby: Unspecified Paulilab member
+  sensor: ps2Top 
+  season: 11
+  season_name: season_11_sorghum_yr_2020
+  slack_notifications: 
+    use: True
+    channel: gantry_data_updates
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
 
 modules:
   1:

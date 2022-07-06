@@ -5,11 +5,11 @@ tags:
   notes: Processing of 2019 cotton RNA-Seq TPM data and spectral data for gene expression prediction.
   runby: Emmanuel Miguel Gonzalez
   sensor: rnaseq_hyperspectral 
-  season: 2019 cotton
+  season: 2019_cotton
   season_name: 2019_cotton
   slack_notifications: 
     use: True
-    channel: gantry_test #gantry_data_updates
+    channel: gantry_test
     container:
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
@@ -61,10 +61,10 @@ paths:
   outpath_subdirs: [correlation_scores, plots, models, permutation]
 
   cyverse: 
-    upload_directories:
-      use: True
-      temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
-      upload_account: frost_lab
+    # upload_directories:
+    #   use: False #True
+    #   temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
+    #   upload_account: frost_lab
 
     basename: /iplant/home/shared/phytooracle/
     input: 

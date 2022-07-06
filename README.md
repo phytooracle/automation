@@ -1,6 +1,6 @@
 # <p align="center"><b>PhytoOracle | Modular, Scalable Phenomic Data Processing Pipeline</b></p>
 <p align="center"><img src="docs/IMG_0102.PNG" height="200"></p>
-PhytoOracle (PO) Automation is general-use, distributed computing pipeline for phenomic data. PO can be run on local or HPC resources and is capable of processing large phenomic datasets such as those collected by the Field Scanner at the University of Arizona's Maricopa Agricultural Center (pictured below).
+PhytoOracle (PO) Automation is general-use, distributed computing pipeline for phenomic data. PO can be run on local or HPC resources and is capable of processing large phenomic datasets such as those collected by the Field Scanner at the University of Arizona's Maricopa Agricultural Center (pictured below, Photo: Jesse Rieser for The Wall Street Journal).
 
 <p align="center"><img src="docs/gantry_wsj.jpg" height="300"></p>
 

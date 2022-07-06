@@ -554,7 +554,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --job-name={job_name}\n")
             fh.writelines(f"#SBATCH --nodes={nodes}\n")
             fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker) + 1}\n")
-            fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
+            fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
             fh.writelines(f"#SBATCH --time={time}\n")
             fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
             fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
@@ -573,7 +573,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --job-name={job_name}\n")
             fh.writelines(f"#SBATCH --nodes={nodes}\n")
             fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
-            fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}GB\n")
+            fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
             fh.writelines(f"#SBATCH --time={time}\n")
             fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
             fh.writelines(f"#SBATCH --qos={dictionary['workload_manager']['high_priority_settings']['qos_group']}\n")
@@ -606,7 +606,7 @@ def kill_workers(job_name):
 
     
 # --------------------------------------------------
-def generate_makeflow_json(cctools_path, level, files_list, command, container, inputs, outputs, date, sensor, n_rules=1, json_out_path='wf_file.json'):
+def generate_makeflow_json(cctools_path, level, files_list, command, container, inputs, outputs, date, sensor, dictionary, n_rules=1, json_out_path='wf_file.json'):
     '''
     Generate Makeflow JSON file to distribute tasks. 
 
@@ -622,6 +622,15 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
     timeout = 'timeout 1h '
     cwd = os.getcwd()
+
+    # seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
+
+    # if args.shared_file_system:
+        # container = os.path.join(cwd, container)
+        # seg_model_name = os.path.join(cwd, seg_model_name)
+        # det_model_name = os.path.join(cwd, det_model_name)
+        # inputs = [os.path.join(cwd, item) for item in inputs]
+        # files_list = [os.path.join(cwd, item) for item in files_list]
 
     if inputs:
         if sensor=='scanner3DTop':
@@ -737,10 +746,10 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     home = os.path.expanduser('~')
     cctools = os.path.join(home, cctools_path, 'bin', 'makeflow')
     cctools = os.path.join(home, cctools)
-    arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log}' # --disable-cache $@'
+    arguments = f'-T {batch_type} --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --skip-file-check' # --disable-cache $@'
 
-    if args.hpc or args.shared_file_system:
-        arguments = f'-T {batch_type} --skip-file-check --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --shared-fs {cwd}' #--disable-cache $@' 
+    if args.shared_file_system:
+        arguments = f'-T {batch_type} --json {json_out_path} -a --shared-fs {cwd} -X {cwd} -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --skip-file-check' # --disable-cache $@' 
     
     cmd1 = ' '.join([cctools, arguments])
     sp.call(cmd1, shell=True)
@@ -1172,7 +1181,7 @@ def main():
             print(irods_dl_dir)
             if 'input_dir' in yaml_input_keys:
                 _dir = dictionary['paths']['cyverse']['input']['input_dir']
-                irods_dl_dir = os.path.join(irods_dl_dir, _dir)
+                irods_dl_dir = os.path.join(irods_dl_dir, date, _dir)
                 print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
                 print(irods_dl_dir)
             file_to_dl = find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir)
@@ -1223,7 +1232,7 @@ def main():
 
             files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
             write_file_list(files_list)
-            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
+            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], dictionary=dictionary, json_out_path=f'wf_file_{k}.json')
             run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
 
             if not args.noclean:
