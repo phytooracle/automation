@@ -23,15 +23,15 @@ modules:
     container: 
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
-    #command: tar -xvf ${SUBDIR}_individual_plants.tar && rm ${SUBDIR}_individual_plants.tar 
-    command: mkdir csv_splits; cp indv_temps_files/${DATE}_indv_temps.csv csv_splits/; cd csv_splits/; split -l 1 --additional-suffix=.csv ${DATE}_indv_temps.csv; cd ..
+    #command: mkdir csv_splits; cp indv_temps_files/${DATE}_indv_temps.csv csv_splits/; cd csv_splits/; split -l 1 --additional-suffix=.csv ${DATE}_indv_temps.csv; cd ..
+    command: mkdir csv_splits; cp ${DATE}_indv_temps.csv csv_splits/; cd csv_splits/; split -l 1 --additional-suffix=.csv ${DATE}_indv_temps.csv; cd ..
     #command: touch foocommandcommand
     distribution_level: local
     file_level: 
-    input_dir: [indv_temps_files]
+    input_dir: [.]
     input_file: _indv_temps.csv
-    inputs: [$DATE_indv_temps.csv]
-    outputs: []
+    inputs: [$FILE]
+    outputs: []  # empty because local
   2:
     container: 
       simg_name: environment_association.simg
