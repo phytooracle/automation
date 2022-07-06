@@ -36,7 +36,7 @@ modules:
     container: 
       simg_name: environment_association.simg
       dockerhub_path: docker://phytooracle/environment_association:latest
-    command: singularity run environment_association.simg -s flir -g ./season10_multi_latlon_geno.geojson -d ${DATE} -o output -c ${FILE} -z season_10_lettuce_yr_2020 flirIrCamera/${DATE}
+    command: singularity run environment_association.simg -s flir -g ./season10_multi_latlon_geno.geojson -d ${DATE} -o env_output -c ${FILE} -z season_10_lettuce_yr_2020 flirIrCamera/${DATE}
     distribution_level: local
     file_level: 
     input_dir: [csv_splits]
@@ -44,7 +44,7 @@ modules:
     inputs: [$FILE,
              $SUB_DIR/$UUID_metadata.json,
              season10_multi_latlon_geno.geojson]
-    outputs: []
+    outputs: [env_output]
   3: 
     # This container...
     # (1) Take the header from the first csv file (head -1 xaa.csv)
@@ -52,13 +52,13 @@ modules:
     container: 
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
-    command: head -1 outputs/xaa.csv >> outputs/full.csv ; tail -1 outputs/x*.csv >> outputs/full.csv
+    command: head -1 env_output/xaa.csv >> env_output/full.csv ; tail -1 env_output/x*.csv >> env_output/full_envass_output.csv
     distribution_level: local
     file_level: dir
-    input_dir: [outputs]
+    input_dir: [env_output]
     input_file: ignored
-    inputs: [outputs]
-    outputs: [outputs/full.csv]
+    inputs: [env_outputs]
+    outputs: [env_output/full_envass_output.csv]
 
 workload_manager:
   account: dukepauli
