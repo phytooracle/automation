@@ -488,6 +488,8 @@ def get_support_files(dictionary, date):
             server_utils.download_file_from_cyverse(os.path.join(irods_basename, file_path))
         else:
             print(f"FOUND")
+        server_utils.untar_files([filename])
+
 
 
 
@@ -1222,6 +1224,9 @@ def main():
             slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])}.", date=date)
 
             files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
+            if len(files_list) < 1:
+                raise ValueError(f"file_list for module #{k} is empty")
+                
             write_file_list(files_list)
             json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], json_out_path=f'wf_file_{k}.json')
             run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)

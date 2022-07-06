@@ -93,11 +93,10 @@ def untar_files(local_files, force_overwrite=False):
         if any(x in filename for x in extensions):
             file = tarfile.open(filename)
             print(f"untar_files() is examining {filename} to see if it's been untared before.")
-            if not file.getmembers()[0].isdir():
-                raise Exception(f"   tarball doesn't start with a directory")
-            tarball_root_dir = file.getmembers()[0].name
-            #pdb.set_trace()
-            if os.path.isdir(tarball_root_dir):
+            #if not file.getmembers()[0].isdir():
+                #raise Exception(f"   tarball doesn't start with a directory")
+            tarball_first_file = file.getmembers()[0].name
+            if os.path.isdir(tarball_first_file):
                 print(f"   Looks like tarball has been unarchived before.  Skipping")
             else:
                 print(f"Unarchiving: {filename}")
