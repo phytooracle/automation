@@ -1,4 +1,5 @@
 testing.ipynb
+tags
 *.tar.gz
 *.tgz
 *.tar
@@ -35,3 +36,9 @@ postprocessing_out/
 individual_plants_out/
 segmentation_pointclouds/
 upload.sh
+csv_splits/
+azmet_cache/
+output/
+*indv_temps*
+season10_multi_latlon_geno.geojson
+tags
