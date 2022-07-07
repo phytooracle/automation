@@ -38,7 +38,7 @@ segmentation_pointclouds/
 upload.sh
 csv_splits/
 azmet_cache/
-output/
+env_output/
 *indv_temps*
 season10_multi_latlon_geno.geojson
 tags

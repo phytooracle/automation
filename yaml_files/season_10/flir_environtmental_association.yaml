@@ -1,4 +1,4 @@
----
+--
 tags:
   pipeline: season10_flir
   pre_parse_yaml: True
@@ -46,7 +46,6 @@ modules:
     inputs: [$FILE,
              $SUB_DIR/$UUID_metadata.json,
              season10_multi_latlon_geno.geojson]
-    #outputs: [env_output/$FILE_BASE_atm_temp.csv]
     outputs: ["env_output/{{$FILE_BASE}}.csv"]
 
   3: 
