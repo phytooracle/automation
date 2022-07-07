@@ -623,8 +623,6 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     timeout = 'timeout 1h '
     cwd = os.getcwd()
 
-    breakpoint()
-
     # seg_model_name, det_model_name = get_model_files(yaml_dictionary['paths']['models']['segmentation'], yaml_dictionary['paths']['models']['detection'])
 
     # if args.shared_file_system:
@@ -725,6 +723,55 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                     ]
         } 
 
+    ### Nathan was here...
+    #    Sorry this on got away from me
+    #    Heres the general idea of what's in the substitutions dictionary...
+    #
+    #    'STRING THAT IS REPLACED' : [ evaluated variable name, function to manipulate it ] 
+    #
+    #    Then we loop through each jx_dict -> "rules" (i.e. command, outputs, inputs) and replace stuff.
+    substitutions = {
+            '{{$FILE_BASE}}' : ['_f', lambda x: os.path.splitext(os.path.basename(x))[0]],
+                             # _f is the file from files_list 
+    }
+
+    def do_replacement(substitutions, original_string):
+        for match_string, _v in substitutions.items():
+            eval_var  = eval(_v[0])
+            lfunction = _v[1]
+            replacement_string = lfunction(eval_var)
+            try:
+                return original_string.replace(match_string, replacement_string)
+            except:
+                breakpoint()
+
+    _d = jx_dict['rules']
+    for idx, _f in enumerate(files_list):
+        for rule_section, entry in _d[idx].items():
+            # [rule_section] can be a string or a list, so we have to deal with that...
+            if type(entry) is list:
+                for _eidx, e in enumerate(entry):
+                    #_d[idx][rule_section][_eidx] = do_replacement(substitutions, e)
+                    for match_string, _v in substitutions.items():
+                        eval_var  = eval(_v[0])
+                        lfunction = _v[1]
+                        replacement_string = lfunction(eval_var)
+                        try:
+                            _d[idx][rule_section][_eidx] = e.replace(match_string, replacement_string)
+                        except:
+                            breakpoint()
+            else:
+                #_d[idx][rule_section] = do_replacement(substitutions, entry)
+                for match_string, _v in substitutions.items():
+                    eval_var  = eval(_v[0])
+                    lfunction = _v[1]
+                    replacement_string = lfunction(eval_var)
+                    try:
+                        _d[idx][rule_section] = entry.replace(match_string, replacement_string)
+                    except:
+                        breakpoint()
+    ### ...Nathan was here.
+
     with open(json_out_path, 'w') as convert_file:
         convert_file.write(json.dumps(jx_dict))
 
@@ -743,6 +790,7 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     Output: 
         - Running workflow
     '''
+    breakpoint()
     args = get_args()
     cores_max = int(multiprocessing.cpu_count()*args.local_cores)
     home = os.path.expanduser('~')
@@ -1135,7 +1183,7 @@ def main():
 
 
     with open(args.yaml, 'r') as stream:
-        global dictionary
+        global original_yaml_dictionary
         original_yaml_dictionary = yaml.safe_load(stream)
 
     if "workload_manager_yaml" in args:
@@ -1150,9 +1198,18 @@ def main():
     for date in args.date:
         cwd = os.getcwd()
         
-        if original_yaml_dictionary['tags']['pre_parse_yaml']:
+        global yaml_dictionary
+        if 'pre_parse_yaml' not in original_yaml_dictionary['tags'].keys():
+            yaml_dictionary = original_yaml_dictionary
+        elif original_yaml_dictionary['tags']['pre_parse_yaml']:
+            import yaml_preprocessor as yamlpre
+            yaml_dictionary = yamlpre.preprocess_yaml_file(yaml_path = args.yaml,
+                                                 date      = date,
+                                                 args      = args
+            )
         else:
             yaml_dictionary = original_yaml_dictionary
+
         slack_notification(message=f"Starting data processing.", date=date)
 
         build_containers(yaml_dictionary)

@@ -1,4 +1,4 @@
-
+---
 tags:
   pipeline: season10_flir
   pre_parse_yaml: True
@@ -30,7 +30,7 @@ modules:
     distribution_level: local
     file_level: 
     input_dir: [.]
-    input_file: {{$DATE}}_indv_temps.csv
+    input_file: "{{$DATE}}_indv_temps.csv"
     inputs: [$FILE]
     outputs: []  # empty because local
 
@@ -47,7 +47,7 @@ modules:
              $SUB_DIR/$UUID_metadata.json,
              season10_multi_latlon_geno.geojson]
     #outputs: [env_output/$FILE_BASE_atm_temp.csv]
-    outputs: [env_output/$PLANT_NAME]
+    outputs: ["env_output/{{$FILE_BASE}}.csv"]
 
   3: 
     # This container...
