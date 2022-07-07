@@ -735,7 +735,6 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                              # _f is the file from files_list 
     }
 
-    breakpoint()
 
     def do_replacement(substitutions, original_string):
         for match_string, _v in substitutions.items():
@@ -755,20 +754,14 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                         eval_var  = eval(_v[0])
                         lfunction = _v[1]
                         replacement_string = lfunction(eval_var)
-                        try:
-                            _d[idx][rule_section][_eidx] = e.replace(match_string, replacement_string)
-                        except:
-                            breakpoint()
+                        _d[idx][rule_section][_eidx] = e.replace(match_string, replacement_string)
             else:
                 #_d[idx][rule_section] = do_replacement(substitutions, entry)
                 for match_string, _v in substitutions.items():
                     eval_var  = eval(_v[0])
                     lfunction = _v[1]
                     replacement_string = lfunction(eval_var)
-                    try:
-                        _d[idx][rule_section] = entry.replace(match_string, replacement_string)
-                    except:
-                        breakpoint()
+                    _d[idx][rule_section] = entry.replace(match_string, replacement_string)
     ### ...Nathan was here.
 
     with open(json_out_path, 'w') as convert_file:
@@ -789,7 +782,7 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     Output: 
         - Running workflow
     '''
-    breakpoint()
+
     args = get_args()
     cores_max = int(multiprocessing.cpu_count()*args.local_cores)
     home = os.path.expanduser('~')
