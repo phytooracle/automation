@@ -502,7 +502,7 @@ def get_support_files(dictionary, date):
     sensor = dictionary["tags"]["sensor"]
    
     if sensor == "stereoTop":
-        sp.Popen("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git")
+        sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
 
 
 # --------------------------------------------------
