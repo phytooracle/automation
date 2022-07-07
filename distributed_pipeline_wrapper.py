@@ -436,6 +436,15 @@ def get_file_list(directory, level, match_string='.ply'):
         plant_names = [os.path.join(directory, plant_name, 'null.ply') for plant_name in plant_names]
         files_list = plant_names
 
+    if level == 'whole_subdir':
+        files_list = []
+        for root, dirs, files in os.walk(directory, topdown=False):
+            for d in dirs:
+                files_list.append(d)
+    
+    if level == 'dir':
+        files_list = [directory]
+
     return files_list
 
 
@@ -488,6 +497,8 @@ def get_support_files(dictionary, date):
             server_utils.download_file_from_cyverse(os.path.join(irods_basename, file_path))
         else:
             print(f"FOUND")
+    
+    # sensor = dictionary[]
 
 
 
@@ -691,6 +702,23 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                 } for file in  files_list
                             ]
                 } 
+
+
+        ## THE PART I'M WORKING ON
+
+        elif sensor == 'stereoTop':
+
+            jx_dict = {
+                'rules': [
+                            {
+                                "command": timeout + command.replace('${FILE}', file).replace('${UUID}', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])).replace('${DATE}', date),
+                                "outputs": [out.replace('$FILE_BASE', os.path.basename(file).split('.')[0]).replace('$DATE', date) for out in outputs],
+                                "inputs": [container, seg_model_name, det_model_name] + [input.replace('$FILE', file).replace('$UUID', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])) for input in inputs]
+                            } for file in files_list
+                        ]
+            }
+
+        #########
 
         else: 
             jx_dict = {
