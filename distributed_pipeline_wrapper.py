@@ -110,16 +110,16 @@ def get_args():
 
 
 # --------------------------------------------------
-def build_containers(dictionary):
+def build_containers(yaml_dictionary):
     """Build module containers outlined in YAML file
     
     Input: 
-        - dictionary: Dictionary generated from the YAML file
+        - yaml_dictionary: Dictionary generated from the YAML file
     
     Output: 
         - Singularity images (SIMG files)
     """
-    for k, v in dictionary['modules'].items():
+    for k, v in yaml_dictionary['modules'].items():
         container = v['container']
         if not os.path.isfile(container["simg_name"]):
             print(f'Building {container["simg_name"]}.')
@@ -236,11 +236,11 @@ def build_irods_path_to_sensor_from_yaml(yaml_dictionary, args):
 
     return path
 
-def download_irods_input_dir(dictionary, date, args):
+def download_irods_input_dir(yaml_dictionary, date, args):
     """
     (0) Make the local input_dir
     (1) Download all contents from the cyverse location pointed to
-    by dictionary['paths']['cyverse']['input']['input_dir']
+    by yaml_dictionary['paths']['cyverse']['input']['input_dir']
     (2) Untar stuff if needed
 
     Usecase example...  The level 1 3D data after landmark selection is a bunch of tarballs
@@ -249,11 +249,11 @@ def download_irods_input_dir(dictionary, date, args):
     """
 
     # Step (0)
-    input_dir = dictionary['paths']['cyverse']['input']['input_dir']
+    input_dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
     server_utils.make_dir(input_dir)
 
     # Step (1)
-    sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
+    sensor_path = build_irods_path_to_sensor_from_yaml(yaml_dictionary, args)
     irods_input_dir_path = os.path.join(sensor_path, date, input_dir) 
     files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_input_dir_path)
     file_paths = [os.path.join(irods_input_dir_path, x) for x in files_in_dir]
@@ -269,21 +269,21 @@ def download_irods_input_dir(dictionary, date, args):
     return
 
 # --------------------------------------------------
-def find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir):
+def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
     """
     Get IRODS path to download
     
     Input: 
-        - dictionary: Dictionary generated from the YAML file
+        - yaml_dictionary: Dictionary generated from the YAML file
     
     Output: 
         - irods_path: CyVerse filepath
     """
 
     experiment        = args.experiment
-    cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
-    prefix            = dictionary['paths']['cyverse']['input']['prefix']
-    suffix            = dictionary['paths']['cyverse']['input']['suffix']
+    cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
+    prefix            = yaml_dictionary['paths']['cyverse']['input']['prefix']
+    suffix            = yaml_dictionary['paths']['cyverse']['input']['suffix']
 
     all_files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_dl_dir)
     # Now lets see if our file is in all_files_in_dir
@@ -458,26 +458,26 @@ def write_file_list(input_list, out_path='file.txt'):
 
 
 # --------------------------------------------------
-def get_support_files(dictionary, date):
+def get_support_files(yaml_dictionary, date):
     '''
     Input:
-        - dictionary: Dictionary variable (YAML file)
+        - yaml_dictionary: Dictionary variable (YAML file)
         - date: Scan date being processed
     
     Output: 
         - Downloaded files/directories in the current working directory
     '''
 
-    #season_name = dictionary['tags']['season_name']
+    #season_name = yaml_dictionary['tags']['season_name']
     season_name = get_season_name()
-    cyverse_basename  = dictionary['paths']['cyverse']['basename']
+    cyverse_basename  = yaml_dictionary['paths']['cyverse']['basename']
 
     irods_basename = os.path.join(
             cyverse_basename,
             season_name
     )
 
-    support_files = dictionary['paths']['cyverse']['input']['necessary_files']
+    support_files = yaml_dictionary['paths']['cyverse']['input']['necessary_files']
 
     for file_path in support_files:
         print(f"Looking for {file_path}...")
@@ -493,10 +493,10 @@ def get_support_files(dictionary, date):
 
 # --------------------------------------------------
 def get_season_name():
-    season_name = dictionary['tags']['season_name']
+    season_name = yaml_dictionary['tags']['season_name']
     if not season_name:
         raise ValueError(
-          f"ERROR.  You need to specify dictionary['tags']['season_name'] in your yaml file.  For example: \n" + \
+          f"ERROR.  You need to specify yaml_dictionary['tags']['season_name'] in your yaml file.  For example: \n" + \
           "season_name: season_11_sorghum_yr_2020"
         )
     return season_name
@@ -547,7 +547,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
     '''
     time_seconds = int(time)*60
     
-    if dictionary['workload_manager']['standard_settings']['use']==True:
+    if yaml_dictionary['workload_manager']['standard_settings']['use']==True:
         with open(outfile, 'w') as fh:
             fh.writelines("#!/bin/bash\n")
             fh.writelines(f"#SBATCH --account={account}\n")
@@ -557,7 +557,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
             fh.writelines(f"#SBATCH --time={time}\n")
             fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
-            fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['standard_settings']['partition']}\n")
+            fh.writelines(f"#SBATCH --partition={yaml_dictionary['workload_manager']['standard_settings']['partition']}\n")
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
             # fh.writelines(f"cd {cwd}\n")
@@ -566,7 +566,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
         if return_code == 1:
             raise Exception(f"sbatch Failed")
 
-    if dictionary['workload_manager']['high_priority_settings']['use']==True:
+    if yaml_dictionary['workload_manager']['high_priority_settings']['use']==True:
         with open(outfile_priority, 'w') as fh:
             fh.writelines("#!/bin/bash\n")
             fh.writelines(f"#SBATCH --account={account}\n")
@@ -576,8 +576,8 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
             fh.writelines(f"#SBATCH --time={time}\n")
             fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
-            fh.writelines(f"#SBATCH --qos={dictionary['workload_manager']['high_priority_settings']['qos_group']}\n")
-            fh.writelines(f"#SBATCH --partition={dictionary['workload_manager']['high_priority_settings']['partition']}\n")
+            fh.writelines(f"#SBATCH --qos={yaml_dictionary['workload_manager']['high_priority_settings']['qos_group']}\n")
+            fh.writelines(f"#SBATCH --partition={yaml_dictionary['workload_manager']['high_priority_settings']['partition']}\n")
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
             # fh.writelines(f"cd {cwd}\n")
@@ -606,7 +606,7 @@ def kill_workers(job_name):
 
     
 # --------------------------------------------------
-def generate_makeflow_json(cctools_path, level, files_list, command, container, inputs, outputs, date, sensor, dictionary, n_rules=1, json_out_path='wf_file.json'):
+def generate_makeflow_json(cctools_path, level, files_list, command, container, inputs, outputs, date, sensor, yaml_dictionary, n_rules=1, json_out_path='wf_file.json'):
     '''
     Generate Makeflow JSON file to distribute tasks. 
 
@@ -623,7 +623,9 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     timeout = 'timeout 1h '
     cwd = os.getcwd()
 
-    # seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
+    breakpoint()
+
+    # seg_model_name, det_model_name = get_model_files(yaml_dictionary['paths']['models']['segmentation'], yaml_dictionary['paths']['models']['detection'])
 
     # if args.shared_file_system:
         # container = os.path.join(cwd, container)
@@ -638,22 +640,22 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
             if level == 'subdir':
                 
                 if args.hpc:
-                    kill_workers(dictionary['workload_manager']['job_name'])
+                    kill_workers(yaml_dictionary['workload_manager']['job_name'])
                     launch_workers(cctools_path=cctools_path,
-                            account=dictionary['workload_manager']['account'], 
-                            # partition=dictionary['workload_manager']['partition'], 
-                            job_name=dictionary['workload_manager']['job_name'], 
-                            nodes=dictionary['workload_manager']['nodes'], 
-                            #number_tasks=dictionary['workload_manager']['number_tasks'], 
-                            #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
-                            time=dictionary['workload_manager']['time_minutes'], 
-                            mem_per_core=dictionary['workload_manager']['mem_per_core'], 
-                            manager_name=dictionary['workload_manager']['manager_name'], 
-                            number_worker_array=dictionary['workload_manager']['number_worker_array'], 
-                            cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                            worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'],
+                            account=yaml_dictionary['workload_manager']['account'], 
+                            # partition=yaml_dictionary['workload_manager']['partition'], 
+                            job_name=yaml_dictionary['workload_manager']['job_name'], 
+                            nodes=yaml_dictionary['workload_manager']['nodes'], 
+                            #number_tasks=yaml_dictionary['workload_manager']['number_tasks'], 
+                            #number_tasks_per_node=yaml_dictionary['workload_manager']['number_tasks_per_node'], 
+                            time=yaml_dictionary['workload_manager']['time_minutes'], 
+                            mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
+                            manager_name=yaml_dictionary['workload_manager']['manager_name'], 
+                            number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
+                            cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
+                            worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'],
                             cwd=cwd)
-                            # qos_group=dictionary['workload_manager']['qos_group'])
+                            # qos_group=yaml_dictionary['workload_manager']['qos_group'])
 
                 subdir_list = []
                 for item in files_list:
@@ -756,20 +758,20 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
 
 
 # --------------------------------------------------
-def tar_outputs(scan_date, dictionary):
+def tar_outputs(scan_date, yaml_dictionary):
     '''
     Bundles outputs for upload to the CyVerse DataStore.
 
     Input:
         - scan_date: Date of the scan
-        - dictionary: Dictionary variable (YAML file)
+        - yaml_dictionary: Dictionary variable (YAML file)
     
     Output: 
         - Tar files containing all output data
     '''
     cwd = os.getcwd()
 
-    for item in dictionary['paths']['pipeline_outpath']:
+    for item in yaml_dictionary['paths']['pipeline_outpath']:
         if os.path.isdir(item):
             os.chdir(item)
 
@@ -778,7 +780,7 @@ def tar_outputs(scan_date, dictionary):
         if not os.path.isdir(os.path.join(cwd, scan_date, outdir)):
             os.makedirs(os.path.join(cwd, scan_date, outdir))
 
-        for v in dictionary['paths']['outpath_subdirs']:
+        for v in yaml_dictionary['paths']['outpath_subdirs']:
 
             _full_v = os.path.join(cwd, outdir, v)
 
@@ -829,18 +831,18 @@ def create_pipeline_logs(scan_date):
 
 
 # --------------------------------------------------
-def get_irods_data_path(dictionary):
+def get_irods_data_path(yaml_dictionary):
 
     args= get_args()
-    #root = dictionary['paths']['cyverse']['output']['basename']
-    #subdir = dictionary['paths']['cyverse']['output']['subdir']
+    #root = yaml_dictionary['paths']['cyverse']['output']['basename']
+    #subdir = yaml_dictionary['paths']['cyverse']['output']['subdir']
 
-    #season_name = dictionary['tags']['season_name']
+    #season_name = yaml_dictionary['tags']['season_name']
     season_name = get_season_name()
     experiment  = args.experiment
-    sensor      = dictionary['tags']['sensor']
-    cyverse_basename  = dictionary['paths']['cyverse']['basename']
-    cyverse_datalevel = dictionary['paths']['cyverse']['output']['level']
+    sensor      = yaml_dictionary['tags']['sensor']
+    cyverse_basename  = yaml_dictionary['paths']['cyverse']['basename']
+    cyverse_datalevel = yaml_dictionary['paths']['cyverse']['output']['level']
 
     # Every path (level zero or otherwise) starts the same:
     # .../phytooracle/season_11_sorghum_yr_2020/level_0/scanner3DTop
@@ -864,20 +866,20 @@ def get_irods_data_path(dictionary):
 
 
 # --------------------------------------------------
-def upload_outputs(date, dictionary):
+def upload_outputs(date, yaml_dictionary):
     '''
     Uploads bundled data to the CyVerse path ('paths/cyverse/output/basename' value) specified in the YAML file.
 
     Input:
         - date: Date of the scan
-        - dictionary: Dictionary variable (YAML file)
+        - yaml_dictionary: Dictionary variable (YAML file)
     
     Output: 
         - Uploaded data on CyVerse DataStore
     '''  
     args= get_args()
 
-    irods_output_path = get_irods_data_path(dictionary)
+    irods_output_path = get_irods_data_path(yaml_dictionary)
     
     cwd = os.getcwd()
 
@@ -925,7 +927,7 @@ def clean_directory():
 
 
 # --------------------------------------------------
-def clean_inputs(date, dictionary):
+def clean_inputs(date, yaml_dictionary):
     '''
     Cleans directory from distributed pipeline input directories and files.
 
@@ -966,7 +968,7 @@ def clean_inputs(date, dictionary):
     if len(raw_data_list) > 0:
         shutil.rmtree(glob.glob(f'scanner3DTop-{date}*')[0])
 
-    for item in dictionary['paths']['pipeline_outpath']:
+    for item in yaml_dictionary['paths']['pipeline_outpath']:
         if os.path.isdir(item):
             shutil.rmtree(item)
 
@@ -1006,11 +1008,11 @@ def return_date_list(level_0_list):
 
 
 # --------------------------------------------------
-def get_process_date_list(dictionary):
+def get_process_date_list(yaml_dictionary):
 
     args= get_args()
-    basename = dictionary['paths']['cyverse']['basename']
-    input_level = dictionary['paths']['cyverse']['input']['level']
+    basename = yaml_dictionary['paths']['cyverse']['basename']
+    input_level = yaml_dictionary['paths']['cyverse']['input']['level']
 
     try:
         pre, input_num = input_level.split('_')
@@ -1019,8 +1021,8 @@ def get_process_date_list(dictionary):
     except ValueError:
         print('Error')
     
-    input_path = os.path.join(basename, dictionary['tags']['season_name'], input_level, dictionary['tags']['sensor'])
-    output_path = os.path.join(basename, dictionary['tags']['season_name'], output_level, dictionary['tags']['sensor'])
+    input_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], input_level, yaml_dictionary['tags']['sensor'])
+    output_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], output_level, yaml_dictionary['tags']['sensor'])
     
     level_0_list, level_1_list = [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {input_path}').readlines()][1:]] \
                                 ,[os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {output_path}').readlines()][1:]]
@@ -1039,15 +1041,15 @@ def get_process_date_list(dictionary):
 # --------------------------------------------------
 def slack_notification(message, date):
 
-    sensor = dictionary['tags']['sensor']
-    if 'slack_notifications' in dictionary['tags'].keys():
+    sensor = yaml_dictionary['tags']['sensor']
+    if 'slack_notifications' in yaml_dictionary['tags'].keys():
         
-        if dictionary['tags']['slack_notifications']['use']==True:
+        if yaml_dictionary['tags']['slack_notifications']['use']==True:
 
-            simg = dictionary['tags']['slack_notifications']['container']['simg_name']
-            dockerhub_path = dictionary['tags']['slack_notifications']['container']['dockerhub_path']
-            channel = dictionary['tags']['slack_notifications']['channel']
-            season = ''.join(['Season', str(dictionary['tags']['season'])])
+            simg = yaml_dictionary['tags']['slack_notifications']['container']['simg_name']
+            dockerhub_path = yaml_dictionary['tags']['slack_notifications']['container']['dockerhub_path']
+            channel = yaml_dictionary['tags']['slack_notifications']['channel']
+            season = ''.join(['Season', str(yaml_dictionary['tags']['season'])])
             user = os.environ['LOGNAME']
             host_name = socket.gethostname()
             user_host = '@'.join([user, host_name])
@@ -1084,13 +1086,13 @@ def create_wq_status(cctools_path, outfile='./shell_scripts/wq_status.sh'):
 
 
 # --------------------------------------------------
-def move_outputs(scan_date, dictionary):
+def move_outputs(scan_date, yaml_dictionary):
 
     print('Moving outputs')
     cwd = os.getcwd()
-    temp_path = dictionary['paths']['cyverse']['upload_directories']['temp_directory']
-    dir_list = dictionary['paths']['cyverse']['upload_directories']['directories_to_move']
-    pipeline_out_path = dictionary['paths']['pipeline_outpath']
+    temp_path = yaml_dictionary['paths']['cyverse']['upload_directories']['temp_directory']
+    dir_list = yaml_dictionary['paths']['cyverse']['upload_directories']['directories_to_move']
+    pipeline_out_path = yaml_dictionary['paths']['pipeline_outpath']
 
     for out_path in pipeline_out_path:
 
@@ -1110,16 +1112,16 @@ def move_outputs(scan_date, dictionary):
 
 
 # --------------------------------------------------
-def handle_date_failure(args, date, dictionary):
+def handle_date_failure(args, date, yaml_dictionary):
     slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
     if not args.noclean:
         slack_notification(message=f"PIPELINE ERROR. Cleaning inputs.", date=date)
         print(f"Cleaning directory")
         clean_directory()
-        clean_inputs(date, dictionary)  
+        clean_inputs(date, yaml_dictionary)  
         slack_notification(message=f"PIPELINE ERROR. Cleaning inputs complete.", date=date)
 
-    kill_workers(dictionary['workload_manager']['job_name'])
+    kill_workers(yaml_dictionary['workload_manager']['job_name'])
     
 
 # --------------------------------------------------
@@ -1134,30 +1136,32 @@ def main():
 
     with open(args.yaml, 'r') as stream:
         global dictionary
-        dictionary = yaml.safe_load(stream)
+        original_yaml_dictionary = yaml.safe_load(stream)
 
     if "workload_manager_yaml" in args:
         if args.workload_manager_yaml is not None:
             with open(args.workload_manager_yaml, 'r') as stream:
                 workload_managaer_dictionary = yaml.safe_load(stream)
-            dictionary['workload_manager'] = workload_managaer_dictionary['workload_manager']
+            original_yaml_dictionary['workload_manager'] = workload_managaer_dictionary['workload_manager']
 
     if not args.date:
-        args.date = get_process_date_list(dictionary)
+        args.date = get_process_date_list(original_yaml_dictionary)
 
     for date in args.date:
         cwd = os.getcwd()
         
+        if original_yaml_dictionary['tags']['pre_parse_yaml']:
+        else:
+            yaml_dictionary = original_yaml_dictionary
         slack_notification(message=f"Starting data processing.", date=date)
 
-#        try:
-        build_containers(dictionary)
+        build_containers(yaml_dictionary)
 
         if args.uploadonly:
-            upload_outputs(date, dictionary)
+            upload_outputs(date, yaml_dictionary)
             return
         if args.archiveonly:
-            tar_outputs(date, dictionary)
+            tar_outputs(date, yaml_dictionary)
             return
 
         server_utils.hpc = args.hpc
@@ -1170,35 +1174,35 @@ def main():
         # (3) both...  add input_dir to irods_path and continue as (1)
 
         slack_notification(message=f"Downloading raw data.", date=date)
-        yaml_input_keys = dictionary['paths']['cyverse']['input'].keys()
+        yaml_input_keys = yaml_dictionary['paths']['cyverse']['input'].keys()
 
         # figure out if yaml has prefix and/or sufix keys...
-        cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
-        irods_sensor_path = build_irods_path_to_sensor_from_yaml(dictionary, args)
+        cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
+        irods_sensor_path = build_irods_path_to_sensor_from_yaml(yaml_dictionary, args)
         if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
             print("Found prefix or suffix.  Building irods_path...")
             irods_dl_dir = irods_sensor_path
             print(irods_dl_dir)
             if 'input_dir' in yaml_input_keys:
-                _dir = dictionary['paths']['cyverse']['input']['input_dir']
+                _dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
                 irods_dl_dir = os.path.join(irods_dl_dir, date, _dir)
                 print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
                 print(irods_dl_dir)
-            file_to_dl = find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir)
+            file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
             if file_to_dl is None:
-                handle_date_failure(args, date, dictionary)
+                handle_date_failure(args, date, yaml_dictionary)
                 continue
             dir_name = download_irods_input_file(file_to_dl)
         elif 'input_dir' in yaml_input_keys:
             print("Using input dir")
-            dir_name = dictionary['paths']['cyverse']['input']['input_dir']
+            dir_name = yaml_dictionary['paths']['cyverse']['input']['input_dir']
             if len(dir_name) < 1:
                 raise ValueError(f"input_dir shouldn't be empty.  Remove it.")
-            download_irods_input_dir(dictionary, date, args)
+            download_irods_input_dir(yaml_dictionary, date, args)
         else:
             raise Exception(f"Couldn't figure out what to do with yaml input")
 
-        get_support_files(dictionary=dictionary, date=date)
+        get_support_files(yaml_dictionary=yaml_dictionary, date=date)
         slack_notification(message=f"Downloading raw data complete.", date=date)
 
         ###########################################################
@@ -1206,80 +1210,80 @@ def main():
         ###########################################################
 
         if args.hpc:
-            kill_workers(dictionary['workload_manager']['job_name'])
+            kill_workers(yaml_dictionary['workload_manager']['job_name'])
 
             launch_workers(cctools_path = cctools_path,
-                    account=dictionary['workload_manager']['account'], 
-                    job_name=dictionary['workload_manager']['job_name'], 
-                    nodes=dictionary['workload_manager']['nodes'], 
-                    time=dictionary['workload_manager']['time_minutes'], 
-                    mem_per_core=dictionary['workload_manager']['mem_per_core'], 
-                    manager_name=dictionary['workload_manager']['manager_name'], 
-                    number_worker_array=dictionary['workload_manager']['number_worker_array'], 
-                    cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
-                    worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'], 
+                    account=yaml_dictionary['workload_manager']['account'], 
+                    job_name=yaml_dictionary['workload_manager']['job_name'], 
+                    nodes=yaml_dictionary['workload_manager']['nodes'], 
+                    time=yaml_dictionary['workload_manager']['time_minutes'], 
+                    mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
+                    manager_name=yaml_dictionary['workload_manager']['manager_name'], 
+                    number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
+                    cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
+                    worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
                     cwd=cwd)
 
         global seg_model_name, det_model_name
-        seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
+        seg_model_name, det_model_name = get_model_files(yaml_dictionary['paths']['models']['segmentation'], yaml_dictionary['paths']['models']['detection'])
 
-        for k, v in dictionary['modules'].items():
+        for k, v in yaml_dictionary['modules'].items():
             
             if 'input_dir' in v.keys():
                 dir_name = os.path.join(*v['input_dir'])
 
-            slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])}.", date=date)
+            slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])}.", date=date)
 
             files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
             write_file_list(files_list)
-            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], dictionary=dictionary, json_out_path=f'wf_file_{k}.json')
-            run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=dictionary['workload_manager']['manager_name'], retries=dictionary['workload_manager']['retries'], port=dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
+            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=yaml_dictionary['tags']['sensor'], yaml_dictionary=yaml_dictionary, json_out_path=f'wf_file_{k}.json')
+            run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=yaml_dictionary['workload_manager']['manager_name'], retries=yaml_dictionary['workload_manager']['retries'], port=yaml_dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
 
             if not args.noclean:
                 print(f"Cleaning directory")
                 clean_directory()
 
-            slack_notification(message=f"Processing step {k}/{len(dictionary['modules'])} complete.", date=date)
+            slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])} complete.", date=date)
 
         slack_notification(message=f"All processing steps complete.", date=date)
-        kill_workers(dictionary['workload_manager']['job_name'])
+        kill_workers(yaml_dictionary['workload_manager']['job_name'])
         
         # Archive output directories
         slack_notification(message=f"Archiving data.", date=date)
-        tar_outputs(date, dictionary)
+        tar_outputs(date, yaml_dictionary)
         slack_notification(message=f"Archiving data complete.", date=date)
 
         # Upload data
         create_pipeline_logs(date)
         slack_notification(message=f"Uploading data.", date=date)
-        upload_outputs(date, dictionary)
+        upload_outputs(date, yaml_dictionary)
         slack_notification(message=f"Uploading data complete.", date=date)
 
         # Move directories if specified in the processing YAML
-        if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
+        if 'upload_directories' in yaml_dictionary['paths']['cyverse'].keys() and yaml_dictionary['paths']['cyverse']['upload_directories']['use']==True:
             
-            slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
-            move_outputs(date, dictionary)
+            slack_notification(message=f"Move data to {yaml_dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
+            move_outputs(date, yaml_dictionary)
             slack_notification(message=f"Moving data complete.", date=date)
 
             # slack_notification(message=f"Uploading data.", date=date)
-            # upload_outputs(date, dictionary)
+            # upload_outputs(date, yaml_dictionary)
             # slack_notification(message=f"Uploading data complete.", date=date)
 
         # else:
         #     slack_notification(message=f"Archiving data.", date=date)
-        #     tar_outputs(date, dictionary)
+        #     tar_outputs(date, yaml_dictionary)
         #     slack_notification(message=f"Archiving data complete.", date=date)
 
         #     create_pipeline_logs(date)
         #     slack_notification(message=f"Uploading data.", date=date)
-        #     upload_outputs(date, dictionary)
+        #     upload_outputs(date, yaml_dictionary)
         #     slack_notification(message=f"Uploading data complete.", date=date)
 
         if not args.noclean:
             slack_notification(message=f"Cleaning inputs.", date=date)
             print(f"Cleaning inputs")
-            clean_inputs(date, dictionary) 
+            clean_inputs(date, yaml_dictionary) 
             slack_notification(message=f"Cleaning inputs complete.", date=date)
 
 #        except:
@@ -1288,10 +1292,10 @@ def main():
 #                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs.", date=date)
 #                print(f"Cleaning directory")
 #                clean_directory()
-#                clean_inputs(date, dictionary)  
+#                clean_inputs(date, yaml_dictionary)  
 #                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs complete.", date=date)
 #
-#            kill_workers(dictionary['workload_manager']['job_name'])
+#            kill_workers(yaml_dictionary['workload_manager']['job_name'])
 
 
 # --------------------------------------------------
