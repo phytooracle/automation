@@ -39,17 +39,17 @@ modules:
     inputs: [$UUID_left.tif]
     outputs: [img_coords_out/$DATE_coordinates.csv]
  
-  # 3:
-  #   container: 
-  #     simg_name: geo-correction.simg
-  #     dockerhub_path: docker:ariyanzarei/geo-correction
-  #   command: singularity exec full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_HPC.py -d ./image_stiching -b ./bin2tif_out -s ${DATE} -c Lettuce_Image_Stitching/geo_correction_config.txt -l ./gcp_season_10.txt -r ./Lettuce_Image_Stitching
-  #   distribution_level: local
-  #   file_level: 
-  #   input_dir: [./bin2tif_out]
-  #   input_file: 
-  #   inputs: []
-  #   outputs: []
+  3:
+    container: 
+      simg_name: full_geocorrection.simg
+      dockerhub_path: docker:ariyanzarei/full_geocorrection
+    command: mkdir image_stiching && singularity exec full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_HPC.py -d image_stiching -b ./bin2tif_out -s 2222-01-01 -c Lettuce_Image_Stitching/geo_correction_config.txt -l ./gcp_season_11.txt -r ./Lettuce_Image_Stitching
+    distribution_level: local
+    file_level: dir
+    input_dir: [./bin2tif_out]
+    input_file: 
+    inputs: []
+    outputs: [image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
 
   # 4:
   #   container: 
@@ -87,6 +87,18 @@ modules:
   #   inputs: []
   #   outputs: []  
 
+  # 7:
+  #   container: 
+  #     simg_name: rgb_flir_plant_detection.simg
+  #     dockerhub_path: docker://phytooracle/rgb_flir_plant_detection.simg
+  #   command: singularity run rgb_flir_plant_detection.simg
+  #   distribution_level: local
+  #   file_level: 
+  #   input_dir: [./bin2tif_out]
+  #   input_file: 
+  #   inputs: []
+  #   outputs: [] 
+
 
 workload_manager:
   account: dukepauli
@@ -113,8 +125,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [level_0/season11_multi_latlon_geno.geojson]
-      prefix: stereoTop-
+      necessary_files: [level_0/season11_multi_latlon_geno.geojson, level_0/necessary_files/gcp_season_11.txt]
       suffix: __*.tar.gz
       level: level_0
       #input_dir: []

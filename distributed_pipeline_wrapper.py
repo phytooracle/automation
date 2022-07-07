@@ -498,8 +498,11 @@ def get_support_files(dictionary, date):
         else:
             print(f"FOUND")
     
-    # sensor = dictionary[]
-
+    
+    sensor = dictionary["tags"]["sensor"]
+   
+    if sensor == "StereoTop":
+        sp.Popen("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git")
 
 
 # --------------------------------------------------
