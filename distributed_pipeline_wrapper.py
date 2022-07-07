@@ -1234,7 +1234,10 @@ def main():
 
             files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
             if len(files_list) < 1:
-                raise ValueError(f"file_list for module #{k} is empty")
+                if v['distribution_level'] == 'local':
+                    print("No input files specified.  Allowed to continue because distribution level is 'local'")
+                else:
+                    raise ValueError(f"file_list for module #{k} is empty")
                 
             write_file_list(files_list)
             json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=dictionary['tags']['sensor'], dictionary=dictionary, json_out_path=f'wf_file_{k}.json')
