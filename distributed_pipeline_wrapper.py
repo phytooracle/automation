@@ -735,15 +735,14 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                              # _f is the file from files_list 
     }
 
+    breakpoint()
+
     def do_replacement(substitutions, original_string):
         for match_string, _v in substitutions.items():
             eval_var  = eval(_v[0])
             lfunction = _v[1]
             replacement_string = lfunction(eval_var)
-            try:
-                return original_string.replace(match_string, replacement_string)
-            except:
-                breakpoint()
+            return original_string.replace(match_string, replacement_string)
 
     _d = jx_dict['rules']
     for idx, _f in enumerate(files_list):
