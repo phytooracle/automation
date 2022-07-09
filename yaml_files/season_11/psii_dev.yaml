@@ -66,17 +66,17 @@ modules:
     inputs: [./psii_segmentation_out, ./multithresh.json]
     outputs: [./fluorescence_aggregation_out/fluorescence_aggregation.csv]
 
-  # 5:
-  #   container: 
-  #     simg_name: slack_notifications.simg
-  #     dockerhub_path: docker://phytooracle/slack_notifications:latest
-  #   command: mkdir ps2Top_processing && mv bin2tif_out, plotclip_out psii_segmentation_out fluorescence_aggregation_out -t ps2Top_processing
-  #   distribution_level: local
-  #   file_level: dir
-  #   input_dir: [./psii_segmentation_out]
-  #   input_file: foo
-  #   inputs: []
-  #   outputs: []   
+  5:
+    container: 
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+    command: mkdir ps2Top_processing && mv bin2tif_out plotclip_out psii_segmentation_out fluorescence_aggregation_out -t ps2Top_processing
+    distribution_level: local
+    file_level: dir
+    input_dir: [./psii_segmentation_out]
+    input_file: foo
+    inputs: []
+    outputs: []   
 
 
 workload_manager:
@@ -105,15 +105,16 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
-  pipeline_outpath: [] 
-  outpath_subdirs: [./bin2tif_out, ./plotclip_out, ./psii_segmentation_out, ./fluorescence_aggregation_out]
-  cyverse: 
+  pipeline_outpath: [ps2Top_processing] 
+  outpath_subdirs: [bin2tif_out, plotclip_out, psii_segmentation_out, fluorescence_aggregation_out]
+  cyverse:
+    basename: /iplant/home/shared/phytooracle/
     upload_directories:
       use: False
       directories_to_move: [plant_reports]
       temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
-      #upload_account: frost_lab
-    basename: /iplant/home/shared/phytooracle/
+      upload_account: frost_lab
+
     input: 
       necessary_files: [level_0/season11_multi_latlon_geno.geojson, level_0/necessary_files/multithresh.json]
       level: level_0
