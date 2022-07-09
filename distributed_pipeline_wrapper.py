@@ -95,6 +95,11 @@ def get_args():
                         help='just do cyverse ul and exit (for testing)',
                         action='store_true',
                        )
+    
+    parser.add_argument('--noupload',
+                        help='do not tar and upload outputs',
+                        action='store_true',
+                       )
 
     parser.add_argument('-r',
                         '--reverse',
@@ -436,6 +441,21 @@ def get_file_list(directory, level, match_string='.ply'):
         plant_names = [os.path.join(directory, plant_name, 'null.ply') for plant_name in plant_names]
         files_list = plant_names
 
+    if level == 'whole_subdir':
+        files_list = []
+        for root, dirs, files in os.walk(directory, topdown=False):
+            for d in dirs:
+                files_list.append(d)
+    
+    if level == 'dir':
+        files_list = [directory]
+    
+
+
+    if len(files_list) == 0:
+        print('---------------------------no files found---------------------------------------')
+
+
     return files_list
 
 
@@ -623,6 +643,8 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     timeout = 'timeout 1h '
     cwd = os.getcwd()
 
+
+
     # seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
 
     # if args.shared_file_system:
@@ -691,7 +713,34 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                 } for file in  files_list
                             ]
                 } 
+        if sensor == 'ps2Top':
+                print(files_list)
+                jx_dict = {
+                    "rules": [
+                                {
+                                    "command" : timeout + command\
+                                        .replace('${FILE}', file)\
+                                        .replace('${M_DATA_FILE}', file.replace(file[-15:], 'metadata.json'))\
+                                        .replace('${FILE_DIR}', os.path.dirname(file))\
+                                        .replace('${DATE}', date),
 
+                                    "outputs" : [out\
+                                        .replace('$FILE_BASE', os.path.basename(file).replace('.bin', ''))\
+                                        .replace('$SEG', os.path.basename(file).replace('.tif', '_segmentation.csv'))\
+                                        .replace('$FILE', file)\
+                                         for out in outputs],
+
+                                    "inputs"  : [container, 
+                                                seg_model_name, 
+                                                det_model_name] + [input\
+                                                    .replace('$FILE', file)\
+                                                    .replace('$M_DATA_FILE', file.replace(file[-15:], 'metadata.json'))\
+                                                    .replace('$FILE_DIR', os.path.dirname(file))\
+                                                        for input in inputs]
+
+                                } for file in  files_list
+                            ]
+                }
         else: 
             jx_dict = {
                 "rules": [
@@ -1243,44 +1292,45 @@ def main():
 
         slack_notification(message=f"All processing steps complete.", date=date)
         kill_workers(dictionary['workload_manager']['job_name'])
-        
-        # Archive output directories
-        slack_notification(message=f"Archiving data.", date=date)
-        tar_outputs(date, dictionary)
-        slack_notification(message=f"Archiving data complete.", date=date)
+        if not args.noupload:
+            # Archive output directories
+            slack_notification(message=f"Archiving data.", date=date)
+            tar_outputs(date, dictionary)
+            slack_notification(message=f"Archiving data complete.", date=date)
 
-        # Upload data
-        create_pipeline_logs(date)
-        slack_notification(message=f"Uploading data.", date=date)
-        upload_outputs(date, dictionary)
-        slack_notification(message=f"Uploading data complete.", date=date)
 
-        # Move directories if specified in the processing YAML
-        if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
-            
-            slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
-            move_outputs(date, dictionary)
-            slack_notification(message=f"Moving data complete.", date=date)
+            # Upload data
+            create_pipeline_logs(date)
+            slack_notification(message=f"Uploading data.", date=date)
+            upload_outputs(date, dictionary)
+            slack_notification(message=f"Uploading data complete.", date=date)
 
-            # slack_notification(message=f"Uploading data.", date=date)
-            # upload_outputs(date, dictionary)
-            # slack_notification(message=f"Uploading data complete.", date=date)
+            # Move directories if specified in the processing YAML
+            if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
+                
+                slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
+                move_outputs(date, dictionary)
+                slack_notification(message=f"Moving data complete.", date=date)
 
-        # else:
-        #     slack_notification(message=f"Archiving data.", date=date)
-        #     tar_outputs(date, dictionary)
-        #     slack_notification(message=f"Archiving data complete.", date=date)
+                # slack_notification(message=f"Uploading data.", date=date)
+                # upload_outputs(date, dictionary)
+                # slack_notification(message=f"Uploading data complete.", date=date)
 
-        #     create_pipeline_logs(date)
-        #     slack_notification(message=f"Uploading data.", date=date)
-        #     upload_outputs(date, dictionary)
-        #     slack_notification(message=f"Uploading data complete.", date=date)
+            # else:
+            #     slack_notification(message=f"Archiving data.", date=date)
+            #     tar_outputs(date, dictionary)
+            #     slack_notification(message=f"Archiving data complete.", date=date)
 
-        if not args.noclean:
-            slack_notification(message=f"Cleaning inputs.", date=date)
-            print(f"Cleaning inputs")
-            clean_inputs(date, dictionary) 
-            slack_notification(message=f"Cleaning inputs complete.", date=date)
+            #     create_pipeline_logs(date)
+            #     slack_notification(message=f"Uploading data.", date=date)
+            #     upload_outputs(date, dictionary)
+            #     slack_notification(message=f"Uploading data complete.", date=date)
+
+            if not args.noclean:
+                slack_notification(message=f"Cleaning inputs.", date=date)
+                print(f"Cleaning inputs")
+                clean_inputs(date, dictionary) 
+                slack_notification(message=f"Cleaning inputs complete.", date=date)
 
 #        except:
 #            slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
