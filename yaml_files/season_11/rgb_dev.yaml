@@ -3,12 +3,12 @@ tags:
   pipeline: season11_stereoTop
   description: dev
   notes: Post landmark selection processing of Season 11 stereoTop data
-  runby: Unspecified Paulilab member
+  runby: 
   sensor: stereoTop
   season: 11
   season_name: season_11_sorghum_yr_2020
   slack_notifications: 
-    use: True
+    use: False
     channel: gantry_test
     container:
       simg_name: slack_notifications.simg
@@ -55,49 +55,50 @@ modules:
     container: 
       simg_name: rgb_flir_edit_gps.simg
       dockerhub_path: docker://phytooracle/rgb_flir_edit_gps:latest
-    command: singularity run rgb_flir_edit_gps.simg bin2tif_out/${FILE} -c image_stiching/${DATE}/${DATE}_coordinates_CORRECTED.csv -o edited_tifs
+    command: singularity run rgb_flir_edit_gps.simg ${FILE} -c image_stiching/${DATE}/${DATE}_coordinates_CORRECTED.csv -o edited_tifs
     distribution_level: local
     file_level: 
-    input_dir: [./bin2tif_out, ./image_stiching]
+    input_dir: [./bin2tif_out]
     input_file: _left.tif
-    inputs: [$UUID_left.tif]
+    inputs: [$FILE, ./image_stiching]
     outputs: [edited_tifs/$FILE_BASE_left_corrected.tif]    
 
-  # 5:
-  #   container: 
-  #     simg_name: stitch_plots.simg
-  #     dockerhub_path: docker://phytooracle/stitch_plots.simg
-  #   command: singularity run stitch_plots.simg
-  #   distribution_level: local
-  #   file_level: 
-  #   input_dir: [./bin2tif_out]
-  #   input_file: 
-  #   inputs: []
-  #   outputs: [] 
+  5:
+    container: 
+      simg_name: rgb_flir_plot_clip_geojson.simg
+      dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson
+    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season11_multi_latlon_geno.geojson -sen rgb
+    distribution_level: local
+    file_level: 
+    input_dir: [./edited_tifs]
+    input_file: .tif
+    inputs: [$FILE, ./season11_multi_latlon_geno.geojson]
+    outputs: [] 
 
-  # 6:
-  #   container: 
-  #     simg_name: rgb_flir_plant_detection.simg
-  #     dockerhub_path: docker://phytooracle/rgb_flir_plant_detection.simg
-  #   command: singularity run rgb_flir_plant_detection.simg
-  #   distribution_level: local
-  #   file_level: 
-  #   input_dir: [./bin2tif_out]
-  #   input_file: 
-  #   inputs: []
-  #   outputs: []  
+  6:
+    container: 
+      simg_name: stitch_plots.simg
+      dockerhub_path: docker://phytooracle/stitch_plots
+    command: singularity run stitch_plots.simg plotclip_out/
+    distribution_level: local
+    file_level: dir
+    input_dir: [./plotclip_out]
+    input_file: foo
+    inputs: [$FILE]
+    outputs: [] 
 
-  # 7:
-  #   container: 
-  #     simg_name: rgb_flir_plant_detection.simg
-  #     dockerhub_path: docker://phytooracle/rgb_flir_plant_detection.simg
-  #   command: singularity run rgb_flir_plant_detection.simg
-  #   distribution_level: local
-  #   file_level: 
-  #   input_dir: [./bin2tif_out]
-  #   input_file: 
-  #   inputs: []
-  #   outputs: [] 
+  7:
+    container: 
+      simg_name: rgb_flir_plant_detection.simg
+      dockerhub_path: docker://phytooracle/rgb_flir_plant_detection.simg
+    command: singularity run rgb_flir_plant_detection.simg plotclip_orthos/ -m ./model_weights_sorghum_rgb.pth -g ./season11_multi_latlon_geno.geojson -d ${DATE} -t RGB -c sorghum
+    distribution_level: local
+    file_level: dir
+    input_dir: [./plotclip_orthos, ./season11_multi_latlon_geno.geojson, ./model_weights_sorghum_rgb.pth]
+    input_file: foo
+    inputs: [$FILE, ]
+    outputs: []  
+
 
 
 workload_manager:
@@ -116,10 +117,10 @@ workload_manager:
 
 paths:
   models:
-    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    detection: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_rgb.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
-  pipeline_outpath: [bin2tif_out, plotclip_out]
-  outpath_subdirs: []
+  pipeline_outpath: [.]
+  outpath_subdirs: [plotclip_orthos, image_stiching, detect_out, img_coords_out, edited_tifs]
   
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
@@ -132,3 +133,7 @@ paths:
       #input_dir: []
     output:
       level: level_1
+
+
+
+      
