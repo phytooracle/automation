@@ -998,7 +998,11 @@ def clean_inputs(date, dictionary):
         shutil.rmtree(glob.glob(f'scanner3DTop-{date}*')[0])
 
     for item in dictionary['paths']['pipeline_outpath']:
-        if os.path.isdir(item):
+        if item == '.':
+            for x in dictionary["paths"]["outpath_subdirs"]:
+                shutil.rmtree(x)
+
+        elif os.path.isdir(item):
             shutil.rmtree(item)
 
     slurm_list = glob.glob('./slurm-*')
