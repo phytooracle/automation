@@ -2,13 +2,13 @@
 tags:
   pipeline: season12_ps2Top
   description: dev
-  notes: Processing of Season 11 ps2Top data
+  notes: Processing of Season 12 ps2Top data
   runby: Travis
   sensor: ps2Top 
   season: 12
   season_name: season_12_sorghum_soybean_sunflower_tepary_yr_2021
   slack_notifications: 
-    use: False
+    use: True
     channel: gantry_test
     container:
       simg_name: slack_notifications.simg
@@ -34,7 +34,7 @@ modules:
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
     command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -sen psii -shp ./season12_multi_latlon_geno.geojson
-    distribution_level: wq
+    distribution_level: local
     file_level: 
     input_dir: [./bin2tif_out]
     input_file: .tif
