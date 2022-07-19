@@ -86,6 +86,11 @@ def get_args():
                         action='store_true',
                        )
 
+    parser.add_argument('--module_breakpoints',
+                        help='Usefule for testing yaml modules.  Code will breakpoint() just before each module.  You can type `continue` to have it continue like nothing happened, or you can `^d` to stop the script and look at the wf_file_n.json and run it by hand.',
+                        action='store_true',
+                       )
+
     parser.add_argument('--archiveonly',
                         help='just archive and exit (for testing)',
                         action='store_true',
@@ -786,6 +791,10 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     '''
 
     args = get_args()
+
+    if args.module_breakpoints:
+        pdb.set_trace()
+
     cores_max = int(multiprocessing.cpu_count()*args.local_cores)
     home = os.path.expanduser('~')
     cctools = os.path.join(home, cctools_path, 'bin', 'makeflow')
