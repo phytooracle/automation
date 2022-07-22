@@ -8,7 +8,7 @@ tags:
   season: 12
   season_name: season_12_sorghum_soybean_sunflower_tepary_yr_2021
   slack_notifications: 
-    use: False
+    use: True
     channel: gantry_test
     container:
       simg_name: slack_notifications.simg
@@ -48,31 +48,31 @@ modules:
     file_level: dir
     input_dir: [./bin2tif_out]
     input_file: _left.tif
-    inputs: [$UUID_left.tif]
+    inputs: [$UUID_left.tif, ./gcp_season_12.txt, ./Lettuce_Image_Stitching, ]
     outputs: [image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
 
   4:
     container: 
       simg_name: rgb_flir_edit_gps.simg
       dockerhub_path: docker://phytooracle/rgb_flir_edit_gps:latest
-    command: singularity run rgb_flir_edit_gps.simg ${FILE} -c image_stiching/${DATE}/${DATE}_coordinates_CORRECTED.csv -o edited_tifs
+    command: singularity run rgb_flir_edit_gps.simg ${FILE} -c ./image_stiching/${DATE}/${DATE}_coordinates_CORRECTED.csv -o edited_tifs
     distribution_level: local
     file_level: 
     input_dir: [./bin2tif_out]
     input_file: _left.tif
-    inputs: [$FILE, ./image_stiching]
+    inputs: [$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
     outputs: [edited_tifs/$FILE_BASE_left_corrected.tif]    
 
   5:
     container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson
-    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season12_multi_latlon_geno.geojson -sen rgb
+    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season12_multi_latlon_geno_updated.geojson -sen rgb
     distribution_level: local
     file_level: 
     input_dir: [./edited_tifs]
     input_file: .tif
-    inputs: [$FILE, ./season12_multi_latlon_geno.geojson]
+    inputs: [$FILE, ./season12_multi_latlon_geno_updated.geojson]
     outputs: [] 
 
   6:
@@ -90,13 +90,13 @@ modules:
   7:
     container: 
       simg_name: rgb_flir_plant_detection.simg
-      dockerhub_path: docker://phytooracle/rgb_flir_plant_detection.simg
-    command: singularity run rgb_flir_plant_detection.simg ./plotclip_orthos -m ./model_weights__sorghum_rgb.pth -g ./season12_multi_latlon_geno_test.geojson -d ${DATE} -t RGB -c sorghum
+      dockerhub_path: docker://phytooracle/rgb_flir_plant_detection
+    command: singularity run rgb_flir_plant_detection.simg ./plotclip_orthos -m ./model_weights_sorghum_rgb.pth -g ./season12_multi_latlon_geno_updated.geojson -d ${DATE} -t RGB -c sorghum
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
     input_file: foo
-    inputs: [$FILE, ./season12_multi_latlon_geno_test.geojson, ./model_weights.pth]
+    inputs: [$FILE, ./season12_multi_latlon_geno_updated.geojson, ./model_weights.pth]
     outputs: []  
 
 
@@ -114,8 +114,8 @@ workload_manager:
 
   job_name: po_worker_travis
   nodes: 1                  # Just do one.  (each array is on a distinct node)
-  number_worker_array: 94 #94      # This is number of arrays (workers)
-  cores_per_worker: 32       # This is how many cores (cpu/gpu) per array, used to increase tot mem
+  number_worker_array: 500 #94      # This is number of arrays (workers)
+  cores_per_worker: 1       # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
   port: 6022
@@ -135,7 +135,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [level_0/season12_multi_latlon_geno.geojson, level_0/necessary_files/gcp_season_12.txt]
+      necessary_files: [level_0/season12_multi_latlon_geno_updated.geojson, level_0/necessary_files/gcp_season_12.txt]
       prefix: stereoTop-
       suffix: __*.tar.gz
       level: level_0
