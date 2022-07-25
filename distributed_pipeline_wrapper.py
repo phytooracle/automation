@@ -741,7 +741,9 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                                     .replace('$M_DATA_FILE', file.replace(file[-15:], 'metadata.json'))\
                                                     .replace('$FILE_DIR', os.path.dirname(file))\
                                                         for input in inputs]
-
+                                } for file in  files_list
+                            ]
+                }                                                       
 
         elif sensor == 'stereoTop':
 
