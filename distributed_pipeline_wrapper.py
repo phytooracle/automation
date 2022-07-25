@@ -449,14 +449,13 @@ def get_file_list(directory, level, match_string='.ply'):
     
     if level == 'dir':
         files_list = [directory]
-    
+        return files_list
 
 
     if len(files_list) == 0:
         print('---------------------------no files found---------------------------------------')
 
 
-    return files_list
 
 
 # --------------------------------------------------
@@ -508,7 +507,12 @@ def get_support_files(dictionary, date):
             server_utils.download_file_from_cyverse(os.path.join(irods_basename, file_path))
         else:
             print(f"FOUND")
-
+    
+    
+    sensor = dictionary["tags"]["sensor"]
+   
+    if sensor == "stereoTop":
+        sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
 
 
 # --------------------------------------------------
@@ -738,9 +742,20 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                                     .replace('$FILE_DIR', os.path.dirname(file))\
                                                         for input in inputs]
 
-                                } for file in  files_list
-                            ]
-                }
+
+        elif sensor == 'stereoTop':
+
+            jx_dict = {
+                'rules': [
+                            {
+                                "command": timeout + command.replace('${FILE}', file).replace('${UUID}', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])).replace('${DATE}', date),
+                                "outputs": [out.replace('$FILE_BASE', os.path.basename(file).split('.')[0]).replace('$DATE', date) for out in outputs],
+                                "inputs": [container, seg_model_name, det_model_name] + [input.replace('$FILE', file).replace('$UUID', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])) for input in inputs]
+                            } for file in files_list
+                        ]
+            }
+
+
         else: 
             jx_dict = {
                 "rules": [
@@ -1016,7 +1031,11 @@ def clean_inputs(date, dictionary):
         shutil.rmtree(glob.glob(f'scanner3DTop-{date}*')[0])
 
     for item in dictionary['paths']['pipeline_outpath']:
-        if os.path.isdir(item):
+        if item == '.':
+            for x in dictionary["paths"]["outpath_subdirs"]:
+                shutil.rmtree(x)
+
+        elif os.path.isdir(item):
             shutil.rmtree(item)
 
     slurm_list = glob.glob('./slurm-*')
