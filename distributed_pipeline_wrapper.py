@@ -87,7 +87,7 @@ def get_args():
                        )
 
     parser.add_argument('--module_breakpoints',
-                        help='Usefule for testing yaml modules.  Code will breakpoint() just before each module.  You can type `continue` to have it continue like nothing happened, or you can `^d` to stop the script and look at the wf_file_n.json and run it by hand.',
+                        help='Useful for testing yaml modules.  Code will breakpoint() just before each module.  You can type `continue` to have it continue like nothing happened, or you can `^d` to stop the script and look at the wf_file_n.json and run it by hand.',
                         action='store_true',
                        )
 
@@ -769,11 +769,14 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                     lfunction = _v[1]
                     replacement_string = lfunction(eval_var)
                     _d[idx][rule_section] = entry.replace(match_string, replacement_string)
-    ### ...Nathan was here.
+    ### ...end Nathan was here.
 
     with open(json_out_path, 'w') as convert_file:
         convert_file.write(json.dumps(jx_dict))
 
+
+    print("BREAK: At end of generate_makeflow_json()")
+    pdb.set_trace()
     return json_out_path
 
 
