@@ -34,19 +34,19 @@ modules:
     inputs: [$FILE]
     outputs: []  # empty because local
 
-#  2:
-#    container: 
-#      simg_name: environment_association.simg
-#      dockerhub_path: docker://phytooracle/environment_association:latest
-#    command: singularity run environment_association.simg -s flir -g ./season10_multi_latlon_geno.geojson -d ${DATE} -o env_output -c ${FILE} --column_names csv_splits/xaa.csv -z season_10_lettuce_yr_2020 flirIrCamera/${DATE}
-#    distribution_level: local
-#    file_level: 
-#    input_dir: [csv_splits]
-#    input_file: .csv
-#    inputs: [$FILE,
-#             $SUB_DIR/$UUID_metadata.json,
-#             season10_multi_latlon_geno.geojson]
-#    outputs: ["env_output/{{$FILE_BASE}}.csv"]
+  2:
+    container: 
+      simg_name: environment_association.simg
+      dockerhub_path: docker://phytooracle/environment_association:latest
+    command: singularity run environment_association.simg -s flir -g ./season10_multi_latlon_geno.geojson -d ${DATE} -o env_output -c ${FILE} --column_names csv_splits/xaa.csv -z season_10_lettuce_yr_2020 flirIrCamera/${DATE}
+    distribution_level: local
+    file_level: 
+    input_dir: [csv_splits]
+    input_file: .csv
+    inputs: [$FILE,
+             $SUB_DIR/$UUID_metadata.json,
+             season10_multi_latlon_geno.geojson]
+    outputs: ["env_output/{{$FILE_BASE}}.csv"]
 
   3: 
     # This container...
@@ -55,7 +55,7 @@ modules:
     container: 
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
-    command: head -1 env_output/xaa_atm_temp.csv >> env_output/full_envass_output.csv ; tail -1 env_output/x*.csv >> env_output/full_envass_output.csv
+    command: head -1 env_output/xab_atm_temp.csv > env_output/full_envass_output.csv ; ls env_output/x*.csv | xargs -i tail --lines=1 '{}' >> env_output/full_envass_output.csv
     distribution_level: local
     file_level: dir
     input_dir: [env_output]

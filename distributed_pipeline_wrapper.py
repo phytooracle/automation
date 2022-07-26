@@ -513,18 +513,12 @@ def get_support_files(yaml_dictionary, date):
             server_utils.download_file_from_cyverse(os.path.join(irods_basename, file_path))
         else:
             print(f"FOUND")
-<<<<<<< HEAD
         server_utils.untar_files([filename])
 
-
-=======
-    
-    
-    sensor = dictionary["tags"]["sensor"]
+    sensor = yaml_dictionary["tags"]["sensor"]
    
     if sensor == "stereoTop":
         sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
->>>>>>> main
 
 
 # --------------------------------------------------
@@ -658,21 +652,6 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
     timeout = 'timeout 1h '
     cwd = os.getcwd()
-
-<<<<<<< HEAD
-    # seg_model_name, det_model_name = get_model_files(yaml_dictionary['paths']['models']['segmentation'], yaml_dictionary['paths']['models']['detection'])
-=======
-
-
-    # seg_model_name, det_model_name = get_model_files(dictionary['paths']['models']['segmentation'], dictionary['paths']['models']['detection'])
->>>>>>> main
-
-    # if args.shared_file_system:
-        # container = os.path.join(cwd, container)
-        # seg_model_name = os.path.join(cwd, seg_model_name)
-        # det_model_name = os.path.join(cwd, det_model_name)
-        # inputs = [os.path.join(cwd, item) for item in inputs]
-        # files_list = [os.path.join(cwd, item) for item in files_list]
 
     if inputs:
         if sensor=='scanner3DTop':
@@ -1097,17 +1076,12 @@ def clean_inputs(date, yaml_dictionary):
     if len(raw_data_list) > 0:
         shutil.rmtree(glob.glob(f'scanner3DTop-{date}*')[0])
 
-<<<<<<< HEAD
     for item in yaml_dictionary['paths']['pipeline_outpath']:
-        if os.path.isdir(item):
-=======
-    for item in dictionary['paths']['pipeline_outpath']:
         if item == '.':
-            for x in dictionary["paths"]["outpath_subdirs"]:
+            for x in yaml_dictionary["paths"]["outpath_subdirs"]:
                 shutil.rmtree(x)
 
         elif os.path.isdir(item):
->>>>>>> main
             shutil.rmtree(item)
 
     slurm_list = glob.glob('./slurm-*')
@@ -1399,47 +1373,6 @@ def main():
             slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])} complete.", date=date)
 
         slack_notification(message=f"All processing steps complete.", date=date)
-<<<<<<< HEAD
-        kill_workers(yaml_dictionary['workload_manager']['job_name'])
-        
-        # Archive output directories
-        slack_notification(message=f"Archiving data.", date=date)
-        tar_outputs(date, yaml_dictionary)
-        slack_notification(message=f"Archiving data complete.", date=date)
-
-        # Upload data
-        create_pipeline_logs(date)
-        slack_notification(message=f"Uploading data.", date=date)
-        upload_outputs(date, yaml_dictionary)
-        slack_notification(message=f"Uploading data complete.", date=date)
-
-        # Move directories if specified in the processing YAML
-        if 'upload_directories' in yaml_dictionary['paths']['cyverse'].keys() and yaml_dictionary['paths']['cyverse']['upload_directories']['use']==True:
-            
-            slack_notification(message=f"Move data to {yaml_dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
-            move_outputs(date, yaml_dictionary)
-            slack_notification(message=f"Moving data complete.", date=date)
-
-            # slack_notification(message=f"Uploading data.", date=date)
-            # upload_outputs(date, yaml_dictionary)
-            # slack_notification(message=f"Uploading data complete.", date=date)
-
-        # else:
-        #     slack_notification(message=f"Archiving data.", date=date)
-        #     tar_outputs(date, yaml_dictionary)
-        #     slack_notification(message=f"Archiving data complete.", date=date)
-
-        #     create_pipeline_logs(date)
-        #     slack_notification(message=f"Uploading data.", date=date)
-        #     upload_outputs(date, yaml_dictionary)
-        #     slack_notification(message=f"Uploading data complete.", date=date)
-
-        if not args.noclean:
-            slack_notification(message=f"Cleaning inputs.", date=date)
-            print(f"Cleaning inputs")
-            clean_inputs(date, yaml_dictionary) 
-            slack_notification(message=f"Cleaning inputs complete.", date=date)
-=======
         kill_workers(dictionary['workload_manager']['job_name'])
         if not args.noupload:
             # Archive output directories
@@ -1480,7 +1413,6 @@ def main():
                 print(f"Cleaning inputs")
                 clean_inputs(date, dictionary) 
                 slack_notification(message=f"Cleaning inputs complete.", date=date)
->>>>>>> main
 
 #        except:
 #            slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
