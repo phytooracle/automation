@@ -512,7 +512,7 @@ def get_support_files(dictionary, date):
     
     sensor = dictionary["tags"]["sensor"]
    
-    if sensor == "stereoTop":
+    if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
         sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
 
 
@@ -746,14 +746,14 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                             ]
                 }                                                       
 
-        elif sensor == 'stereoTop':
+        elif (sensor == 'stereoTop') or (sensor == 'flirIrCamera'):
 
             jx_dict = {
                 'rules': [
                             {
-                                "command": timeout + command.replace('${FILE}', file).replace('${UUID}', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])).replace('${DATE}', date),
-                                "outputs": [out.replace('$FILE_BASE', os.path.basename(file).split('.')[0]).replace('$DATE', date) for out in outputs],
-                                "inputs": [container, seg_model_name, det_model_name] + [input.replace('$FILE', file).replace('$UUID', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])) for input in inputs]
+                                "command": timeout + command.replace('${FILE}', file).replace('${UUID}', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])).replace('${DATE}', date).replace('${FLIR_META}', file.replace('ir.bin', 'metadata.json')),
+                                "outputs": [out.replace('$FILE_BASE', os.path.basename(file).split('.')[0]).replace('$DATE', date).replace('$FLIR_TIF', file.replace('.bin', '.tif')) for out in outputs],
+                                "inputs": [container, seg_model_name, det_model_name] + [input.replace('$FILE', file).replace('$UUID', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])).replace('$FLIR_META', file.replace('ir.bin', 'metadata.json')) for input in inputs]
                             } for file in files_list
                         ]
             }
