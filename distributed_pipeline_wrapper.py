@@ -111,6 +111,12 @@ def get_args():
                         help='Shared filesystem.',
                         action='store_false')
 
+    parser.add_argument('-m',
+                        '--multi_date',
+                        type=int,
+                        help='Choose what date to process in the list 0 for the first element',
+                        default=99)
+
     return parser.parse_args()
 
 
@@ -285,6 +291,8 @@ def find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir):
         - irods_path: CyVerse filepath
     """
 
+
+
     experiment        = args.experiment
     cyverse_datalevel = dictionary['paths']['cyverse']['input']['level']
     prefix            = dictionary['paths']['cyverse']['input']['prefix']
@@ -303,6 +311,13 @@ def find_matching_file_in_irods_dir(dictionary, date, args, irods_dl_dir):
     if len(matching_files) > 1:
         print (f"WARNING Found too many tarballs for date: {date}\n \
                            Found: {matching_files}")
+
+        if args.multi_date != 99:
+            file_dl_path = os.path.join(irods_dl_dir,matching_files[args.multi_date])
+    
+            print(f"multi date used, get_irods_input_path() found a file: {file_dl_path}")
+            return file_dl_path
+
         return None
 
 
