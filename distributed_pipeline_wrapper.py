@@ -384,7 +384,7 @@ def download_irods_input_file(irods_path):
         # cmd1 = f'iget -fKPVT {irods_path}'
         #cmd1 = f'iget -fPVT {irods_path}'
 
-        if '.gz' in tarball_filename: 
+        if any(x in tarball_filename for x in gzip_extensions):
             cmd2 = f'tar -xzvf {tarball_filename}'
             cmd3 = f'rm {tarball_filename}'
 
@@ -507,6 +507,7 @@ def get_support_files(yaml_dictionary, date):
     for file_path in support_files:
         print(f"Looking for {file_path}...")
         filename = os.path.basename(file_path)
+        #pdb.set_trace()
         if not os.path.isfile(filename):
             cyverse_path = os.path.join(irods_basename, file_path)
             print(f"    We need to get: {cyverse_path}")
@@ -829,8 +830,8 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
         convert_file.write(json.dumps(jx_dict))
 
 
-    print("BREAK: At end of generate_makeflow_json()")
-    pdb.set_trace()
+    #print("BREAK: At end of generate_makeflow_json()")
+    #pdb.set_trace()
     return json_out_path
 
 
@@ -1373,57 +1374,33 @@ def main():
             slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])} complete.", date=date)
 
         slack_notification(message=f"All processing steps complete.", date=date)
-        kill_workers(dictionary['workload_manager']['job_name'])
+        kill_workers(yaml_dictionary['workload_manager']['job_name'])
         if not args.noupload:
             # Archive output directories
             slack_notification(message=f"Archiving data.", date=date)
-            tar_outputs(date, dictionary)
+            tar_outputs(date, yaml_dictionary)
             slack_notification(message=f"Archiving data complete.", date=date)
 
 
             # Upload data
             create_pipeline_logs(date)
             slack_notification(message=f"Uploading data.", date=date)
-            upload_outputs(date, dictionary)
+            upload_outputs(date, yaml_dictionary)
             slack_notification(message=f"Uploading data complete.", date=date)
 
             # Move directories if specified in the processing YAML
-            if 'upload_directories' in dictionary['paths']['cyverse'].keys() and dictionary['paths']['cyverse']['upload_directories']['use']==True:
+            if 'upload_directories' in yaml_dictionary['paths']['cyverse'].keys() and yaml_dictionary['paths']['cyverse']['upload_directories']['use']==True:
                 
-                slack_notification(message=f"Move data to {dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
-                move_outputs(date, dictionary)
+                slack_notification(message=f"Move data to {yaml_dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
+                move_outputs(date, yaml_dictionary)
                 slack_notification(message=f"Moving data complete.", date=date)
 
-                # slack_notification(message=f"Uploading data.", date=date)
-                # upload_outputs(date, dictionary)
-                # slack_notification(message=f"Uploading data complete.", date=date)
-
-            # else:
-            #     slack_notification(message=f"Archiving data.", date=date)
-            #     tar_outputs(date, dictionary)
-            #     slack_notification(message=f"Archiving data complete.", date=date)
-
-            #     create_pipeline_logs(date)
-            #     slack_notification(message=f"Uploading data.", date=date)
-            #     upload_outputs(date, dictionary)
-            #     slack_notification(message=f"Uploading data complete.", date=date)
 
             if not args.noclean:
                 slack_notification(message=f"Cleaning inputs.", date=date)
                 print(f"Cleaning inputs")
-                clean_inputs(date, dictionary) 
+                clean_inputs(date, yaml_dictionary) 
                 slack_notification(message=f"Cleaning inputs complete.", date=date)
-
-#        except:
-#            slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
-#            if not args.noclean:
-#                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs.", date=date)
-#                print(f"Cleaning directory")
-#                clean_directory()
-#                clean_inputs(date, yaml_dictionary)  
-#                slack_notification(message=f"PIPELINE ERROR. Cleaning inputs complete.", date=date)
-#
-#            kill_workers(yaml_dictionary['workload_manager']['job_name'])
 
 
 # --------------------------------------------------
