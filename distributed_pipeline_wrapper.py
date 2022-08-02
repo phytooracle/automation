@@ -116,11 +116,19 @@ def get_args():
                         help='Shared filesystem.',
                         action='store_false')
 
+
+    parser.add_argument('-t',
+                        '--timeout',
+                        help='Command timeout in units minute.',
+                        type=float,
+                        default=1)#0.5)
+
     parser.add_argument('-m',
                         '--multi_date',
                         type=int,
                         help='Choose what date to process in the list 0 for the first element',
                         default=99)
+
 
     return parser.parse_args()
 
@@ -666,31 +674,32 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     '''
     args = get_args()
     files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
-    timeout = 'timeout 1h '
+    timeout = f'timeout {args.timeout}h '
     cwd = os.getcwd()
+    command = command.replace('${CWD}', cwd)
 
     if inputs:
         if sensor=='scanner3DTop':
             
             if level == 'subdir':
-                
-                if args.hpc:
-                    kill_workers(yaml_dictionary['workload_manager']['job_name'])
-                    launch_workers(cctools_path=cctools_path,
-                            account=yaml_dictionary['workload_manager']['account'], 
-                            # partition=yaml_dictionary['workload_manager']['partition'], 
-                            job_name=yaml_dictionary['workload_manager']['job_name'], 
-                            nodes=yaml_dictionary['workload_manager']['nodes'], 
-                            #number_tasks=yaml_dictionary['workload_manager']['number_tasks'], 
-                            #number_tasks_per_node=yaml_dictionary['workload_manager']['number_tasks_per_node'], 
-                            time=yaml_dictionary['workload_manager']['time_minutes'], 
-                            mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
-                            manager_name=yaml_dictionary['workload_manager']['manager_name'], 
-                            number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
-                            cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
-                            worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'],
-                            cwd=cwd)
-                            # qos_group=yaml_dictionary['workload_manager']['qos_group'])
+
+                # if args.hpc:
+                #     kill_workers(dictionary['workload_manager']['job_name'])
+                #     launch_workers(cctools_path=cctools_path,
+                #             account=dictionary['workload_manager']['account'], 
+                #             # partition=dictionary['workload_manager']['partition'], 
+                #             job_name=dictionary['workload_manager']['job_name'], 
+                #             nodes=dictionary['workload_manager']['nodes'], 
+                #             #number_tasks=dictionary['workload_manager']['number_tasks'], 
+                #             #number_tasks_per_node=dictionary['workload_manager']['number_tasks_per_node'], 
+                #             time=dictionary['workload_manager']['time_minutes'], 
+                #             mem_per_core=dictionary['workload_manager']['mem_per_core'], 
+                #             manager_name=dictionary['workload_manager']['manager_name'], 
+                #             number_worker_array=dictionary['workload_manager']['number_worker_array'], 
+                #             cores_per_worker=dictionary['workload_manager']['cores_per_worker'], 
+                #             worker_timeout=dictionary['workload_manager']['worker_timeout_seconds'],
+                #             cwd=cwd)
+                #             # qos_group=dictionary['workload_manager']['qos_group'])
 
                 subdir_list = []
                 for item in files_list:
@@ -705,14 +714,16 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                 {
                                     "command" : timeout + command.replace('${FILE}', file).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${DET_MODEL_PATH}', det_model_name).replace('${PLANT_NAME}', file),
                                     "outputs" : [out.replace('$PLANT_NAME', file) for out in outputs],
-                                    "inputs"  : [container, 
-                                                seg_model_name, 
-                                                det_model_name] + [input.replace('$PLANT_NAME', file) for input in inputs if os.path.isdir(input.replace('$PLANT_NAME', file))]
+                                    "inputs"  : [input.replace('$PLANT_NAME', file) for input in inputs if os.path.isdir(input.replace('$PLANT_NAME', file))]
+                                                # [container, 
+                                                # seg_model_name, 
+                                                # det_model_name] + 
 
                                 } for file in  subdir_list
                             ]
                 } 
 
+            # This the one for 3D
             else: 
                 jx_dict = {
                     "rules": [
@@ -720,10 +731,11 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                     "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date)\
                                                 .replace('${INPUT_DIR}', os.path.dirname(file)),
                                     "outputs" : [out.replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
-                                    "inputs"  : [container, 
-                                                seg_model_name, 
-                                                det_model_name] + [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date)\
-                                                                        .replace('$FILE', file) for input in inputs]
+                                    "inputs"  : [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date)\
+                                                                        .replace('$FILE', file).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for input in inputs]
+                                                # [container, 
+                                                # seg_model_name, 
+                                                # det_model_name] + 
 
                                 } for file in  files_list
                             ]
@@ -774,27 +786,30 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                 "rules": [
                             {
                                 "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
-                                "outputs" : [out.replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date) for out in outputs],
-                                "inputs"  : [file, 
-                                             container, 
-                                             seg_model_name, 
-                                             det_model_name] + [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$FILE', file) for input in inputs]
+                                "outputs" : [out.replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file)))  for out in outputs],
+                                "inputs"  : [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$FILE', file).replace('$BASENAME', os.path.basename(os.path.dirname(file)))  for input in inputs]
+                                            # [file, 
+                                            #  container, 
+                                            #  seg_model_name, 
+                                            #  det_model_name] + 
 
                             } for file in  files_list
                         ]
             } 
 
     else: 
-        
+        print('No inputs specified. Assuming local.')
         jx_dict = {
             "rules": [
                         {
                                 "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date),
-                                "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date) for out in outputs],
-                                "inputs"  : [file, 
-                                            container, 
-                                            seg_model_name, 
-                                            det_model_name]
+                                "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
+                                "inputs"  : [seg_model_name,
+                                             det_model_name]
+                                            #[file, 
+                                            #container, 
+                                            #seg_model_name, 
+                                            #det_model_name]
 
                         } for file in  files_list
                     ]
@@ -872,10 +887,10 @@ def run_jx2json(json_out_path, cctools_path, batch_type, manager_name, cwd, retr
     home = os.path.expanduser('~')
     cctools = os.path.join(home, cctools_path, 'bin', 'makeflow')
     cctools = os.path.join(home, cctools)
-    arguments = f'-T {batch_type} --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --skip-file-check' # --disable-cache $@'
+    arguments = f'-T {batch_type} --json {json_out_path} -a -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --skip-file-check' #--disable-cache $@'
 
     if args.shared_file_system:
-        arguments = f'-T {batch_type} --json {json_out_path} -a --shared-fs {cwd} -X {cwd} -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --skip-file-check' # --disable-cache $@' 
+        arguments = f'-T {batch_type} --json {json_out_path} -a --shared-fs {cwd} -X {cwd} -N {manager_name} -M {manager_name} --local-cores {cores_max} -r {retries} -p {port} -dall -o {out_log} --skip-file-check' #--disable-cache $@' 
     
     cmd1 = ' '.join([cctools, arguments])
     sp.call(cmd1, shell=True)
@@ -1235,6 +1250,11 @@ def move_outputs(scan_date, yaml_dictionary):
 
                 if not os.path.isdir(os.path.join(temp_path, scan_date, out_path)):
                     os.makedirs(os.path.join(temp_path, scan_date, out_path))
+
+                if os.path.isdir(os.path.join(temp_path, scan_date)):
+                    if not os.path.isdir(os.path.join(temp_path, 'previously_processed')):
+                        os.makedirs(os.path.join(temp_path, 'previously_processed'))
+                    shutil.move(os.path.join(temp_path, scan_date), os.path.join(temp_path, 'previously_processed'))
 
                 shutil.move(os.path.join(cwd, scan_date, out_path, item), os.path.join(temp_path, scan_date, out_path))
 
