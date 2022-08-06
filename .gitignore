@@ -43,3 +43,5 @@ env_output/
 season10_multi_latlon_geno.geojson
 tags
 env_output
+rnaseq_spectra/
+season12_multi_latlon_geno_updated.geojson
