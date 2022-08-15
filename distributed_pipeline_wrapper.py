@@ -1328,149 +1328,151 @@ def main():
         args.date = get_process_date_list(original_yaml_dictionary)
 
     for date in args.date:
-        cwd = os.getcwd()
+        print(date)
         
-        global yaml_dictionary
-        if 'pre_parse_yaml' not in original_yaml_dictionary['tags'].keys():
-            yaml_dictionary = original_yaml_dictionary
-        elif original_yaml_dictionary['tags']['pre_parse_yaml']:
-            import yaml_preprocessor as yamlpre
-            yaml_dictionary = yamlpre.preprocess_yaml_file(yaml_path = args.yaml,
-                                                 date      = date,
-                                                 args      = args
-            )
-        else:
-            yaml_dictionary = original_yaml_dictionary
+        # cwd = os.getcwd()
+        
+        # global yaml_dictionary
+        # if 'pre_parse_yaml' not in original_yaml_dictionary['tags'].keys():
+        #     yaml_dictionary = original_yaml_dictionary
+        # elif original_yaml_dictionary['tags']['pre_parse_yaml']:
+        #     import yaml_preprocessor as yamlpre
+        #     yaml_dictionary = yamlpre.preprocess_yaml_file(yaml_path = args.yaml,
+        #                                          date      = date,
+        #                                          args      = args
+        #     )
+        # else:
+        #     yaml_dictionary = original_yaml_dictionary
 
-        slack_notification(message=f"Starting data processing.", date=date)
+        # slack_notification(message=f"Starting data processing.", date=date)
 
-        build_containers(yaml_dictionary)
+        # build_containers(yaml_dictionary)
 
-        if args.uploadonly:
-            upload_outputs(date, yaml_dictionary)
-            return
-        if args.archiveonly:
-            tar_outputs(date, yaml_dictionary)
-            return
+        # if args.uploadonly:
+        #     upload_outputs(date, yaml_dictionary)
+        #     return
+        # if args.archiveonly:
+        #     tar_outputs(date, yaml_dictionary)
+        #     return
 
-        server_utils.hpc = args.hpc
+        # server_utils.hpc = args.hpc
             
-        ###############################################
-        # Figure out what we need to DL
-        # There are three scenarios...
-        # (1) No input_dir.  Use suffix and prefix.  Original method.
-        # (2) input_dir, but not suffix or prefix: DL all files from input_dir
-        # (3) both...  add input_dir to irods_path and continue as (1)
+        # ###############################################
+        # # Figure out what we need to DL
+        # # There are three scenarios...
+        # # (1) No input_dir.  Use suffix and prefix.  Original method.
+        # # (2) input_dir, but not suffix or prefix: DL all files from input_dir
+        # # (3) both...  add input_dir to irods_path and continue as (1)
 
-        slack_notification(message=f"Downloading raw data.", date=date)
-        yaml_input_keys = yaml_dictionary['paths']['cyverse']['input'].keys()
+        # slack_notification(message=f"Downloading raw data.", date=date)
+        # yaml_input_keys = yaml_dictionary['paths']['cyverse']['input'].keys()
 
-        # figure out if yaml has prefix and/or sufix keys...
-        cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
-        irods_sensor_path = build_irods_path_to_sensor_from_yaml(yaml_dictionary, args)
-        if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
-            print("Found prefix or suffix.  Building irods_path...")
-            irods_dl_dir = irods_sensor_path
-            print(irods_dl_dir)
-            if 'input_dir' in yaml_input_keys:
-                _dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
-                irods_dl_dir = os.path.join(irods_dl_dir, date, _dir)
-                print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
-                print(irods_dl_dir)
-            file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
+        # # figure out if yaml has prefix and/or sufix keys...
+        # cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
+        # irods_sensor_path = build_irods_path_to_sensor_from_yaml(yaml_dictionary, args)
+        # if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
+        #     print("Found prefix or suffix.  Building irods_path...")
+        #     irods_dl_dir = irods_sensor_path
+        #     print(irods_dl_dir)
+        #     if 'input_dir' in yaml_input_keys:
+        #         _dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
+        #         irods_dl_dir = os.path.join(irods_dl_dir, date, _dir)
+        #         print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
+        #         print(irods_dl_dir)
+        #     file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
 
-            if file_to_dl is None:
-                handle_date_failure(args, date, yaml_dictionary)
-                continue
-            dir_name = download_irods_input_file(file_to_dl)
-        elif 'input_dir' in yaml_input_keys:
-            print("Using input dir")
-            dir_name = yaml_dictionary['paths']['cyverse']['input']['input_dir']
-            if len(dir_name) < 1:
-                raise ValueError(f"input_dir shouldn't be empty.  Remove it.")
+        #     if file_to_dl is None:
+        #         handle_date_failure(args, date, yaml_dictionary)
+        #         continue
+        #     dir_name = download_irods_input_file(file_to_dl)
+        # elif 'input_dir' in yaml_input_keys:
+        #     print("Using input dir")
+        #     dir_name = yaml_dictionary['paths']['cyverse']['input']['input_dir']
+        #     if len(dir_name) < 1:
+        #         raise ValueError(f"input_dir shouldn't be empty.  Remove it.")
 
-            download_irods_input_dir(yaml_dictionary, date, args)
+        #     download_irods_input_dir(yaml_dictionary, date, args)
 
-        else:
-            raise Exception(f"Couldn't figure out what to do with yaml input")
+        # else:
+        #     raise Exception(f"Couldn't figure out what to do with yaml input")
 
-        get_support_files(yaml_dictionary=yaml_dictionary, date=date)
-        slack_notification(message=f"Downloading raw data complete.", date=date)
+        # get_support_files(yaml_dictionary=yaml_dictionary, date=date)
+        # slack_notification(message=f"Downloading raw data complete.", date=date)
 
-        ###########################################################
-        ### All files should be found, DL'd and unarchived by here.
-        ###########################################################
+        # ###########################################################
+        # ### All files should be found, DL'd and unarchived by here.
+        # ###########################################################
 
-        if args.hpc:
-            kill_workers(yaml_dictionary['workload_manager']['job_name'])
+        # if args.hpc:
+        #     kill_workers(yaml_dictionary['workload_manager']['job_name'])
 
-            launch_workers(cctools_path = cctools_path,
-                    account=yaml_dictionary['workload_manager']['account'], 
-                    job_name=yaml_dictionary['workload_manager']['job_name'], 
-                    nodes=yaml_dictionary['workload_manager']['nodes'], 
-                    time=yaml_dictionary['workload_manager']['time_minutes'], 
-                    mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
-                    manager_name=yaml_dictionary['workload_manager']['manager_name'], 
-                    number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
-                    cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
-                    worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
-                    cwd=cwd)
+        #     launch_workers(cctools_path = cctools_path,
+        #             account=yaml_dictionary['workload_manager']['account'], 
+        #             job_name=yaml_dictionary['workload_manager']['job_name'], 
+        #             nodes=yaml_dictionary['workload_manager']['nodes'], 
+        #             time=yaml_dictionary['workload_manager']['time_minutes'], 
+        #             mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
+        #             manager_name=yaml_dictionary['workload_manager']['manager_name'], 
+        #             number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
+        #             cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
+        #             worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
+        #             cwd=cwd)
 
-        global seg_model_name, det_model_name
-        seg_model_name, det_model_name = get_model_files(yaml_dictionary['paths']['models']['segmentation'], yaml_dictionary['paths']['models']['detection'])
+        # global seg_model_name, det_model_name
+        # seg_model_name, det_model_name = get_model_files(yaml_dictionary['paths']['models']['segmentation'], yaml_dictionary['paths']['models']['detection'])
 
-        for k, v in yaml_dictionary['modules'].items():
+        # for k, v in yaml_dictionary['modules'].items():
             
-            if 'input_dir' in v.keys():
-                dir_name = os.path.join(*v['input_dir'])
+        #     if 'input_dir' in v.keys():
+        #         dir_name = os.path.join(*v['input_dir'])
 
-            slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])}.", date=date)
+        #     slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])}.", date=date)
 
-            files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
-            if len(files_list) < 1:
-                if v['distribution_level'] == 'local':
-                    print("No input files specified.  Allowed to continue because distribution level is 'local'")
-                else:
-                    raise ValueError(f"file_list for module #{k} is empty")
+        #     files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
+        #     if len(files_list) < 1:
+        #         if v['distribution_level'] == 'local':
+        #             print("No input files specified.  Allowed to continue because distribution level is 'local'")
+        #         else:
+        #             raise ValueError(f"file_list for module #{k} is empty")
                 
-            write_file_list(files_list)
-            json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=yaml_dictionary['tags']['sensor'], yaml_dictionary=yaml_dictionary, json_out_path=f'wf_file_{k}.json')
-            run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=yaml_dictionary['workload_manager']['manager_name'], retries=yaml_dictionary['workload_manager']['retries'], port=yaml_dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
+        #     write_file_list(files_list)
+        #     json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=yaml_dictionary['tags']['sensor'], yaml_dictionary=yaml_dictionary, json_out_path=f'wf_file_{k}.json')
+        #     run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=yaml_dictionary['workload_manager']['manager_name'], retries=yaml_dictionary['workload_manager']['retries'], port=yaml_dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
 
-            if not args.noclean:
-                print(f"Cleaning directory")
-                clean_directory()
+        #     if not args.noclean:
+        #         print(f"Cleaning directory")
+        #         clean_directory()
 
-            slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])} complete.", date=date)
+        #     slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])} complete.", date=date)
 
-        slack_notification(message=f"All processing steps complete.", date=date)
-        kill_workers(yaml_dictionary['workload_manager']['job_name'])
-        if not args.noupload:
-            # Archive output directories
-            slack_notification(message=f"Archiving data.", date=date)
-            tar_outputs(date, yaml_dictionary)
-            slack_notification(message=f"Archiving data complete.", date=date)
+        # slack_notification(message=f"All processing steps complete.", date=date)
+        # kill_workers(yaml_dictionary['workload_manager']['job_name'])
+        # if not args.noupload:
+        #     # Archive output directories
+        #     slack_notification(message=f"Archiving data.", date=date)
+        #     tar_outputs(date, yaml_dictionary)
+        #     slack_notification(message=f"Archiving data complete.", date=date)
 
 
-            # Upload data
-            create_pipeline_logs(date)
-            slack_notification(message=f"Uploading data.", date=date)
-            upload_outputs(date, yaml_dictionary)
-            slack_notification(message=f"Uploading data complete.", date=date)
+        #     # Upload data
+        #     create_pipeline_logs(date)
+        #     slack_notification(message=f"Uploading data.", date=date)
+        #     upload_outputs(date, yaml_dictionary)
+        #     slack_notification(message=f"Uploading data complete.", date=date)
 
-            # Move directories if specified in the processing YAML
-            if 'upload_directories' in yaml_dictionary['paths']['cyverse'].keys() and yaml_dictionary['paths']['cyverse']['upload_directories']['use']==True:
+        #     # Move directories if specified in the processing YAML
+        #     if 'upload_directories' in yaml_dictionary['paths']['cyverse'].keys() and yaml_dictionary['paths']['cyverse']['upload_directories']['use']==True:
                 
-                slack_notification(message=f"Move data to {yaml_dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
-                move_outputs(date, yaml_dictionary)
-                slack_notification(message=f"Moving data complete.", date=date)
+        #         slack_notification(message=f"Move data to {yaml_dictionary['paths']['cyverse']['upload_directories']['temp_directory']}.", date=date)
+        #         move_outputs(date, yaml_dictionary)
+        #         slack_notification(message=f"Moving data complete.", date=date)
 
 
-            if not args.noclean:
-                slack_notification(message=f"Cleaning inputs.", date=date)
-                print(f"Cleaning inputs")
-                clean_inputs(date, yaml_dictionary) 
-                slack_notification(message=f"Cleaning inputs complete.", date=date)
+        #     if not args.noclean:
+        #         slack_notification(message=f"Cleaning inputs.", date=date)
+        #         print(f"Cleaning inputs")
+        #         clean_inputs(date, yaml_dictionary) 
+        #         slack_notification(message=f"Cleaning inputs complete.", date=date)
 
 
 # --------------------------------------------------
