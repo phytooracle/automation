@@ -68,7 +68,7 @@ modules:
       simg_name: gdal.simg
       dockerhub_path: docker://osgeo/gdal:ubuntu-full-3.1.3
     command: singularity exec ${CWD}/gdal.simg bash ${CWD}/shell_scripts/ortho.sh ${CWD}/edited_tifs ${DATE}
-    distribution_level: wq
+    distribution_level: local
     file_level: dir
     input_dir: [edited_tifs]
     input_file: _left_corrected.tif
