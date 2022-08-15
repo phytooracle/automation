@@ -1330,8 +1330,7 @@ def main():
         args.date = get_process_date_list(original_yaml_dictionary)
 
     for date in args.date:
-        print(date)
-
+        
         # cwd = os.getcwd()
         
         # global yaml_dictionary
