@@ -1205,7 +1205,7 @@ def get_process_date_list(yaml_dictionary):
     level_0_dates, level_1_dates = return_date_list(level_0_list) \
                                 , return_date_list(level_1_list) 
 
-    print(level_1_list)      
+    print(level_0_list)      
     process_list = np.setdiff1d(level_0_dates, level_1_dates)
 
     if args.reverse:
