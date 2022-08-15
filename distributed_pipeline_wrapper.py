@@ -1090,12 +1090,39 @@ def clean_inputs(date, yaml_dictionary):
 
     if os.path.isfile('transfromation.json'):
         os.remove('transfromation.json')
-    
+
+    if os.path.isfile('mosaic.vrt'):
+        os.remove('mosaic.vrt')
+
+    if os.path.isfile('my.vrt'):
+        os.remove('my.vrt')
+
     if os.path.isdir('bundle'):
         shutil.rmtree('bundle')
 
     if os.path.isfile('bundle_list.json'):
         os.remove('bundle_list.json')
+        
+    if os.path.isdir('edited_tifs'):
+        shutil.rmtree('edited_tifs', ignore_errors=True)
+
+    if os.path.isdir('image_stiching'):
+        shutil.rmtree('image_stiching', ignore_errors=True)
+
+    if os.path.isdir('img_coords_out'):
+        shutil.rmtree('img_coords_out', ignore_errors=True)
+
+    if os.path.isdir('plotclip_orthos'):
+        shutil.rmtree('plotclip_orthos', ignore_errors=True)
+
+    if os.path.isdir('plotclip_out'):
+        shutil.rmtree('plotclip_out', ignore_errors=True)
+
+    if os.path.isdir('detect_out'):
+        shutil.rmtree('detect_out', ignore_errors=True)
+
+    if os.path.isdir('bin2tif_out'):
+        shutil.rmtree('bin2tif_out', ignore_errors=True)
 
     if os.path.isdir(date):
         shutil.rmtree(date, ignore_errors=True)
