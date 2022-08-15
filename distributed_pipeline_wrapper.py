@@ -272,6 +272,7 @@ def download_irods_input_dir(yaml_dictionary, date, args):
     dir locally, and then DL and untar each tarball and then DL the json file too.
     """
     args = get_args()
+    print('DOWNLOADING')
 
     # Step (0)
     input_dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
