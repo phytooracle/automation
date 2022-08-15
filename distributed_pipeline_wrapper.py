@@ -1378,7 +1378,7 @@ def main():
                 print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
                 print(irods_dl_dir)
             file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
-            print(file_to_dl)
+
             if file_to_dl is None:
                 handle_date_failure(args, date, yaml_dictionary)
                 continue
@@ -1389,7 +1389,7 @@ def main():
             if len(dir_name) < 1:
                 raise ValueError(f"input_dir shouldn't be empty.  Remove it.")
 
-            if args.experiment in dir_name:
+            if args.experiment in file_to_dl:
                 download_irods_input_dir(yaml_dictionary, date, args)
             else:
                 pass
