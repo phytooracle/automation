@@ -1130,9 +1130,11 @@ def clean_inputs(date, yaml_dictionary):
     if os.path.isdir('scanner3DTop'):
         shutil.rmtree('scanner3DTop')
 
-    raw_data_list = glob.glob(f'./scanner3DTop-{date}*')
-    if len(raw_data_list) > 0:
+    if len(glob.glob(f'./scanner3DTop-{date}*')) > 0:
         shutil.rmtree(glob.glob(f'scanner3DTop-{date}*')[0])
+
+    if len(glob.glob(f'./stereoTop-{date}*')) > 0:
+        shutil.rmtree(glob.glob(f'stereoTop-{date}*')[0])
 
     for item in yaml_dictionary['paths']['pipeline_outpath']:
         if item == '.':
