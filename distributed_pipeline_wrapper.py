@@ -1098,7 +1098,7 @@ def clean_inputs(date, yaml_dictionary):
         os.remove('bundle_list.json')
 
     if os.path.isdir(date):
-        shutil.rmtree(date)
+        shutil.rmtree(date, ignore_errors=True)
 
     if os.path.isdir('scanner3DTop'):
         shutil.rmtree('scanner3DTop')
