@@ -1206,7 +1206,8 @@ def get_process_date_list(yaml_dictionary):
                                 , return_date_list(level_1_list) 
 
     if args.experiment:
-        print(args.experiment)
+        level_0_dates = [item for item in level_0_dates if args.experiment in item else '']
+        level_1_dates = [item for item in level_1_dates if args.experiment in item else '']
     else:
         print('No experiment.')
 
