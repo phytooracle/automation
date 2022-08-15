@@ -45,3 +45,8 @@ tags
 env_output
 rnaseq_spectra/
 season12_multi_latlon_geno_updated.geojson
+Lettuce_Image_Stitching
+bin2tif_out
+edited_tifs
+img_coords_out
+my.vrt
