@@ -1390,6 +1390,8 @@ def main():
 
             if args.experiment in dir_name:
                 download_irods_input_dir(yaml_dictionary, date, args)
+            else:
+                pass
         else:
             raise Exception(f"Couldn't figure out what to do with yaml input")
 
