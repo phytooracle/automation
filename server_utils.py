@@ -41,16 +41,15 @@ def download_file_from_cyverse(irods_path, experiment):
     Download the single file given by irods_path to the current working directory.
     """
 
-    if args.experiment in os.path.basename(irods_path):
-        global hpc
-        cmd = f'iget -PT {os.path.join(irods_path)}'
+    global hpc
+    cmd = f'iget -PT {os.path.join(irods_path)}'
 
-        if hpc: 
-            print(f"Using filexfer node to download file")
-            run_filexfer_node_commands([cmd])
-        else:
-            print(f"Using current node/system to download file")
-            sp.call(cmd, shell=True)
+    if hpc: 
+        print(f"Using filexfer node to download file")
+        run_filexfer_node_commands([cmd])
+    else:
+        print(f"Using current node/system to download file")
+        sp.call(cmd, shell=True)
 
 def download_files_from_cyverse(files, force_overwrite=False):
     """

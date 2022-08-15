@@ -1387,7 +1387,9 @@ def main():
             dir_name = yaml_dictionary['paths']['cyverse']['input']['input_dir']
             if len(dir_name) < 1:
                 raise ValueError(f"input_dir shouldn't be empty.  Remove it.")
-            download_irods_input_dir(yaml_dictionary, date, args)
+
+            if args.experiment in dir_name:
+                download_irods_input_dir(yaml_dictionary, date, args)
         else:
             raise Exception(f"Couldn't figure out what to do with yaml input")
 
