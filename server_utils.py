@@ -72,7 +72,7 @@ def download_files_from_cyverse(files, experiment, force_overwrite=False):
                 print(f"FOUND")
                 if force_overwrite:
                     print(f"    ... but we're going to overwrite it: {file_path}")
-                    download_file_from_cyverse(file_path
+                    download_file_from_cyverse(file_path)
         else:
             pass
 
