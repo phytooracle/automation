@@ -36,7 +36,7 @@ def get_filenames_in_dir_from_cyverse(irods_dir_path):
     dir_files = [x.strip() for x in cyverse_ls.decode('utf-8').splitlines()][1:]
     return dir_files
 
-def download_file_from_cyverse(irods_path, experiment):
+def download_file_from_cyverse(irods_path):
     """
     Download the single file given by irods_path to the current working directory.
     """
@@ -51,7 +51,7 @@ def download_file_from_cyverse(irods_path, experiment):
         print(f"Using current node/system to download file")
         sp.call(cmd, shell=True)
 
-def download_files_from_cyverse(files, force_overwrite=False):
+def download_files_from_cyverse(files, experiment, force_overwrite=False):
     """
     files: a list of files with full paths to their location on cyverse
 
@@ -63,15 +63,18 @@ def download_files_from_cyverse(files, force_overwrite=False):
 
     for file_path in files:
         filename = os.path.basename(file_path)
-        print(f"Looking for local copy of {filename}...")
-        if not os.path.isfile(filename):
-            print(f"    We need to get: {file_path}")
-            download_file_from_cyverse(file_path)
-        else:
-            print(f"FOUND")
-            if force_overwrite:
-                print(f"    ... but we're going to overwrite it: {file_path}")
+        if experiment in filename:
+            print(f"Looking for local copy of {filename}...")
+            if not os.path.isfile(filename):
+                print(f"    We need to get: {file_path}")
                 download_file_from_cyverse(file_path)
+            else:
+                print(f"FOUND")
+                if force_overwrite:
+                    print(f"    ... but we're going to overwrite it: {file_path}")
+                    download_file_from_cyverse(file_path
+        else:
+            pass
 
 def untar_files(local_files, force_overwrite=False):
     """
