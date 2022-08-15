@@ -1203,7 +1203,9 @@ def get_process_date_list(yaml_dictionary):
                                 ,[os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {output_path}').readlines()][1:]]
 
     level_0_dates, level_1_dates = return_date_list(level_0_list) \
-                                , return_date_list(level_1_list)       
+                                , return_date_list(level_1_list) 
+
+    print(level_1_list)      
     process_list = np.setdiff1d(level_0_dates, level_1_dates)
 
     if args.reverse:
@@ -1329,7 +1331,7 @@ def main():
 
     for date in args.date:
         print(date)
-        
+
         # cwd = os.getcwd()
         
         # global yaml_dictionary
