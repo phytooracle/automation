@@ -271,6 +271,7 @@ def download_irods_input_dir(yaml_dictionary, date, args):
     and a json file that live in a directory called `alignment`.  So we have to make that
     dir locally, and then DL and untar each tarball and then DL the json file too.
     """
+    args = get_args()
 
     # Step (0)
     input_dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
@@ -284,8 +285,7 @@ def download_irods_input_dir(yaml_dictionary, date, args):
 
     os.chdir(input_dir)
 
-    if args.experiment in os.path.basename(file_paths):
-        server_utils.download_files_from_cyverse(file_paths)
+    server_utils.download_files_from_cyverse(irods_path=file_paths, experiment=args.experiment)
 
     # Step (2)
 

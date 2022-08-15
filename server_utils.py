@@ -36,20 +36,21 @@ def get_filenames_in_dir_from_cyverse(irods_dir_path):
     dir_files = [x.strip() for x in cyverse_ls.decode('utf-8').splitlines()][1:]
     return dir_files
 
-def download_file_from_cyverse(irods_path):
+def download_file_from_cyverse(irods_path, experiment):
     """
     Download the single file given by irods_path to the current working directory.
     """
 
-    global hpc
-    cmd = f'iget -PT {os.path.join(irods_path)}'
+    if args.experiment in os.path.basename(irods_path):
+        global hpc
+        cmd = f'iget -PT {os.path.join(irods_path)}'
 
-    if hpc: 
-        print(f"Using filexfer node to download file")
-        run_filexfer_node_commands([cmd])
-    else:
-        print(f"Using current node/system to download file")
-        sp.call(cmd, shell=True)
+        if hpc: 
+            print(f"Using filexfer node to download file")
+            run_filexfer_node_commands([cmd])
+        else:
+            print(f"Using current node/system to download file")
+            sp.call(cmd, shell=True)
 
 def download_files_from_cyverse(files, force_overwrite=False):
     """
