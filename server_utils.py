@@ -74,7 +74,7 @@ def download_files_from_cyverse(files, experiment, force_overwrite=False):
                     print(f"    ... but we're going to overwrite it: {file_path}")
                     download_file_from_cyverse(file_path)
         else:
-            pass
+            continue
 
 def untar_files(local_files, force_overwrite=False):
     """
