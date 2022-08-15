@@ -1207,7 +1207,9 @@ def get_process_date_list(yaml_dictionary):
 
     if args.experiment:
         print(args.experiment)
-        
+    else:
+        print('No experiment.')
+
     process_list = np.setdiff1d(level_0_dates, level_1_dates)
 
     if args.reverse:
