@@ -63,18 +63,16 @@ def download_files_from_cyverse(files, experiment, force_overwrite=False):
 
     for file_path in files:
         filename = os.path.basename(file_path)
-        if experiment in filename:
-            print(f"Looking for local copy of {filename}...")
-            if not os.path.isfile(filename):
-                print(f"    We need to get: {file_path}")
-                download_file_from_cyverse(file_path)
-            else:
-                print(f"FOUND")
-                if force_overwrite:
-                    print(f"    ... but we're going to overwrite it: {file_path}")
-                    download_file_from_cyverse(file_path)
+
+        print(f"Looking for local copy of {filename}...")
+        if not os.path.isfile(filename):
+            print(f"    We need to get: {file_path}")
+            download_file_from_cyverse(file_path)
         else:
-            continue
+            print(f"FOUND")
+            if force_overwrite:
+                print(f"    ... but we're going to overwrite it: {file_path}")
+                download_file_from_cyverse(file_path)
 
 def untar_files(local_files, force_overwrite=False):
     """
