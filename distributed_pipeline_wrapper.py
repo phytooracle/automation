@@ -334,8 +334,12 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
         return None
     if len(matching_files) > 1:
         
-        matching_files = [item for item in matching_files if date in item]
-        print(matching_files)
+        if args.experiment:
+            matching_files = [item for item in matching_files if date in item]
+            print(matching_files)
+
+        else:
+            return None
         # if args.multi_date != 99:
         #     file_dl_path = os.path.join(irods_dl_dir,matching_files[args.multi_date])
     
