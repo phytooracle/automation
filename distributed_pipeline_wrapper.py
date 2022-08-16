@@ -337,8 +337,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
         print (f"WARNING Found too many tarballs for date: {date}\n \
                            Found: {matching_files}")
         
-        file_dl_path = [item for item in matching_files if date in item]
-        print(file_dl_path)
+        file_dl_path = str([item for item in matching_files if date in item])
 
         # if args.multi_date != 99:
         #     file_dl_path = os.path.join(irods_dl_dir,matching_files[args.multi_date])
