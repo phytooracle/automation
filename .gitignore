@@ -50,3 +50,6 @@ bin2tif_out
 edited_tifs
 img_coords_out
 my.vrt
+multithresh.json
+season12_multi_latlon_geno.geojson
+test2
