@@ -755,7 +755,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                             ]
                 } 
         if sensor == 'ps2Top':
-                print(files_list)
+                files_list = [item for item in files_list if not '0101' in item]
                 jx_dict = {
                     "rules": [
                                 {
