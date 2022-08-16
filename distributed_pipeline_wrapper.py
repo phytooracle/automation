@@ -1201,19 +1201,16 @@ def get_process_date_list(yaml_dictionary):
     
     level_0_list, level_1_list = [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {input_path}').readlines()][1:]] \
                                 ,[os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {output_path}').readlines()][1:]]
+    
+    if args.experiment:
 
+        level_0_dates = [item for item in level_0_list if args.experiment in item]
+        level_1_dates = [item for item in level_1_list if args.experiment in item]
+        print(level_0_dates)
+        print(level_1_dates)
+    
     level_0_dates, level_1_dates = return_date_list(level_0_list) \
                                 , return_date_list(level_1_list) 
-
-    if args.experiment:
-        print(level_0_dates)
-        print(level_1_dates)
-        level_0_dates = [item for item in level_0_dates if args.experiment in item]
-        level_1_dates = [item for item in level_1_dates if args.experiment in item]
-        print(level_0_dates)
-        print(level_1_dates)
-    else:
-        print('No experiment.')
 
     process_list = np.setdiff1d(level_0_dates, level_1_dates)
 
