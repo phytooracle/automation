@@ -308,7 +308,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
     """
 
 
-
+    args = get_args()
     experiment        = args.experiment
     cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
     prefix            = yaml_dictionary['paths']['cyverse']['input']['prefix']
