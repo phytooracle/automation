@@ -336,7 +336,6 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
         
         if args.experiment:
             matching_files = [item for item in matching_files if date in item]
-            print(matching_files)
 
         else:
             return None
@@ -1411,7 +1410,7 @@ def main():
                 print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
                 print(irods_dl_dir)
             file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
-            print(file_to_dl)
+
             if file_to_dl is None:
                 handle_date_failure(args, date, yaml_dictionary)
                 continue
