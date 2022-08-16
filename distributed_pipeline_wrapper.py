@@ -1220,7 +1220,12 @@ def get_process_date_list(yaml_dictionary):
         print('Error')
     
     input_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], input_level, yaml_dictionary['tags']['sensor'])
-    output_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], output_level, yaml_dictionary['tags']['sensor'])
+
+    if args.experiment:
+        output_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], output_level, yaml_dictionary['tags']['sensor'], args.experiment)
+    
+    else:
+        output_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], output_level, yaml_dictionary['tags']['sensor'])
     
     level_0_list, level_1_list = [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {input_path}').readlines()][1:]] \
                                 ,[os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {output_path}').readlines()][1:]]
