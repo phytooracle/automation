@@ -1169,10 +1169,14 @@ def clean_inputs(date, yaml_dictionary):
 
 # --------------------------------------------------
 def return_date_list(level_0_list):
+    args= get_args()
     date_list = []
     for item in level_0_list:
         try:
             match = re.search(r'\d{4}-\d{2}-\d{2}', item)
+            if args.experiment:
+                match = re.search(r'\d{4}-\d{2}-\d{2}__\d{2}-\d{2}-\d{2}-\d{3}', item)
+                
             if match:
                 date = str(datetime.strptime(match.group(), '%Y-%m-%d').date())
                 date_list.append(date)
