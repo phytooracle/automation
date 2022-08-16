@@ -9,7 +9,7 @@ tags:
   season_name: season_12_sorghum_soybean_sunflower_tepary_yr_2021
   slack_notifications: 
     use: True
-    channel: gantry_test
+    channel: gantry_data_updates #gantry_test
     container:
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
@@ -110,8 +110,6 @@ modules:
     input_file: foo
     inputs: [$FILE, ./season12_multi_latlon_geno_updated.geojson, ./model_weights.pth]
     outputs: []  
-
-
 
 workload_manager:
   account: dukepauli
