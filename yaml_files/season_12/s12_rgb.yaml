@@ -134,7 +134,7 @@ workload_manager:
   #mem_per_core: 32
   mem_per_core: 5
   manager_name: phytooracle_manager_rgb
-  worker_timeout_seconds: 900   # 86400
+  worker_timeout_seconds: 7200   # 86400
 
 paths:
   models:
