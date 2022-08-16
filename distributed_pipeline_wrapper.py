@@ -1182,6 +1182,7 @@ def return_date_list(level_0_list):
             if match:
                 if args.experiment:
                     date = str(match.group())
+                    date = '_'.join([date, args.experiment])
                 else:
                     date = str(datetime.strptime(match.group(), '%Y-%m-%d').date())
                 
