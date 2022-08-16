@@ -1153,7 +1153,8 @@ def clean_inputs(date, yaml_dictionary):
     for item in yaml_dictionary['paths']['pipeline_outpath']:
         if item == '.':
             for x in yaml_dictionary["paths"]["outpath_subdirs"]:
-                shutil.rmtree(x)
+                if os.path.isdir(x):
+                    shutil.rmtree(x, ignore_errors=True)
 
         elif os.path.isdir(item):
             shutil.rmtree(item)
