@@ -316,7 +316,15 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
 
     all_files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_dl_dir)
     # Now lets see if our file is in all_files_in_dir
-    pattern = (prefix if prefix else "") + date + (suffix if suffix else "")
+
+    if args.experiment:
+        date_sub = match = re.search(r'\d{4}-\d{2}-\d{2}', date)
+        date_sub = str(datetime.strptime(date_sub.group(), '%Y-%m-%d').date())
+        pattern = (prefix if prefix else "") + date_sub + (suffix if suffix else "")
+
+    else:
+        pattern = (prefix if prefix else "") + date + (suffix if suffix else "")
+
     import pathlib
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
 
