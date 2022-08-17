@@ -58,13 +58,13 @@ modules:
     container: 
       simg_name: psii_fluorescence_aggregation.simg
       dockerhub_path: docker://phytooracle/psii_fluorescence_aggregation
-    command: singularity run psii_fluorescence_aggregation.simg -od ${DATE}_fluorescence_aggregation -of ${DATE}_fluorescence_aggregation -m multithresh.json psii_segmentation_out
+    command: singularity run psii_fluorescence_aggregation.simg -od fluorescence_aggregation_out -of ${DATE}_fluorescence_aggregation -m multithresh.json psii_segmentation_out
     distribution_level: local
     file_level: dir
     input_dir: [./psii_segmentation_out]
     input_file: psii_segmentation_out
     inputs: [./psii_segmentation_out, ./multithresh.json]
-    outputs: [./fluorescence_aggregation_out/fluorescence_aggregation.csv]
+    outputs: [./fluorescence_aggregation_out/$DATE_fluorescence_aggregation.csv]
 
   #5:
   #  container: 
