@@ -103,7 +103,7 @@ modules:
     container: 
       simg_name: flir_plant_temp.simg
       dockerhub_path: docker://phytooracle/flir_plant_temp
-    command: singularity run -B $(pwd):/mnt --pwd /mnt flir_plant_temp.simg -d ${DATE} -g season12_multi_latlon_geno_updated.geojson -m model_weights_sorghum_flir.pth -c 20 -o detect_out plotclip_orthos
+    command: singularity run -B $(pwd):/mnt --pwd /mnt flir_plant_temp.simg -d ${DATE} -g season12_multi_latlon_geno_updated.geojson -m model_weights_sorghum_flir.pth -c 20 -od detect_out -of ${DATE}_sorghum_detection plotclip_orthos
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
