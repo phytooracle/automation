@@ -769,6 +769,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                         .replace('$FILE_BASE', os.path.basename(file).replace('.bin', ''))\
                                         .replace('$SEG', os.path.basename(file).replace('.tif', '_segmentation.csv'))\
                                         .replace('$FILE', file)\
+                                        .replace('$DATE', date)\
                                          for out in outputs],
 
                                     "inputs"  : [container, 
