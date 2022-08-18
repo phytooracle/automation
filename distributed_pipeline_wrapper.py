@@ -21,6 +21,7 @@ from datetime import datetime
 import numpy as np
 import platform
 import socket
+import time
 
 # Our libraries...
 import server_utils
@@ -387,6 +388,7 @@ def download_irods_input_file(irods_path):
         else: 
             sp.call(cmd1, shell=True)
 
+    time.sleep(30)
     #tarball = tarfile.open(tarball_filename, mode='r')
     #print(f"Examining {tarball_filename}, this can take a minute.")
     #dir_name = os.path.commonprefix(tarball.getnames())
