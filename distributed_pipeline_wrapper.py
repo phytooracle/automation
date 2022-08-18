@@ -1153,6 +1153,9 @@ def clean_inputs(date, yaml_dictionary):
     if len(glob.glob(f'stereoTop-{date}*')) > 0:
         shutil.rmtree(glob.glob(f'stereoTop-{date}*')[0])
 
+    if len(glob.glob(f'flirIrCamera-{date}*')) > 0:
+        shutil.rmtree(glob.glob(f'stereoTop-{date}*')[0])
+
     for item in yaml_dictionary['paths']['pipeline_outpath']:
         if item == '.':
             for x in yaml_dictionary["paths"]["outpath_subdirs"]:
