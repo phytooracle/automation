@@ -8,10 +8,6 @@ tags:
   season: 12
   season_name: season_12_sorghum_soybean_sunflower_tepary_yr_2021
   sensor: scanner3DTop
-  # Season 12 and on should have a value for experiment set
-  # (e.g. sorghum, sunflower)
-  # For Season 11 it should be left blank
-  experiment: sorghum
   slack_notifications: 
     use: True
     channel: gantry_test #gantry_data_updates
@@ -66,7 +62,7 @@ workload_manager:
   cores_per_worker: 6       # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
-  port: 6022
+  port: 0 #6022
   #mem_per_core: 32
   mem_per_core: 5 #6
   manager_name: phytooracle_manager_3d
