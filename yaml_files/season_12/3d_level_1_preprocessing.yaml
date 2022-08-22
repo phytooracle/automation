@@ -48,10 +48,10 @@ modules:
 
 
 workload_manager:
-  account: lyons-lab
+  account: dukepauli
   high_priority_settings:
     use: True
-    qos_group: user_qos_ericlyons
+    qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
     use: False
