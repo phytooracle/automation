@@ -25,6 +25,7 @@ modules:
     file_level: 
 #     input_dir: [scanner3DTop]
     input_file: -west_0.ply
+    inputs: [season12_all_bucket_gcps.txt]
 #     inputs: [$FILE_metadata.json,
 #              $FILE__Top-heading-east_0_g.png,
 #              $FILE__Top-heading-east_0.ply,
