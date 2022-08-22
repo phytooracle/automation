@@ -27,7 +27,7 @@ modules:
     command: singularity run ${CWD}/3d_preprocessing.simg -l  ${CWD}/season12_all_bucket_gcps.txt -o alignment -i  ${CWD}/${INPUT_DIR}
     distribution_level: wq
     file_level: 
-    input_dir: [scanner3DTop]
+#     input_dir: [scanner3DTop]
     input_file: -west_0.ply
 #     inputs: [$FILE_metadata.json,
 #              $FILE__Top-heading-east_0_g.png,
