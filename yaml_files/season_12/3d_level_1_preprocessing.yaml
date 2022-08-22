@@ -76,6 +76,7 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
+      necessary_files: [/iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_0/vector_files/season12_all_bucket_gcps.txt]
       level: level_0
       prefix: scanner3DTop-
       suffix: __*_sorghum.tar.gz
