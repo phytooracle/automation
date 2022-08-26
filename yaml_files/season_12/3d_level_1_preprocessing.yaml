@@ -49,7 +49,7 @@ modules:
 workload_manager:
   account: dukepauli
   high_priority_settings:
-    use: False #True
+    use: True
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
