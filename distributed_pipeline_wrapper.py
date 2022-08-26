@@ -1394,23 +1394,6 @@ def main():
             if args.archiveonly:
                 tar_outputs(date, yaml_dictionary)
                 return
-
-            ### TESTING 2022-08-26
-            if args.hpc:
-                kill_workers(yaml_dictionary['workload_manager']['job_name'])
-
-                launch_workers(cctools_path = cctools_path,
-                        account=yaml_dictionary['workload_manager']['account'], 
-                        job_name=yaml_dictionary['workload_manager']['job_name'], 
-                        nodes=yaml_dictionary['workload_manager']['nodes'], 
-                        time=yaml_dictionary['workload_manager']['time_minutes'], 
-                        mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
-                        manager_name=yaml_dictionary['workload_manager']['manager_name'], 
-                        number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
-                        cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
-                        worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
-                        cwd=cwd)
-            ### END TESTING
             
             server_utils.hpc = args.hpc
                 
@@ -1460,20 +1443,20 @@ def main():
             ### All files should be found, DL'd and unarchived by here.
             ###########################################################
 
-            # if args.hpc:
-            #     kill_workers(yaml_dictionary['workload_manager']['job_name'])
+            if args.hpc:
+                kill_workers(yaml_dictionary['workload_manager']['job_name'])
 
-            #     launch_workers(cctools_path = cctools_path,
-            #             account=yaml_dictionary['workload_manager']['account'], 
-            #             job_name=yaml_dictionary['workload_manager']['job_name'], 
-            #             nodes=yaml_dictionary['workload_manager']['nodes'], 
-            #             time=yaml_dictionary['workload_manager']['time_minutes'], 
-            #             mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
-            #             manager_name=yaml_dictionary['workload_manager']['manager_name'], 
-            #             number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
-            #             cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
-            #             worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
-            #             cwd=cwd)
+                launch_workers(cctools_path = cctools_path,
+                        account=yaml_dictionary['workload_manager']['account'], 
+                        job_name=yaml_dictionary['workload_manager']['job_name'], 
+                        nodes=yaml_dictionary['workload_manager']['nodes'], 
+                        time=yaml_dictionary['workload_manager']['time_minutes'], 
+                        mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
+                        manager_name=yaml_dictionary['workload_manager']['manager_name'], 
+                        number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
+                        cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
+                        worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
+                        cwd=cwd)
 
             global seg_model_name, det_model_name
             seg_model_name, det_model_name = get_model_files(yaml_dictionary['paths']['models']['segmentation'], yaml_dictionary['paths']['models']['detection'])
