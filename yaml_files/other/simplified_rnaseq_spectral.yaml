@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: rnaseq_spectral_plsr.simg
       dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:random_forest_vs #:latest #:train_test
-    command: singularity run ${CWD}/rnaseq_spectral_plsr.simg -c ${CWD}/${FILE} -o ${CWD}/plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones -np 40
+    command: singularity run ${CWD}/rnaseq_spectral_plsr.simg -c ${CWD}/${FILE} -o ${CWD}/plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones -sam
     distribution_level: wq
     file_level: 
     input_dir: [rnaseq_spectra]
