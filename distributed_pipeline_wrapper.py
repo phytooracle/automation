@@ -1158,6 +1158,7 @@ def clean_inputs(date, yaml_dictionary):
 
 
     if len(glob.glob(f'stereoTop-{date}*')) > 0:
+
         for item in glob.glob(f'stereoTop-{date}*'):
             if os.path.isdir(item):
                 shutil.rmtree(item)
@@ -1166,6 +1167,7 @@ def clean_inputs(date, yaml_dictionary):
                 os.remove(item)
 
     if len(glob.glob(f'flirIrCamera-{date}*')) > 0:
+        
         for item in glob.glob(f'flirIrCamera-{date}*'):
             if os.path.isdir(item):
                 shutil.rmtree(item)
