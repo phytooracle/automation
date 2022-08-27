@@ -1148,13 +1148,30 @@ def clean_inputs(date, yaml_dictionary):
         shutil.rmtree('scanner3DTop')
 
     if len(glob.glob(f'scanner3DTop-{date}*')) > 0:
-        shutil.rmtree(glob.glob(f'scanner3DTop-{date}*')[0])
+
+        for item in glob.glob(f'scanner3DTop-{date}*'):
+            if os.path.isdir(item):
+                shutil.rmtree(item)
+
+            if os.path.isfile(item):
+                os.remove(item)
+
 
     if len(glob.glob(f'stereoTop-{date}*')) > 0:
-        shutil.rmtree(glob.glob(f'stereoTop-{date}*')[0])
+        for item in glob.glob(f'stereoTop-{date}*'):
+            if os.path.isdir(item):
+                shutil.rmtree(item)
+
+            if os.path.isfile(item):
+                os.remove(item)
 
     if len(glob.glob(f'flirIrCamera-{date}*')) > 0:
-        shutil.rmtree(glob.glob(f'flirIrCamera-{date}*')[0])
+        for item in glob.glob(f'flirIrCamera-{date}*'):
+            if os.path.isdir(item):
+                shutil.rmtree(item)
+
+            if os.path.isfile(item):
+                os.remove(item)
 
     for item in yaml_dictionary['paths']['pipeline_outpath']:
         if item == '.':
