@@ -19,21 +19,12 @@ modules:
     container: 
       simg_name: 3d_postprocessing.simg
       dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_11_clustering.csv -s 11 -d ${DATE} -l ${CWD}/gcp_season_11.txt
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_11_clustering.csv -s 11 -d ${DATE} -l ${CWD}/gcp_season_12.txt
     distribution_level: wq
     file_level: 
     input_dir: [alignment, west_downsampled]
     input_file: -west.ply
-    inputs: [gcp_season_11.txt]
-    # inputs: [alignment/east/$SUBDIR-east.ply,
-            #  alignment/east_downsampled/$SUBDIR-east.ply, 
-            #  alignment/merged/$SUBDIR-merged.ply,
-            #  alignment/merged_downsampled/$SUBDIR-merged.ply,
-            #  alignment/west/$SUBDIR-west.ply,
-            #  alignment/west_downsampled/$SUBDIR-west.ply,
-            #  alignment/transfromation.json,
-            #  season_11_clustering.csv,
-            #  gcp_season_11.txt]
+    inputs: [gcp_season_12.txt]
     outputs: [postprocessing_out/east/$SUBDIR-east.ply,
               postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
               postprocessing_out/merged/$SUBDIR-merged.ply,
@@ -50,16 +41,7 @@ modules:
     file_level: 
     input_dir: [postprocessing_out, west_downsampled]
     input_file: -west.ply
-    inputs: [gcp_season_11.txt]
-    # inputs: [alignment/transfromation.json,
-    #          season_11_clustering.csv,
-    #          gcp_season_11.txt,
-    #          postprocessing_out/east/$SUBDIR-east.ply,
-    #          postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
-    #          postprocessing_out/merged/$SUBDIR-merged.ply,
-    #          postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
-    #          postprocessing_out/west/$SUBDIR-west.ply,
-    #          postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+    inputs: [gcp_season_12.txt]
     outputs: [$BASENAME_individual_plants.tar]
 
   3: 
@@ -71,8 +53,7 @@ modules:
     file_level: 
     input_dir: [postprocessing_out, west]
     input_file: -west.ply
-    inputs: [gcp_season_11.txt] 
-    # inputs: [$BASENAME_individual_plants.tar]
+    inputs: [gcp_season_12.txt] 
     outputs: []
 
   4: 
@@ -84,11 +65,7 @@ modules:
     file_level: subdir
     input_dir: [individual_plants_out, west]
     input_file: _cropped.ply
-    inputs: [gcp_season_11.txt]
-    # inputs: [individual_plants_out/west/$PLANT_NAME,
-    #          individual_plants_out/west_downsampled/$PLANT_NAME,
-    #          individual_plants_out/east/$PLANT_NAME,
-    #          individual_plants_out/east_downsampled/$PLANT_NAME]
+    inputs: [gcp_season_12.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
               individual_plants_out/plant_reports/$PLANT_NAME]
 
@@ -101,8 +78,7 @@ modules:
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
-    inputs: [gcp_season_11.txt]
-    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+    inputs: [gcp_season_12.txt]
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
 
 workload_manager:
@@ -135,7 +111,8 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [level_3/stereoTop/season_11_clustering.csv, /iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_0/necessary_files/gcp_season_12.txt]
+      necessary_files: [level_3/stereoTop/season_11_clustering.csv, 
+                        /iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_0/necessary_files/gcp_season_12.txt]
       level: level_1
       input_dir: alignment
     output: 
