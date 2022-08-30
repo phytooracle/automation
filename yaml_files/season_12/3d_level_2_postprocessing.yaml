@@ -1,0 +1,142 @@
+---
+tags:
+  pipeline: season12_scanner3DTop
+  description: season12_postprocessing
+  notes: Post landmark selection processing of Season 12 scanner3DTop data
+  runby: Unspecified Paulilab member
+  sensor: scanner3DTop 
+  season: 12
+  season_name: season_12_sorghum_soybean_sunflower_tepary_yr_2021
+  slack_notifications: 
+    use: True
+    channel: gantry_test #gantry_data_updates
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+
+modules:
+  1: 
+    container: 
+      simg_name: 3d_postprocessing.simg
+      dockerhub_path: docker://phytooracle/3d_postprocessing:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_11_clustering.csv -s 11 -d ${DATE} -l ${CWD}/gcp_season_11.txt
+    distribution_level: wq
+    file_level: 
+    input_dir: [alignment, west_downsampled]
+    input_file: -west.ply
+    inputs: [gcp_season_11.txt]
+    # inputs: [alignment/east/$SUBDIR-east.ply,
+            #  alignment/east_downsampled/$SUBDIR-east.ply, 
+            #  alignment/merged/$SUBDIR-merged.ply,
+            #  alignment/merged_downsampled/$SUBDIR-merged.ply,
+            #  alignment/west/$SUBDIR-west.ply,
+            #  alignment/west_downsampled/$SUBDIR-west.ply,
+            #  alignment/transfromation.json,
+            #  season_11_clustering.csv,
+            #  gcp_season_11.txt]
+    outputs: [postprocessing_out/east/$SUBDIR-east.ply,
+              postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
+              postprocessing_out/merged/$SUBDIR-merged.ply,
+              postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
+              postprocessing_out/west/$SUBDIR-west.ply,
+              postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+  
+  2: 
+    container: 
+      simg_name: 3d_crop_individual_plants.simg
+      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_11_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 11 -d ${DATE} && tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
+    distribution_level: wq
+    file_level: 
+    input_dir: [postprocessing_out, west_downsampled]
+    input_file: -west.ply
+    inputs: [gcp_season_11.txt]
+    # inputs: [alignment/transfromation.json,
+    #          season_11_clustering.csv,
+    #          gcp_season_11.txt,
+    #          postprocessing_out/east/$SUBDIR-east.ply,
+    #          postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
+    #          postprocessing_out/merged/$SUBDIR-merged.ply,
+    #          postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
+    #          postprocessing_out/west/$SUBDIR-west.ply,
+    #          postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+    outputs: [$BASENAME_individual_plants.tar]
+
+  3: 
+    container: 
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+    command: tar -xvf ${CWD}/${SUBDIR}_individual_plants.tar && rm ${CWD}/${SUBDIR}_individual_plants.tar 
+    distribution_level: local
+    file_level: 
+    input_dir: [postprocessing_out, west]
+    input_file: -west.ply
+    inputs: [gcp_season_11.txt] 
+    # inputs: [$BASENAME_individual_plants.tar]
+    outputs: []
+
+  4: 
+    container: 
+      simg_name: 3d_individual_plant_registration.simg
+      dockerhub_path: docker://phytooracle/3d_individual_plant_registration:multiway_registration
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_individual_plant_registration.simg -i ${CWD}/individual_plants_out/ -p ${PLANT_NAME} -r individual_plants_out/plant_reports/${PLANT_NAME} -o individual_plants_out/segmentation_pointclouds/${PLANT_NAME}
+    distribution_level: wq
+    file_level: subdir
+    input_dir: [individual_plants_out, west]
+    input_file: _cropped.ply
+    inputs: [gcp_season_11.txt]
+    # inputs: [individual_plants_out/west/$PLANT_NAME,
+    #          individual_plants_out/west_downsampled/$PLANT_NAME,
+    #          individual_plants_out/east/$PLANT_NAME,
+    #          individual_plants_out/east_downsampled/$PLANT_NAME]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
+              individual_plants_out/plant_reports/$PLANT_NAME]
+
+  5:
+    container: 
+      simg_name: 3d_segmentation_dashboard_assets.simg
+      dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_segmentation_dashboard_assets.simg -i ${CWD}/${PLANT_PATH} -plant ${PLANT_NAME} -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: combined_multiway_registered.ply
+    inputs: [gcp_season_11.txt]
+    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
+
+workload_manager:
+  account: ericlyons
+  high_priority_settings:
+    use: True
+    qos_group: user_qos_ericlyons
+    partition: high_priority
+  standard_settings:
+    use: False
+    partition: standard
+
+  job_name: phytooracle_worker_3d
+  nodes: 1
+  number_worker_array: 500
+  cores_per_worker: 4
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  mem_per_core: 5
+  manager_name: phytooracle_manager_3d
+  worker_timeout_seconds: 86400 #900
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  pipeline_outpath: [individual_plants_out]
+  outpath_subdirs: [segmentation_pointclouds, plant_reports]
+  cyverse: 
+    basename: /iplant/home/shared/phytooracle/
+    input: 
+      necessary_files: [level_3/stereoTop/season_11_clustering.csv, /iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_0/necessary_files/gcp_season_12.txt]
+      level: level_1
+      input_dir: alignment
+    output: 
+      level: level_2
