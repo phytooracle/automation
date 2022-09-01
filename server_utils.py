@@ -62,6 +62,7 @@ def download_files_from_cyverse(files, experiment, force_overwrite=False):
     """
 
     for file_path in files:
+        print(file_path)
         filename = os.path.basename(file_path)
 
         print(f"Looking for local copy of {filename}...")

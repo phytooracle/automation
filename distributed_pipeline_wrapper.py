@@ -292,7 +292,6 @@ def download_irods_input_dir(yaml_dictionary, date, args):
     
     files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_input_dir_path)
     file_paths = [os.path.join(irods_input_dir_path, x) for x in files_in_dir]
-    print(file_paths)
 
     os.chdir(input_dir)
 
