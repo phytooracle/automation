@@ -1248,6 +1248,10 @@ def get_process_date_list(yaml_dictionary):
 
     if args.experiment:
         output_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], output_level, yaml_dictionary['tags']['sensor'], args.experiment)
+
+        if int(yaml_dictionary['paths']['cyverse']['input']['level'].split('_')) >= 1:
+
+            input_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], input_level, yaml_dictionary['tags']['sensor'], args.experiment)
     
     else:
         output_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], output_level, yaml_dictionary['tags']['sensor'])
