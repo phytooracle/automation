@@ -282,13 +282,14 @@ def download_irods_input_dir(yaml_dictionary, date, args):
     # Step (1)
     sensor_path = build_irods_path_to_sensor_from_yaml(yaml_dictionary, args)
     irods_input_dir_path = os.path.join(sensor_path, date, input_dir)
+    print(irods_input_dir_path)
 
-    if args.experiment:
+    # if args.experiment:
      
-        if int(str(yaml_dictionary['paths']['cyverse']['input']['level']).split('_')[1]) >= 1:
+    #     if int(str(yaml_dictionary['paths']['cyverse']['input']['level']).split('_')[1]) >= 1:
 
-            irods_input_dir_path = os.path.join(sensor_path, date, input_dir, args.experiment)
-            print(irods_input_dir_path)
+    #         irods_input_dir_path = os.path.join(sensor_path, date, input_dir, args.experiment)
+    #         print(irods_input_dir_path)
     
     files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_input_dir_path)
     file_paths = [os.path.join(irods_input_dir_path, x) for x in files_in_dir]
