@@ -111,7 +111,8 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_3/stereoTop/season_12_clustering.csv, 
+      necessary_files: [/iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_3/stereoTop/thresh_098/season_12_clustering.csv,
+#                         /iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_3/stereoTop/season_12_clustering.csv, 
                         /iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_0/necessary_files/gcp_season_12.txt]
       level: level_1
       input_dir: alignment
