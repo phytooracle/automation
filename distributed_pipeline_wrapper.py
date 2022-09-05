@@ -1385,6 +1385,7 @@ def main():
     cctools_path = download_cctools(cctools_version=args.cctools_version)
     create_mf_monitor(cctools_path)
     create_wq_status(cctools_path)
+    cwd = os.getcwd()
 
 
     with open(args.yaml, 'r') as stream:
@@ -1401,8 +1402,8 @@ def main():
         args.date = get_process_date_list(original_yaml_dictionary)
 
     for date in args.date:
-
-        cwd = os.getcwd()
+        
+        os.chdir(cwd)
         
         try:
             global yaml_dictionary
