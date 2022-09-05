@@ -1547,11 +1547,12 @@ def main():
                     slack_notification(message=f"Cleaning inputs complete.", date=date)
 
         except:
-            slack_notification(message=f"SKIP SCAN. Raw data faulty, cannot be processed.", date=date)
-            slack_notification(message=f"SKIP SCAN. Cleaning inputs.", date=date)
-            print(f"Cleaning inputs")
-            clean_inputs(date, yaml_dictionary) 
-            slack_notification(message=f"SKIP SCAN. Cleaning inputs complete.", date=date)
+            handle_date_failure(args, date, yaml_dictionary)
+#             slack_notification(message=f"SKIP SCAN. Raw data faulty, cannot be processed.", date=date)
+#             slack_notification(message=f"SKIP SCAN. Cleaning inputs.", date=date)
+#             print(f"Cleaning inputs")
+#             clean_inputs(date, yaml_dictionary) 
+#             slack_notification(message=f"SKIP SCAN. Cleaning inputs complete.", date=date)
 
 # --------------------------------------------------
 if __name__ == '__main__':
