@@ -1548,6 +1548,7 @@ def main():
                     slack_notification(message=f"Cleaning inputs complete.", date=date)
 
         except:
+            os.chdir(cwd)
             create_pipeline_logs(date)
             handle_date_failure(args, date, yaml_dictionary)
 #             slack_notification(message=f"SKIP SCAN. Raw data faulty, cannot be processed.", date=date)
