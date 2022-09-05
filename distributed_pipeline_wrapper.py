@@ -273,7 +273,7 @@ def download_irods_input_dir(yaml_dictionary, date, args):
     dir locally, and then DL and untar each tarball and then DL the json file too.
     """
     args = get_args()
-    print('DOWNLOADING')
+    # print('DOWNLOADING')
 
     # Step (0)
     input_dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
@@ -1547,6 +1547,7 @@ def main():
                     slack_notification(message=f"Cleaning inputs complete.", date=date)
 
         except:
+            create_pipeline_logs(date)
             handle_date_failure(args, date, yaml_dictionary)
 #             slack_notification(message=f"SKIP SCAN. Raw data faulty, cannot be processed.", date=date)
 #             slack_notification(message=f"SKIP SCAN. Cleaning inputs.", date=date)
