@@ -98,7 +98,7 @@ workload_manager:
   time_minutes: 1440
   retries: 1
   port: 0
-  mem_per_core: 5
+  mem_per_core: 6
   manager_name: phytooracle_manager_3d
   worker_timeout_seconds: 86400 #900
 
