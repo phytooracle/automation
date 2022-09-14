@@ -84,11 +84,11 @@ modules:
 workload_manager:
   account: ericlyons
   high_priority_settings:
-    use: True
+    use: False
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: False
+    use: True
     partition: standard
 
   job_name: phytooracle_worker_3d
