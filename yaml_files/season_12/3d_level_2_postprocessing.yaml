@@ -35,7 +35,7 @@ modules:
   2: 
     container: 
       simg_name: 3d_crop_individual_plants.simg
-      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:latest
+      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:fix_date_search #latest
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_12_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 12 -d ${DATE} && tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
     distribution_level: wq
     file_level: 
@@ -82,13 +82,13 @@ modules:
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
 
 workload_manager:
-  account: ericlyons
+  account: dukepauli
   high_priority_settings:
-    use: False
-    qos_group: user_qos_ericlyons
+    use: True
+    qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
-    use: True
+    use: False
     partition: standard
 
   job_name: phytooracle_worker_3d
@@ -98,7 +98,7 @@ workload_manager:
   time_minutes: 1440
   retries: 1
   port: 0
-  mem_per_core: 6
+  mem_per_core: 5
   manager_name: phytooracle_manager_3d
   worker_timeout_seconds: 86400 #900
 
