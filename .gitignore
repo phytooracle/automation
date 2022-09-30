@@ -52,5 +52,5 @@ img_coords_out
 my.vrt
 mosaic.vrt
 multithresh.json
-season12_multi_latlon_geno.geojson
+*.geojson
 test2
