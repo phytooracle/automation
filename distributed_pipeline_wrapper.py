@@ -707,8 +707,11 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     timeout = f'timeout {args.timeout}h '
     cwd = os.getcwd()
     command = command.replace('${CWD}', cwd)
-    match_str = re.search(r'\d{4}-\d{2}-\d{2}', date)
-    date = str(datetime.strptime(match_str.group(), '%Y-%m-%d').date())
+    
+    if sensor=='scanner3DTop':
+
+        match_str = re.search(r'\d{4}-\d{2}-\d{2}', date)
+        date = str(datetime.strptime(match_str.group(), '%Y-%m-%d').date())
 
     if inputs:
         if sensor=='scanner3DTop':
