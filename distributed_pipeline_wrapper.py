@@ -567,7 +567,8 @@ def get_support_files(yaml_dictionary, date):
     sensor = yaml_dictionary["tags"]["sensor"]
    
     if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
-        sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
+        if not os.path.isdir('Lettuce_Image_Stitching'):
+            sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
 
 
 # --------------------------------------------------
