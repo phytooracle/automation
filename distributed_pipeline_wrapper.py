@@ -1423,7 +1423,7 @@ def generate_megastitch_config(cwd, yaml_dictionary):
         f.write('TRANSFORMATION_ERR_STD:9.32e-6,10.56e-6\n')
         f.write('GPS_ERR_STD:9.02e-6,10.48e-6\n')
         f.write('LID_ERR_STD:1e-9\n')
-        f.write(f'LID_MODEL_PATH:{os.path.join(cwd, lid_model_path)}\n')
+        f.write(f'LID_MODEL_PATH:{os.path.join(cwd, os.path.basename(lid_model_path))}\n')
         f.write('SAVE_COORDS_ON_CSV:True\n')
         f.write('SAVE_NEW_TIFF_FILES:True\n')
 
