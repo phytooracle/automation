@@ -119,7 +119,7 @@ workload_manager:
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
-    use: True #False
+    use: False
     partition: standard
 
   job_name: phytooracle_worker_flir
