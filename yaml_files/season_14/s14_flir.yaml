@@ -43,7 +43,7 @@ modules:
     container: 
       simg_name: full_geocorrection.simg
       dockerhub_path: docker:ariyanzarei/full_geocorrection:latest
-    command: mkdir -p image_stiching/${DATE} && singularity exec full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_FLIR.py -d image_stiching -b ./flir2tif_out -s ${DATE} -c Lettuce_Image_Stitching/geo_correction_config.txt -l ./gcp_season_14_bucket.txt -r ./Lettuce_Image_Stitching
+    command: mkdir -p image_stiching/${DATE} && singularity exec full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_FLIR.py -d image_stiching -b ./flir2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_14_bucket.txt -r ./Lettuce_Image_Stitching
     distribution_level: local
     file_level: dir
     input_dir: [./flir2tif_out]
@@ -138,6 +138,7 @@ paths:
   models:
     detection:  /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_flir.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    lid: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth
   pipeline_outpath: [.]
   outpath_subdirs: [flir2tif_out, plotclip_orthos, image_stiching, detect_out, img_coords_out, edited_tifs]
   
