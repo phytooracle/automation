@@ -43,12 +43,12 @@ modules:
     container: 
       simg_name: full_geocorrection.simg
       dockerhub_path: docker:ariyanzarei/full_geocorrection:latest
-    command: mkdir -p image_stiching/${DATE} && singularity exec full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_FLIR.py -d image_stiching -b ./flir2tif_out -s ${DATE} -c Lettuce_Image_Stitching/geo_correction_config.txt -l ./gcp_season_12.txt -r ./Lettuce_Image_Stitching
+    command: mkdir -p image_stiching/${DATE} && singularity exec full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_FLIR.py -d image_stiching -b ./flir2tif_out -s ${DATE} -c Lettuce_Image_Stitching/geo_correction_config.txt -l ./gcp_season_14_bucket.txt -r ./Lettuce_Image_Stitching
     distribution_level: local
     file_level: dir
     input_dir: [./flir2tif_out]
     input_file: _ir.tif
-    inputs: [$UUID.tif, ./gcp_season_12.txt, ./Lettuce_Image_Stitching]
+    inputs: [$UUID.tif, ./gcp_season_14_bucket.txt, ./Lettuce_Image_Stitching]
     outputs: [image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
 
   4:
@@ -72,19 +72,19 @@ modules:
     file_level: dir
     input_dir: [edited_tifs]
     input_file: _left_corrected.tif
-    inputs: [season12_multi_latlon_geno_updated.geojson] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
+    inputs: [season14_multi_latlon_geno_updated.geojson] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
     outputs: [$DATE/$DATE_thermal_ortho_10pct_cubic.tif] 
 
   6:
     container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson
-    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season12_multi_latlon_geno_updated.geojson -sen rgb
+    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season14_multi_latlon_geno_updated.geojson -sen rgb
     distribution_level: local
     file_level: 
     input_dir: [./edited_tifs]
     input_file: .tif
-    inputs: [$FILE, ./season12_multi_latlon_geno_updated.geojson]
+    inputs: [$FILE, ./season14_multi_latlon_geno_updated.geojson]
     outputs: [] 
 
   7:
@@ -103,12 +103,12 @@ modules:
     container: 
       simg_name: flir_plant_temp.simg
       dockerhub_path: docker://phytooracle/flir_plant_temp
-    command: singularity run -B $(pwd):/mnt --pwd /mnt flir_plant_temp.simg -d ${DATE} -g season12_multi_latlon_geno_updated.geojson -m model_weights_sorghum_flir.pth -c 20 -od detect_out -of ${DATE}_detection plotclip_orthos
+    command: singularity run -B $(pwd):/mnt --pwd /mnt flir_plant_temp.simg -d ${DATE} -g season14_multi_latlon_geno_updated.geojson -m model_weights_sorghum_flir.pth -c 20 -od detect_out -of ${DATE}_detection plotclip_orthos
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
     input_file: foo
-    inputs: [$FILE, ./season12_multi_latlon_geno_updated.geojson, ./model_weights.pth]
+    inputs: [$FILE, ./season14_multi_latlon_geno_updated.geojson, ./model_weights.pth]
     outputs: []  
 
 workload_manager:
@@ -145,7 +145,8 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [level_0/season12_multi_latlon_geno_updated.geojson, level_0/necessary_files/gcp_season_12.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/season14_multi_latlon_geno_updated.geojson,
+                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/necessary_files/gcp_season_14_bucket.txt]
       prefix: flirIrCamera-
       suffix: __*.tar.gz
       level: level_0 
