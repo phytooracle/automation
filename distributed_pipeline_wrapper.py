@@ -1397,7 +1397,7 @@ def generate_megastitch_config(cwd, yaml_dictionary):
 
         f.write('METHOD:TransformationOnly\n')
         f.write(f'NO_CORES:{int(multiprocessing.cpu_count()*0.20)}\n')
-        f.write(f'NO_CORES_MAX:{int(multiprocessing.cpu_count()*0.80)}\n')
+        f.write(f'NO_CORES_MAX:{int(multiprocessing.cpu_count()*0.70)}\n')
         f.write('SCALE:0.2\n')
         f.write('HEIGHT_RATIO_FOR_ROW_SEPARATION:0.1\n')
         f.write('PERCENTAGE_OF_GOOD_MATCHES:0.5\n')
@@ -1429,7 +1429,7 @@ def generate_megastitch_config(cwd, yaml_dictionary):
         f.write('LID_ERR_STD:1e-9\n')
         f.write(f'LID_MODEL_PATH:{os.path.join(cwd, os.path.basename(lid_model_path))}\n')
         f.write('SAVE_COORDS_ON_CSV:True\n')
-        f.write('SAVE_NEW_TIFF_FILES:True\n')
+        f.write('SAVE_NEW_TIFF_FILES:False\n')
 
 
 # --------------------------------------------------
