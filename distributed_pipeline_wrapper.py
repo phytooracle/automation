@@ -1472,7 +1472,11 @@ def main():
             slack_notification(message=f"Starting data processing.", date=date)
 
             build_containers(yaml_dictionary)
-            generate_megastitch_config(cwd, yaml_dictionary)
+            
+            sensor = yaml_dictionary["tags"]["sensor"]
+   
+            if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
+                generate_megastitch_config(cwd, yaml_dictionary)
 
             if args.uploadonly:
                 upload_outputs(date, yaml_dictionary)
