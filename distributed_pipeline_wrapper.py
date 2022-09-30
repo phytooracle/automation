@@ -1396,8 +1396,8 @@ def generate_megastitch_config(cwd, yaml_dictionary):
     with open(outpath, 'w') as f:
 
         f.write('METHOD:TransformationOnly\n')
-        f.write(f'NO_CORES:{multiprocessing.cpu_count()*0.20}\n')
-        f.write(f'NO_CORES_MAX:{multiprocessing.cpu_count()*0.80}\n')
+        f.write(f'NO_CORES:{int(multiprocessing.cpu_count()*0.20)}\n')
+        f.write(f'NO_CORES_MAX:{int(multiprocessing.cpu_count()*0.80)}\n')
         f.write('SCALE:0.2\n')
         f.write('HEIGHT_RATIO_FOR_ROW_SEPARATION:0.1\n')
         f.write('PERCENTAGE_OF_GOOD_MATCHES:0.5\n')
