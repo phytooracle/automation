@@ -48,7 +48,8 @@ modules:
     file_level: dir
     input_dir: [./bin2tif_out]
     input_file: _left.tif
-    inputs: [$UUID_left.tif, ./gcp_season_14_bucket.txt, ./Lettuce_Image_Stitching, ]
+    inputs: [model_weights_sorghum_rgb.pth]
+    # inputs: [$UUID_left.tif, ./gcp_season_14_bucket.txt, ./Lettuce_Image_Stitching, ]
     outputs: [image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
 
   4:
