@@ -1421,7 +1421,7 @@ def generate_megastitch_config(cwd, yaml_dictionary):
         f.write('is_single_group:True\n')
         f.write('Initial_Size:3296,2472\n')
         f.write('LID_SIZE_MIN_MAX:170,230\n')
-        f.write('LID_METHOD:ML:TMP:FLIR:RGB\n')
+        f.write('LID_METHOD:ML\n')
         f.write('circle_error:30\n')
         f.write('lid_search_surrounding_patch_number:0\n')
         f.write('TRANSFORMATION_ERR_STD:9.32e-6,10.56e-6\n')
