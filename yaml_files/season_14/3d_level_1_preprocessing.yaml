@@ -23,7 +23,7 @@ modules:
     distribution_level: wq
     file_level: 
     input_file: -west_0.ply
-    inputs: [season12_all_bucket_gcps.txt]
+    inputs: [gcp_season_14_bucket.txt]
     outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
               alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
               alignment/merged/$SUBDIR__Top-heading-merged.ply,
