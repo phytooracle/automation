@@ -128,7 +128,7 @@ workload_manager:
   cores_per_worker: 1       # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
-  port: 6022
+  port: 0
   #mem_per_core: 32
   mem_per_core: 5
   manager_name: phytooracle_manager_flir
