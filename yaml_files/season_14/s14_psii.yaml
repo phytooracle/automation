@@ -105,15 +105,11 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+    lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
   pipeline_outpath: [.] 
   outpath_subdirs: [bin2tif_out, plotclip_out, psii_segmentation_out, fluorescence_aggregation_out]
   cyverse:
     basename: /iplant/home/shared/phytooracle/
-    upload_directories:
-      use: False
-      directories_to_move: [plant_reports]
-      temp_directory: /xdisk/cjfrost/emmanuelgonzalez/po_outputs
-      upload_account: frost_lab
 
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/season14_multi_latlon_geno_updated.geojson, 
