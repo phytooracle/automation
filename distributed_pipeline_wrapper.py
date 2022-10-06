@@ -799,7 +799,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                                 seg_model_name, 
                                                 det_model_name] + [input\
                                                     .replace('$FILE', file)\
-                                                    .replace('$UUID', os.path.basename(file).replace(file[-15:], ''))\
+                                                    .replace('$UUID', os.path.basename(file).replace(file[-16:], ''))\
                                                     .replace('$M_DATA_FILE', file.replace(file[-15:], 'metadata.json'))\
                                                     .replace('$FILE_DIR', os.path.dirname(file))\
                                                         for input in inputs]
