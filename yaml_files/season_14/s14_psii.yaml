@@ -59,9 +59,9 @@ modules:
       dockerhub_path: docker://phytooracle/psii_segmentation
     command: singularity run psii_segmentation.simg plotclip_orthos/*
     distribution_level: local
-    file_level: whole_subdir
+    file_level: dir
     input_dir: [./plotclip_out]
-    input_file: .tif
+    input_file: foo
     inputs: [./plotclip_out/$FILE]
   # outputs wrong
     outputs: []
