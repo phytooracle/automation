@@ -19,8 +19,8 @@ modules:
     container: 
       simg_name: psii_bin_to_tif.simg
       dockerhub_path: docker://phytooracle/psii_bin_to_tif:latest
-    command:  singularity run psii_bin_to_tif.simg ${FILE} -m ${M_DATA_FILE}
-    distribution_level: local
+    command:  singularity run ${CWD}/psii_bin_to_tif.simg ${CWD}/${FILE} -m ${CWD}/${M_DATA_FILE}
+    distribution_level: wq
     file_level:
     # input_dir: []
     input_file: .bin
