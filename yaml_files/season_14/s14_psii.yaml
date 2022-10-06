@@ -53,7 +53,7 @@ modules:
     inputs: [$FILE]
     outputs: []         
 
-  3:
+  4:
     container: 
       simg_name: psii_segmentation.simg
       dockerhub_path: docker://phytooracle/psii_segmentation
@@ -66,7 +66,7 @@ modules:
   # outputs wrong
     outputs: []
 
-  4:
+  5:
     container: 
       simg_name: psii_fluorescence_aggregation.simg
       dockerhub_path: docker://phytooracle/psii_fluorescence_aggregation
