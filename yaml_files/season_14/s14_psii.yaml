@@ -45,7 +45,7 @@ modules:
     container: 
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
-    command: tar -xvf ${CWD}/${FILE_DIR}.tar && rm ${CWD}/${UUID}.tar 
+    command: tar -xvf ${CWD}/${UUID}.tar && rm ${CWD}/${UUID}.tar 
     distribution_level: local
     file_level: 
     input_dir: [bin2tif_out]
