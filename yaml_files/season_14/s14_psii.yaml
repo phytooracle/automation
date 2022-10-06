@@ -57,7 +57,7 @@ modules:
     container: 
       simg_name: psii_segmentation.simg
       dockerhub_path: docker://phytooracle/psii_segmentation
-    command: singularity run psii_segmentation.simg plotclip_orthos/*
+    command: singularity run psii_segmentation.simg plotclip_out/*
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_out]
