@@ -1201,6 +1201,15 @@ def clean_inputs(date, yaml_dictionary):
             if os.path.isfile(item):
                 os.remove(item)
 
+    if len(glob.glob(f'ps2Top-{date}*')) > 0:
+        
+        for item in glob.glob(f'ps2Top-{date}*'):
+            if os.path.isdir(item):
+                shutil.rmtree(item)
+
+            if os.path.isfile(item):
+                os.remove(item)
+
     for item in yaml_dictionary['paths']['pipeline_outpath']:
         if item == '.':
             for x in yaml_dictionary["paths"]["outpath_subdirs"]:
