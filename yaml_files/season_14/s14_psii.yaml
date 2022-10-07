@@ -79,11 +79,11 @@ modules:
     outputs: [./fluorescence_aggregation_out/$DATE_fluorescence_aggregation.csv]
 
 workload_manager:
-  account: dukepauli
+  account: ericlyons
 
   high_priority_settings:
-    use: False 
-    qos_group: user_qos_dukepauli
+    use: True 
+    qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
     use: True
