@@ -637,7 +637,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"#SBATCH --account={account}\n")
             fh.writelines(f"#SBATCH --job-name={job_name}\n")
             fh.writelines(f"#SBATCH --nodes={nodes}\n")
-            fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker) + 1}\n")
+            fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker)}\n")
             fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
             fh.writelines(f"#SBATCH --time={time}\n")
             fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
