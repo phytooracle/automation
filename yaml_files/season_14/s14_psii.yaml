@@ -106,7 +106,7 @@ paths:
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
     lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
   pipeline_outpath: [.] 
-  outpath_subdirs: [bin2tif_out, plotclip_out, psii_segmentation_out, fluorescence_aggregation_out]
+  outpath_subdirs: [bin2tif_out, psii_segmentation_out, fluorescence_aggregation_out] #plotclip_out
   cyverse:
     basename: /iplant/home/shared/phytooracle/
 
