@@ -96,7 +96,7 @@ workload_manager:
   time_minutes: 1440
   retries: 1
   port: 0
-  mem_per_core: 6
+  mem_per_core: 5
   manager_name: phytooracle_manager_psii
   worker_timeout_seconds: 7200
 
