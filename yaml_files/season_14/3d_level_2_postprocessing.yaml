@@ -88,7 +88,7 @@ workload_manager:
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: True
+    use: False
     partition: standard
 
   job_name: phytooracle_worker_3d
