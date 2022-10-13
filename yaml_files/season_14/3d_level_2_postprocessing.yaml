@@ -9,7 +9,7 @@ tags:
   season_name: season_14_sorghum_yr_2022
   slack_notifications: 
     use: True
-    channel: gantry_test #gantry_data_updates
+    channel: gantry_data_updates
     container:
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
@@ -96,7 +96,7 @@ workload_manager:
   number_worker_array: 500
   cores_per_worker: 5
   time_minutes: 1440
-  retries: 1
+  retries: 0
   port: 0
   mem_per_core: 5
   manager_name: phytooracle_manager_3d
