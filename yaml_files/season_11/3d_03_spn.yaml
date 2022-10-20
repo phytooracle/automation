@@ -1,0 +1,71 @@
+---
+tags:
+  pipeline: season11_SPN
+  description: 
+  notes: Season 11 SPN 
+  runby: Pauli Lab Member
+  sensor: scanner3DTop
+  season: 11
+  season_name: season_11_sorghum_yr_2020
+  slack_notifications: 
+    use: True
+    channel: gantry_test
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+
+modules:
+  1:
+    container: 
+      simg_name: sorghum_soil_segmentation.simg
+      dockerhub_path: docker://phytooracle/sorghum_soil_segmentation:latest
+    command: mkdir -p segmentation_out/${PLANT_NAME} && singularity run ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o segmentation_out/${PLANT_NAME} -n ${PLANT_NAME}
+    distribution_level: wq
+    file_level: 
+    input_dir: [segmentation_pointclouds]
+    input_file: combined_multiway_registered.ply
+    inputs: [model_weights_sorghum_rgb.pth]
+    outputs: [segmentation_out/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, segmentation_out/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
+
+workload_manager:
+  account: windfall
+
+  high_priority_settings:
+    use: False
+    qos_group: user_qos_ericlyons
+    partition: high_priority
+  standard_settings:
+    use: True
+    partition: windfall
+
+  job_name: phytooracle_worker_rgb
+  nodes: 1                  # Just do one.  (each array is on a distinct node)
+  number_worker_array: 100  #94      # This is number of arrays (workers)
+  cores_per_worker: 10      # This is how many cores (cpu/gpu) per array, used to increase tot mem
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  #mem_per_core: 32
+  mem_per_core: 6
+  manager_name: phytooracle_manager_rgb
+  worker_timeout_seconds: 7200   # 86400
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_rgb.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
+  pipeline_outpath: [individual_plants_out_spn]
+  outpath_subdirs: [segmentation_pointclouds]
+  
+  cyverse: 
+    basename: /iplant/home/shared/phytooracle/
+
+    input: 
+      necessary_files: []
+      prefix: 
+      suffix: _segmentation_pointclouds.tar
+      level: level_2
+      input_dir: individual_plants_out
+    output:
+      level: level_3
