@@ -91,8 +91,8 @@ modules:
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
     inputs: [model_weights_sorghum_rgb.pth]
-    outputs: [individual_plants_out/segmentation_out/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
-              individual_plants_out/segmentation_out/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
 
 workload_manager:
   account: windfall
