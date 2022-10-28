@@ -5,7 +5,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=2
 #SBATCH --mem-per-cpu=5GB
-#SBATCH --time=120:00:00
+#SBATCH --time=168:00:00
 #DATE=${1}
 #YAML=${2}
 
