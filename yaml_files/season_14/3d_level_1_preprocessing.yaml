@@ -34,23 +34,23 @@ modules:
 
 
 workload_manager:
-  account: ericlyons
+  account: windfall
   high_priority_settings:
     use: False
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
     use: True
-    partition: standard
+    partition: windfall
     
   job_name: phytooracle_worker_3d
   nodes: 1
-  number_worker_array: 300
-  cores_per_worker: 4
+  number_worker_array: 500
+  cores_per_worker: 5
   time_minutes: 1440
-  retries: 1
+  retries: 2
   port: 0
-  mem_per_core: 6
+  mem_per_core: 5
   manager_name: phytooracle_manager_3d
   worker_timeout_seconds: 86400
 
