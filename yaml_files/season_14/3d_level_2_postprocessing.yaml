@@ -81,18 +81,18 @@ modules:
     inputs: [gcp_season_14_bucket.txt]
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
 
-  6:
-    container: 
-      simg_name: sorghum_soil_segmentation.simg
-      dockerhub_path: docker://phytooracle/sorghum_soil_segmentation:latest
-    command: mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && singularity run ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME}
-    distribution_level: wq
-    file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: combined_multiway_registered.ply
-    inputs: [model_weights_sorghum_rgb.pth]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
-              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
+  # 6:
+  #   container: 
+  #     simg_name: sorghum_soil_segmentation.simg
+  #     dockerhub_path: docker://phytooracle/sorghum_soil_segmentation:latest
+  #   command: mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && singularity run ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME}
+  #   distribution_level: wq
+  #   file_level: 
+  #   input_dir: [individual_plants_out, segmentation_pointclouds]
+  #   input_file: combined_multiway_registered.ply
+  #   inputs: [model_weights_sorghum_rgb.pth]
+  #   outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
+  #             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
 
 workload_manager:
   account: windfall
@@ -106,10 +106,10 @@ workload_manager:
 
   job_name: phytooracle_worker_3d
   nodes: 1
-  number_worker_array: 400
+  number_worker_array: 500
   cores_per_worker: 5
-  time_minutes: 720
-  retries: 1
+  time_minutes: 1440
+  retries: 2
   port: 0
   mem_per_core: 5
   manager_name: phytooracle_manager_3d
