@@ -36,7 +36,7 @@ modules:
     container: 
       simg_name: 3d_crop_individual_plants.simg
       dockerhub_path: docker://phytooracle/3d_crop_individual_plants:fix_date_search #latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_14_clustering.csv -f ${SUBDIR} -o ${CWD}/individual_plants_out -s 14 -d ${DATE} && tar -cvf ${CWD}/${SUBDIR}_individual_plants.tar ${CWD}/individual_plants_out/
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_14_clustering.csv -f ${SUBDIR} -o ${CWD}/individual_plants_out -s 14 -d ${DATE} #&& tar -cvf ${CWD}/${SUBDIR}_individual_plants.tar ${CWD}/individual_plants_out/
     distribution_level: wq
     file_level: 
     input_dir: [postprocessing_out, west_downsampled]
@@ -44,17 +44,17 @@ modules:
     inputs: [gcp_season_14_bucket.txt]
     outputs: [$BASENAME_individual_plants.tar]
 
-  3: 
-    container: 
-      simg_name: slack_notifications.simg
-      dockerhub_path: docker://phytooracle/slack_notifications:latest
-    command: tar -xvf ${CWD}/${SUBDIR}_individual_plants.tar && rm ${CWD}/${SUBDIR}_individual_plants.tar 
-    distribution_level: local
-    file_level: 
-    input_dir: [postprocessing_out, west]
-    input_file: -west.ply
-    inputs: [gcp_season_14_bucket.txt] 
-    outputs: []
+#   3: 
+#     container: 
+#       simg_name: slack_notifications.simg
+#       dockerhub_path: docker://phytooracle/slack_notifications:latest
+#     command: tar -xvf ${CWD}/${SUBDIR}_individual_plants.tar && rm ${CWD}/${SUBDIR}_individual_plants.tar 
+#     distribution_level: local
+#     file_level: 
+#     input_dir: [postprocessing_out, west]
+#     input_file: -west.ply
+#     inputs: [gcp_season_14_bucket.txt] 
+#     outputs: []
 
   4: 
     container: 
