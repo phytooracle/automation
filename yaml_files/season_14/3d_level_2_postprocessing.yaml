@@ -95,13 +95,13 @@ modules:
   #             individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
 
 workload_manager:
-  account: windfall
+  account: dukepauli #windfall
   high_priority_settings:
-    use: False
+    use: True #False
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
-    use: True
+    use: False #True
     partition: windfall
 
   job_name: phytooracle_worker_3d
