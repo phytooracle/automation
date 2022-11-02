@@ -122,7 +122,7 @@ paths:
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
     lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
   pipeline_outpath: [individual_plants_out]
-  outpath_subdirs: [segmentation_pointclouds, plant_reports]
+  outpath_subdirs: [segmentation_pointclouds, plant_reports, east, west]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
