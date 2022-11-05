@@ -42,13 +42,14 @@ modules:
     input_dir: [alignment, west_downsampled]
     input_file: -west.ply
     inputs: [gcp_season_14_bucket.txt]
-    outputs: [sequential_alignment/east/$SUBDIR__Top-heading-east.ply,
-              sequential_alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
-              sequential_alignment/merged/$SUBDIR__Top-heading-merged.ply,
-              sequential_alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
-              sequential_alignment/west/$SUBDIR__Top-heading-west.ply,
-              sequential_alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
-              sequential_alignment/metadata/$SUBDIR_updated-metadata.json]
+    outputs: []
+#     outputs: [sequential_alignment/east/$SUBDIR__Top-heading-east.ply,
+#               sequential_alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
+#               sequential_alignment/merged/$SUBDIR__Top-heading-merged.ply,
+#               sequential_alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+#               sequential_alignment/west/$SUBDIR__Top-heading-west.ply,
+#               sequential_alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
+#               sequential_alignment/metadata/$SUBDIR_updated-metadata.json]
 
 workload_manager:
   account: windfall
