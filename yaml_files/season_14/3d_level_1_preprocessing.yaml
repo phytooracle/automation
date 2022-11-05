@@ -32,6 +32,22 @@ modules:
               alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
               alignment/metadata/$SUBDIR_updated-metadata.json]
 
+  2: 
+    container: 
+      simg_name: 3d_sequential_align.simg
+      dockerhub_path: docker://phytooracle/3d_sequential_align:latest
+    command: singularity run ${CWD}/3d_sequential_align.simg -o ${CWD}/sequential_alignment -i ${CWD}/alignment
+    distribution_level: wq
+    file_level: 
+    input_file: -west_0.ply
+    inputs: [gcp_season_14_bucket.txt]
+    outputs: [sequential_alignment/east/$SUBDIR__Top-heading-east.ply,
+              sequential_alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
+              sequential_alignment/merged/$SUBDIR__Top-heading-merged.ply,
+              sequential_alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+              sequential_alignment/west/$SUBDIR__Top-heading-west.ply,
+              sequential_alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
+              sequential_alignment/metadata/$SUBDIR_updated-metadata.json]
 
 workload_manager:
   account: windfall
@@ -59,8 +75,8 @@ paths:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
     lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
-  pipeline_outpath: [alignment]
-  outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled, merged, merged_downsampled, metadata]
+  pipeline_outpath: [alignment, sequential_alignment]
+  outpath_subdirs: [east, east_downsampled, west, west_downsampled, merged, merged_downsampled, metadata]
 
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
