@@ -39,7 +39,7 @@ modules:
     command: singularity run ${CWD}/3d_sequential_align.simg -o ${CWD}/alignment -i ${CWD}/preprocessing
     distribution_level: local
     file_level: dir
-    input_dir: [alignment, west_downsampled]
+    input_dir: [preprocessing, west_downsampled]
     input_file: -west.ply
     inputs: [gcp_season_14_bucket.txt]
     outputs: []
