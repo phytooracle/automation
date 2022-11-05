@@ -52,10 +52,10 @@ modules:
 #               sequential_alignment/metadata/$SUBDIR_updated-metadata.json]
 
 workload_manager:
-  account: dukepauli
+  account: ericlyons
   high_priority_settings:
     use: True
-    qos_group: user_qos_dukepauli
+    qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
     use: False
