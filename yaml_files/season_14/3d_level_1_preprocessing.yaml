@@ -37,9 +37,10 @@ modules:
       simg_name: 3d_sequential_align.simg
       dockerhub_path: docker://phytooracle/3d_sequential_align:latest
     command: singularity run ${CWD}/3d_sequential_align.simg -o ${CWD}/sequential_alignment -i ${CWD}/alignment
-    distribution_level: wq
-    file_level: 
-    input_file: -west_0.ply
+    distribution_level: local
+    file_level: dir
+    input_dir: [alignment, west_downsampled]
+    input_file: -west.ply
     inputs: [gcp_season_14_bucket.txt]
     outputs: [sequential_alignment/east/$SUBDIR__Top-heading-east.ply,
               sequential_alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
