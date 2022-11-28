@@ -111,7 +111,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/season13_multi_latlon_geno_updated.geojson, 
+      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/season13_multi_latlon_geno.geojson, 
                         /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/multithresh.json]
       level: level_0
       # input_dir: 
