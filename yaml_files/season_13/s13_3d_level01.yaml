@@ -1,0 +1,85 @@
+---
+tags:
+  pipeline: season13_scanner3DTop
+  description: testing_season13_preprocessing
+  notes: Test processing of Season 13 scanner3DTop data
+  runby: Nathan
+  sensor: scanner3DTop
+  season: 13
+  season_name: season_13_lettuce_yr_2022
+  slack_notifications: 
+    use: True
+    channel: gantry_test #gantry_data_updates
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+
+modules:
+  1: 
+    container: 
+      simg_name: 3d_preprocessing.simg
+      dockerhub_path: docker://phytooracle/3d_preprocessing:latest
+    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/season13_all_bucket_gcps.txt -o alignment -i ${CWD}/${INPUT_DIR}
+    distribution_level: wq
+    file_level: 
+#     input_dir: [scanner3DTop]
+    input_file: -west_0.ply
+    inputs: [season13_all_bucket_gcps.txt]
+#     inputs: [$FILE_metadata.json,
+#              $FILE__Top-heading-east_0_g.png,
+#              $FILE__Top-heading-east_0.ply,
+#              $FILE__Top-heading-east_0_p.png,
+#              $FILE__Top-heading-west_0_g.png,
+#              $FILE__Top-heading-west_0.ply,
+#              $FILE__Top-heading-west_0_p.png,
+#              $FILE__Top-heading-west_0.ply,
+#              #stereoTop_full_season_clustering.csv,
+#              #level_3/stereoTop/stereoTop_full_season_clustering.csv,
+#              #level_3/stereoTop/season_12_midseason_clustering.csv,
+#              level_0/necessary_files/season12_all_bucket_gcps.txt]
+    outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
+              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
+              alignment/merged/$SUBDIR__Top-heading-merged.ply,
+              alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+              alignment/west/$SUBDIR__Top-heading-west.ply,
+              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
+              alignment/metadata/$SUBDIR_updated-metadata.json]
+
+
+workload_manager:
+  account: ericlyons
+  high_priority_settings:
+    use: True
+    qos_group: user_qos_ericlyons
+    partition: high_priority
+  standard_settings:
+    use: False
+    partition: standard
+    
+  job_name: phytooracle_worker_3d
+  nodes: 1
+  number_worker_array: 500
+  cores_per_worker: 4
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  mem_per_core: 5
+  manager_name: phytooracle_manager_3d
+  worker_timeout_seconds: 86400
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  pipeline_outpath: [alignment]
+  outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled, merged, merged_downsampled, metadata]
+
+  cyverse: 
+    basename: /iplant/home/shared/phytooracle/
+    input: 
+      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/vector_files/season13_all_bucket_gcps.txt]
+      level: level_0
+      prefix: scanner3DTop-
+      suffix: __*.tar.gz
+    output: 
+      level: level_1
