@@ -70,7 +70,7 @@ paths:
       necessary_files: [level_0/necessary_files/gcp_season_10.txt]
       level: level_3
       subdir: individual_plants_out
-      prefix:
-      suffix: _segmentation_pointclouds.tar
+      #prefix:
+      suffix: __*segmentation_pointclouds.tar
     output: 
       level: level_4
