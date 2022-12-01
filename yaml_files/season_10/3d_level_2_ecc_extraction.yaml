@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: pcd_ecc.simg
       dockerhub_path: docker://phytooracle/pcd_ecc:latest
-    command: singularity run pcd_ecc.simg -n ${PLANT_NAME} ${CWD}/${PLANT_PATH}/final.ply
+    command: singularity run ${CWD}/pcd_ecc.simg -n ${PLANT_NAME} ${CWD}/${PLANT_PATH}/final.ply
     distribution_level: wq
     file_level: 
     input_dir: [segmentation_pointclouds]
