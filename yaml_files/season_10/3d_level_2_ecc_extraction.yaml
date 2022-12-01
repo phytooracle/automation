@@ -71,6 +71,6 @@ paths:
       level: level_3
       input_dir: individual_plants_out
       #prefix:
-      suffix: __*segmentation_pointclouds.tar
+      suffix: __*_segmentation_pointclouds.tar
     output: 
       level: level_4
