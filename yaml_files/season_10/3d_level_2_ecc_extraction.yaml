@@ -41,7 +41,7 @@ workload_manager:
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: True
+    use: False
     partition: standard
 
   job_name: phytooracle_worker
@@ -70,7 +70,6 @@ paths:
       necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/necessary_files/gcp_season_14_bucket.txt]
       level: level_3
       input_dir: individual_plants_out
-      #prefix:
-      suffix: __*_segmentation_pointclouds.tar
+      suffix: segmentation_pointclouds.tar
     output: 
       level: level_4
