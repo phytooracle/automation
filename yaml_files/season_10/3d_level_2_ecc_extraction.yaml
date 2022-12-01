@@ -67,9 +67,10 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/necessary_files/gcp_season_14_bucket.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_3/stereoTop/season_14_clustering.csv]
       level: level_3
-      input_dir: individual_plants_out
+      prefix:
       suffix: _segmentation_pointclouds.tar
+      input_dir: individual_plants_out
     output: 
       level: level_4
