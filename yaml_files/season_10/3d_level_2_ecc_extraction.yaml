@@ -69,7 +69,7 @@ paths:
     input: 
       necessary_files: [level_0/necessary_files/gcp_season_10.txt]
       level: level_3
-      subdir: individual_plants_out
+      input_dir: individual_plants_out
       #prefix:
       suffix: __*segmentation_pointclouds.tar
     output: 
