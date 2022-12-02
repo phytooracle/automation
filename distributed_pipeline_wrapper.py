@@ -648,7 +648,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd} 
         
         if 'total_submission' in yaml_dictionary['workload_manager'].keys():
-            num = yaml_dictionary['workload_manager']['total_submision']
+            num = yaml_dictionary['workload_manager']['total_submission']
             for i in range(0, num):
                 return_code = sp.call(f"sbatch {outfile}", shell=True)
         else:
@@ -675,7 +675,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd}
         
         if 'total_submission' in yaml_dictionary['workload_manager'].keys():
-            num = yaml_dictionary['workload_manager']['total_submision']
+            num = yaml_dictionary['workload_manager']['total_submission']
             for i in range(0, num):
                 return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
         else:
