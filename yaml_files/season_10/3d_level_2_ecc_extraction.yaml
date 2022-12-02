@@ -25,13 +25,13 @@ modules:
     input_dir: [segmentation_pointclouds]
     input_file: final.ply
     inputs: [distributed_pipeline_wrapper.py]
-    outputs: [euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_alpha_3D.npy,
-              euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_bins_3D.npy,
-              euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_filt_3D.npy,
-              euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_simp_3D.npy,
-              euler_characteristic_curves/dataframes/$PLANT_NAME/$PLANT_NAME_ecc_long.csv,
+    outputs: [euler_characteristic_curves/dataframes/$PLANT_NAME/$PLANT_NAME_ecc_long.csv,
               euler_characteristic_curves/dataframes/$PLANT_NAME/$PLANT_NAME_ecc_wide.csv,
               euler_characteristic_curves/figures/$PLANT_NAME/$PLANT_NAME_ecc_figure.png]
+              # euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_alpha_3D.npy,
+              # euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_bins_3D.npy,
+              # euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_filt_3D.npy,
+              # euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_simp_3D.npy,
     
 workload_manager:
   account: ericlyons
