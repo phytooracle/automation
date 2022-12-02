@@ -1252,6 +1252,23 @@ def clean_inputs(date, yaml_dictionary):
     if os.path.isfile(f"upload.sh"):
         os.remove(f"upload.sh")
 
+    if len(glob.glob('*.tar')) > 0:
+        
+        for item in glob.glob('*.tar'):
+            if os.path.isdir(item):
+                shutil.rmtree(item)
+
+            if os.path.isfile(item):
+                os.remove(item)
+
+    if len(glob.glob('*.tar.gz')) > 0:
+        
+        for item in glob.glob('*.tar.gz'):
+            if os.path.isdir(item):
+                shutil.rmtree(item)
+
+            if os.path.isfile(item):
+                os.remove(item)
 
 # --------------------------------------------------
 def return_date_list(level_0_list):
