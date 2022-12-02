@@ -389,7 +389,7 @@ def download_irods_input_file(irods_path):
     tarball_filename = os.path.basename(irods_path)
     if not os.path.isfile(tarball_filename):
         # We need to DL the tarball.
-        cmd1 = f'iget -fPVT {irods_path}'
+        cmd1 = f'iget -fKPVT {irods_path}'
         if args.hpc: 
             print('>>>>>>Using data transfer node.')
             cwd = os.getcwd()
@@ -646,7 +646,14 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
             # fh.writelines(f"cd {cwd}\n")
             fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd} 
-        return_code = sp.call(f"sbatch {outfile}", shell=True)
+        
+        if 'total_submission' in yaml_dictionary['workload_manager'].keys():
+            num = yaml_dictionary['workload_manager']['total_submission']
+            for i in range(0, num):
+                return_code = sp.call(f"sbatch {outfile}", shell=True)
+        else:
+            return_code = sp.call(f"sbatch {outfile}", shell=True)
+
         if return_code == 1:
             raise Exception(f"sbatch Failed")
 
@@ -666,7 +673,14 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
             # fh.writelines(f"cd {cwd}\n")
             fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd}
-        return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
+        
+        if 'total_submission' in yaml_dictionary['workload_manager'].keys():
+            num = yaml_dictionary['workload_manager']['total_submission']
+            for i in range(0, num):
+                return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
+        else:
+            return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
+
         if return_code == 1:
             raise Exception(f"sbatch Failed")
     
@@ -1238,6 +1252,23 @@ def clean_inputs(date, yaml_dictionary):
     if os.path.isfile(f"upload.sh"):
         os.remove(f"upload.sh")
 
+    if len(glob.glob('*.tar')) > 0:
+        
+        for item in glob.glob('*.tar'):
+            if os.path.isdir(item):
+                shutil.rmtree(item)
+
+            if os.path.isfile(item):
+                os.remove(item)
+
+    if len(glob.glob('*.tar.gz')) > 0:
+        
+        for item in glob.glob('*.tar.gz'):
+            if os.path.isdir(item):
+                shutil.rmtree(item)
+
+            if os.path.isfile(item):
+                os.remove(item)
 
 # --------------------------------------------------
 def return_date_list(level_0_list):

@@ -25,13 +25,13 @@ modules:
     input_dir: [segmentation_pointclouds]
     input_file: final.ply
     inputs: [distributed_pipeline_wrapper.py]
-    outputs: [euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_alpha_3D.npy,
-              euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_bins_3D.npy,
-              euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_filt_3D.npy,
-              euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_simp_3D.npy,
-              euler_characteristic_curves/dataframes/$PLANT_NAME/$PLANT_NAME_ecc_long.csv,
+    outputs: [euler_characteristic_curves/dataframes/$PLANT_NAME/$PLANT_NAME_ecc_long.csv,
               euler_characteristic_curves/dataframes/$PLANT_NAME/$PLANT_NAME_ecc_wide.csv,
               euler_characteristic_curves/figures/$PLANT_NAME/$PLANT_NAME_ecc_figure.png]
+              # euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_alpha_3D.npy,
+              # euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_bins_3D.npy,
+              # euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_filt_3D.npy,
+              # euler_characteristic_curves/arrays/$PLANT_NAME/$PLANT_NAME_simp_3D.npy,
     
 workload_manager:
   account: ericlyons
@@ -44,10 +44,11 @@ workload_manager:
     use: False
     partition: standard
 
+  total_submission: 2
   job_name: phytooracle_worker
   nodes: 1
   number_worker_array: 450
-  cores_per_worker: 2
+  cores_per_worker: 1
   time_minutes: 1440
   retries: 1
   port: 0
@@ -61,7 +62,7 @@ paths:
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
     lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
   pipeline_outpath: [euler_characteristic_curves]
-  outpath_subdirs: [arrays, dataframes, figures]
+  outpath_subdirs: [dataframes, figures]
 
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
