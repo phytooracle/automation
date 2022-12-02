@@ -389,7 +389,7 @@ def download_irods_input_file(irods_path):
     tarball_filename = os.path.basename(irods_path)
     if not os.path.isfile(tarball_filename):
         # We need to DL the tarball.
-        cmd1 = f'iget -fPVT {irods_path}'
+        cmd1 = f'iget -fKPVT {irods_path}'
         if args.hpc: 
             print('>>>>>>Using data transfer node.')
             cwd = os.getcwd()
