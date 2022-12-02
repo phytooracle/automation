@@ -2,8 +2,8 @@
 tags:
   pipeline: season10_scanner3DTop
   description: final
-  notes: Processing of Season 10 scanner3DTop data using the machine learning (ML)-based cropping approach. This approach using a Faster RCNN object detection model to localize plants in 2D.
-  runby: Pauli lab member
+  notes: Euler characteristic curve (ECC) extraction for individual plant point clouds.
+  runby: Emmanuel Gonzalez
   sensor: scanner3DTop 
   season: 10
   season_name: season_10_lettuce_yr_2020
@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: pcd_ecc.simg
       dockerhub_path: docker://phytooracle/pcd_ecc:latest
-    command: singularity run ${CWD}/pcd_ecc.simg -n ${PLANT_NAME} ${CWD}/${PLANT_PATH}/final.ply
+    command: singularity run ${CWD}/pcd_ecc.simg -n ${PLANT_NAME} -o ${CWD}/euler_characteristic_curves ${CWD}/${PLANT_PATH}/final.ply
     distribution_level: wq
     file_level: 
     input_dir: [segmentation_pointclouds]
