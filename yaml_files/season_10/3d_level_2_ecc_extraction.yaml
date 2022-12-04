@@ -44,17 +44,18 @@ workload_manager:
     use: False
     partition: standard
 
-  total_submission: 2
+  worker_type: work_queue_factory
+  total_submission: 1
   job_name: phytooracle_worker
   nodes: 1
-  number_worker_array: 450
-  cores_per_worker: 1
-  time_minutes: 1440
+  number_worker_array: 5
+  cores_per_worker: 94
+  time_minutes: 720
   retries: 1
   port: 0
   mem_per_core: 5
   manager_name: phytooracle_manager
-  worker_timeout_seconds: 1600
+  worker_timeout_seconds: 1800
   
 paths:
   models:
