@@ -639,7 +639,6 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
         fh.writelines(f"#SBATCH --account={account}\n")
         fh.writelines(f"#SBATCH --job-name={job_name}\n")
         fh.writelines(f"#SBATCH --nodes={nodes}\n")
-        fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker)}\n")
         fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
         fh.writelines(f"#SBATCH --time={time}\n")
         fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
@@ -654,13 +653,18 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
         fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
         fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
         if worker_type == 'work_queue_worker':
+            
+            fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker)}\n")
             fh.writelines(f"{worker_type} -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
+
         elif worker_type == 'work_queue_factory':
 
             if 'max_workers' in yaml_dictionary['workload_manager'].keys():
+                fh.writelines(f"#SBATCH --ntasks={int(yaml_dictionary['workload_manager']['max_workers'])}\n")
                 fh.writelines(f"{worker_type} -T local -M {manager_name} --max-workers {yaml_dictionary['workload_manager']['max_workers']} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
 
             else:
+                fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
                 fh.writelines(f"{worker_type} -T local -M {manager_name} --max-workers {cores_per_worker} --cores 1 -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
 
     
