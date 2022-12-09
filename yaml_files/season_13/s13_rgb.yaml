@@ -43,7 +43,7 @@ modules:
     container: 
       simg_name: full_geocorrection.simg
       dockerhub_path: docker://ariyanzarei/full_geocorrection:latest
-    command: mkdir -p image_stiching && singularity exec -B $(pwd):/mnt --pwd /mnt full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_HPC.py -d image_stiching -b ./bin2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_10.txt -r ./Lettuce_Image_Stitching
+    command: mkdir -p image_stiching && singularity exec -B $(pwd):/mnt --pwd /mnt full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_HPC.py -d image_stiching -b ./bin2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_13_bucket.txt -r ./Lettuce_Image_Stitching
     distribution_level: local
     file_level: dir
     input_dir: [./bin2tif_out]
@@ -80,12 +80,12 @@ modules:
     container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson
-    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season10_multi_latlon_geno.geojson -sen rgb
+    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season13_multi_latlon_geno.geojson -sen rgb
     distribution_level: local
     file_level: 
     input_dir: [./edited_tifs]
     input_file: .tif
-    inputs: [$FILE, ./season10_multi_latlon_geno.geojson]
+    inputs: [$FILE, ./season13_multi_latlon_geno.geojson]
     outputs: [] 
 
   7:
@@ -104,23 +104,23 @@ modules:
     container: 
       simg_name: rgb_flir_plant_detection.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plant_detection
-    command: singularity run rgb_flir_plant_detection.simg ./plotclip_orthos -m ./model_weights.pth -g ./season10_multi_latlon_geno.geojson -d ${DATE} -t RGB -c lettuce #is lettuce valid?
+    command: singularity run rgb_flir_plant_detection.simg ./plotclip_orthos -m ./model_weights.pth -g ./season13_multi_latlon_geno.geojson -d ${DATE} -t RGB -c lettuce
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
     input_file: foo
-    inputs: [$FILE, ./season10_multi_latlon_geno.geojson, ./model_weights.pth]
+    inputs: [$FILE, ./season13_multi_latlon_geno.geojson, ./model_weights.pth]
     outputs: []  
 
 workload_manager:
-  account: frost_lab
+  account: user_qos_dukepauli
 
   high_priority_settings:
-    use: False
-    qos_group: user_qos_ericlyons
+    use: True
+    qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
-    use: True
+    use: False
     partition: standard
 
   job_name: phytooracle_worker_rgb
@@ -147,9 +147,8 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      # should these be season 10 or season 13?
-      necessary_files: [/iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/season10_multi_latlon_geno.geojson,
-                        /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/gcp_season_10.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2020/level_0/season13_multi_latlon_geno.geojson,
+                        /iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/necessary_files/gcp_season_13_bucket.txt]
       prefix: stereoTop-
       suffix: __*.tar.gz
       level: level_0
