@@ -113,7 +113,7 @@ modules:
     outputs: []  
 
 workload_manager:
-  account: user_qos_dukepauli
+  account: dukepauli
 
   high_priority_settings:
     use: True
