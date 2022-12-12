@@ -6,7 +6,7 @@ tags:
   runby: Pauli Lab Member
   sensor: ps2Top 
   season: 13
-  season_name: season_13_sorghum_yr_2022
+  season_name: season_13_lettuce_yr_2022
   slack_notifications: 
     use: True
     channel: gantry_test
