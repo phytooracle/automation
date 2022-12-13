@@ -33,7 +33,7 @@ modules:
     container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
-    command: singularity run rgb_flir_plot_clip_geojson.simg ${CWD}/${FILE} -sen psii -shp ${CWD}/season14_multi_latlon_geno_updated.geojson && tar -cvf ${UUID}.tar plotclip_out/
+    command: singularity run rgb_flir_plot_clip_geojson.simg ${CWD}/${FILE} -sen psii -shp ${CWD}/season13_multi_latlon_geno_updated.geojson && tar -cvf ${UUID}.tar plotclip_out/
     distribution_level: wq
     file_level: 
     input_dir: [bin2tif_out]
