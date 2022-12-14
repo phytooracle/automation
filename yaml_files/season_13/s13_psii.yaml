@@ -38,7 +38,7 @@ modules:
     file_level: 
     input_dir: [bin2tif_out]
     input_file: .tif
-    inputs: [$FILE, season13_multi_latlon_geno_updated.geojson]
+    inputs: [$FILE, season13_multi_latlon_geno.geojson]
     outputs: [$UUID.tar]    
 
   3: 
@@ -50,7 +50,7 @@ modules:
     file_level: 
     input_dir: [bin2tif_out]
     input_file: .tif
-    inputs: [season13_multi_latlon_geno_updated.geojson] 
+    inputs: [season13_multi_latlon_geno.geojson] 
     outputs: []
 
   4:
