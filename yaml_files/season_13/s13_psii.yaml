@@ -6,7 +6,7 @@ tags:
   runby: Pauli Lab Member
   sensor: ps2Top 
   season: 13
-  season_name: season_13_sorghum_yr_2022
+  season_name: season_13_lettuce_yr_2022
   slack_notifications: 
     use: True
     channel: gantry_test
@@ -33,12 +33,12 @@ modules:
     container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
-    command: singularity run rgb_flir_plot_clip_geojson.simg ${CWD}/${FILE} -sen psii -shp ${CWD}/season14_multi_latlon_geno_updated.geojson && tar -cvf ${UUID}.tar plotclip_out/
+    command: singularity run rgb_flir_plot_clip_geojson.simg ${CWD}/${FILE} -sen psii -shp ${CWD}/season13_multi_latlon_geno_updated.geojson && tar -cvf ${UUID}.tar plotclip_out/
     distribution_level: wq
     file_level: 
     input_dir: [bin2tif_out]
     input_file: .tif
-    inputs: [$FILE, season14_multi_latlon_geno_updated.geojson]
+    inputs: [$FILE, season13_multi_latlon_geno.geojson]
     outputs: [$UUID.tar]    
 
   3: 
@@ -50,7 +50,7 @@ modules:
     file_level: 
     input_dir: [bin2tif_out]
     input_file: .tif
-    inputs: [season14_multi_latlon_geno_updated.geojson] 
+    inputs: [season13_multi_latlon_geno.geojson] 
     outputs: []
 
   4:
