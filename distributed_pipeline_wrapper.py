@@ -583,7 +583,7 @@ def get_season_name():
 
 
 # --------------------------------------------------
-def get_model_files(seg_model_path, det_model_path, lid_model_path):
+def get_model_files(yaml_dictionary):
     """Download model weights from CyVerse DataStore
     
     Input:
@@ -593,17 +593,30 @@ def get_model_files(seg_model_path, det_model_path, lid_model_path):
     Output: 
         - Downloaded model weight files.
     """
-    if not os.path.isfile(os.path.basename(seg_model_path)):
-        cmd1 = f'iget -fKPVT {seg_model_path}'
-        sp.call(cmd1, shell=True)
+    
+    if 'segmentation' in yaml_dictionary['paths']['models'].keys():
 
-    if not os.path.isfile(os.path.basename(det_model_path)):
-        cmd1 = f'iget -fKPVT {det_model_path}'
-        sp.call(cmd1, shell=True)
+        seg_model_path = yaml_dictionary['paths']['models']['segmentation']
 
-    if not os.path.isfile(os.path.basename(lid_model_path)):
-        cmd1 = f'iget -fKPVT {lid_model_path}'
-        sp.call(cmd1, shell=True)
+        if not os.path.isfile(os.path.basename(seg_model_path)):
+            cmd1 = f'iget -fKPVT {seg_model_path}'
+            sp.call(cmd1, shell=True)
+
+    if 'detection' in yaml_dictionary['paths']['models'].keys():
+        
+        det_model_path = yaml_dictionary['paths']['models']['detection']
+
+        if not os.path.isfile(os.path.basename(det_model_path)):
+            cmd1 = f'iget -fKPVT {det_model_path}'
+            sp.call(cmd1, shell=True)
+
+    if 'lid' in yaml_dictionary['paths']['models'].keys():
+        
+        lid_model_path = yaml_dictionary['paths']['models']['lid']
+
+        if not os.path.isfile(os.path.basename(lid_model_path)):
+            cmd1 = f'iget -fKPVT {lid_model_path}'
+            sp.call(cmd1, shell=True)
 
     return os.path.basename(seg_model_path), os.path.basename(det_model_path) 
 
@@ -1636,9 +1649,7 @@ def main():
                         cwd=cwd)
 
             global seg_model_name, det_model_name
-            seg_model_name, det_model_name = get_model_files(yaml_dictionary['paths']['models']['segmentation'], 
-                                                             yaml_dictionary['paths']['models']['detection'],
-                                                             yaml_dictionary['paths']['models']['lid'])
+            seg_model_name, det_model_name = get_model_files(yaml_dictionary)
 
             for k, v in yaml_dictionary['modules'].items():
                 
