@@ -609,7 +609,7 @@ def get_model_files(seg_model_path, det_model_path, lid_model_path):
 
 
 # --------------------------------------------------
-def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, cwd, outfile='worker.sh', outfile_priority='worker_priority.sh'):
+def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, manager_name, number_worker_array, cores_per_worker, worker_timeout, cwd, outfile='worker.sh', worker_type='work_queue_worker'):
     '''
     Launches workers on a SLURM workload management system.
 
@@ -630,61 +630,58 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
         - Running workers on an HPC system
     '''
     time_seconds = int(time)*60
+
+    if 'worker_type' in yaml_dictionary['workload_manager'].keys():
+        worker_type=yaml_dictionary['workload_manager']['worker_type']
     
-    if yaml_dictionary['workload_manager']['standard_settings']['use']==True:
-        with open(outfile, 'w') as fh:
-            fh.writelines("#!/bin/bash\n")
-            fh.writelines(f"#SBATCH --account={account}\n")
-            fh.writelines(f"#SBATCH --job-name={job_name}\n")
-            fh.writelines(f"#SBATCH --nodes={nodes}\n")
-            fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker)}\n")
-            fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
-            fh.writelines(f"#SBATCH --time={time}\n")
-            fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
+    with open(outfile, 'w') as fh:
+        fh.writelines("#!/bin/bash\n")
+        fh.writelines(f"#SBATCH --account={account}\n")
+        fh.writelines(f"#SBATCH --job-name={job_name}\n")
+        fh.writelines(f"#SBATCH --nodes={nodes}\n")
+        fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
+        fh.writelines(f"#SBATCH --time={time}\n")
+        fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
+
+        if yaml_dictionary['workload_manager']['standard_settings']['use']==True:
             fh.writelines(f"#SBATCH --partition={yaml_dictionary['workload_manager']['standard_settings']['partition']}\n")
-            fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
-            fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-            # fh.writelines(f"cd {cwd}\n")
-            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd} 
-        
-        if 'total_submission' in yaml_dictionary['workload_manager'].keys():
-            num = yaml_dictionary['workload_manager']['total_submission']
-            for i in range(0, num):
-                return_code = sp.call(f"sbatch {outfile}", shell=True)
-        else:
-            return_code = sp.call(f"sbatch {outfile}", shell=True)
 
-        if return_code == 1:
-            raise Exception(f"sbatch Failed")
-
-    if yaml_dictionary['workload_manager']['high_priority_settings']['use']==True:
-        with open(outfile_priority, 'w') as fh:
-            fh.writelines("#!/bin/bash\n")
-            fh.writelines(f"#SBATCH --account={account}\n")
-            fh.writelines(f"#SBATCH --job-name={job_name}\n")
-            fh.writelines(f"#SBATCH --nodes={nodes}\n")
-            fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
-            fh.writelines(f"#SBATCH --mem-per-cpu={mem_per_core}gb\n")
-            fh.writelines(f"#SBATCH --time={time}\n")
-            fh.writelines(f"#SBATCH --array 1-{number_worker_array}\n")
+        elif yaml_dictionary['workload_manager']['high_priority_settings']['use']==True:
             fh.writelines(f"#SBATCH --qos={yaml_dictionary['workload_manager']['high_priority_settings']['qos_group']}\n")
             fh.writelines(f"#SBATCH --partition={yaml_dictionary['workload_manager']['high_priority_settings']['partition']}\n")
+        
+
+        if worker_type == 'work_queue_worker':
+
+            fh.writelines(f"#SBATCH --ntasks={int(cores_per_worker)}\n")
             fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
             fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
-            # fh.writelines(f"cd {cwd}\n")
-            fh.writelines(f"work_queue_worker -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n") #--workdir {cwd}
-        
-        if 'total_submission' in yaml_dictionary['workload_manager'].keys():
-            num = yaml_dictionary['workload_manager']['total_submission']
-            for i in range(0, num):
-                return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
-        else:
-            return_code = sp.call(f"sbatch {outfile_priority}", shell=True)
+            fh.writelines(f"{worker_type} -M {manager_name} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
 
-        if return_code == 1:
-            raise Exception(f"sbatch Failed")
+        elif worker_type == 'work_queue_factory':
+
+            if 'max_workers' in yaml_dictionary['workload_manager'].keys():
+                fh.writelines(f"#SBATCH --ntasks={int(yaml_dictionary['workload_manager']['max_workers'])}\n")
+                fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
+                fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
+                fh.writelines(f"{worker_type} -T local -M {manager_name} --max-workers {yaml_dictionary['workload_manager']['max_workers']} --cores {cores_per_worker} -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
+
+            else:
+                fh.writelines(f"#SBATCH --ntasks={cores_per_worker}\n")
+                fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
+                fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
+                fh.writelines(f"{worker_type} -T local -M {manager_name} --max-workers {cores_per_worker} --cores 1 -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
+
     
+    if 'total_submission' in yaml_dictionary['workload_manager'].keys():
+        num = yaml_dictionary['workload_manager']['total_submission']
+        for i in range(0, num):
+            return_code = sp.call(f"sbatch {outfile}", shell=True)
+    else:
+        return_code = sp.call(f"sbatch {outfile}", shell=True)
 
+    if return_code == 1:
+        raise Exception(f"sbatch Failed")
 
 
 # --------------------------------------------------
