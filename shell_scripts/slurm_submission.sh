@@ -10,4 +10,4 @@
 #YAML=${2}
 
 YAML=${1}
-./distributed_pipeline_wrapper.py -hpc -y ${YAML} -x sorghum
+./distributed_pipeline_wrapper.py -hpc -y ${YAML} -x lettuce
