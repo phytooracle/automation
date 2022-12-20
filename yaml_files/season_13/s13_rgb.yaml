@@ -126,7 +126,7 @@ workload_manager:
   job_name: phytooracle_worker_rgb
   total_submission: 2
   nodes: 1
-  number_worker_array: 500
+  number_worker_array: 490
   cores_per_worker: 1
   time_minutes: 1440
   retries: 1
