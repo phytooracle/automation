@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: rgb_bin_to_tif.simg
       dockerhub_path: docker://phytooracle/rgb_bin_to_tif:latest
-    command:  singularity run ${CWD}/rgb_bin_to_tif.simg ${CWD}/${FILE} -m ${CWD}/${UUID}_metadata.json
+    command:  singularity run --fakeroot ${CWD}/rgb_bin_to_tif.simg ${CWD}/${FILE} -m ${CWD}/${UUID}_metadata.json
     distribution_level: wq
     file_level:
     #input_dir: [./$RAW_DATA_PATH]
@@ -148,7 +148,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2020/level_0/season13_multi_latlon_geno.geojson,
+      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/season13_multi_latlon_geno.geojson,
                         /iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/necessary_files/gcp_season_13_bucket.txt]
       prefix: stereoTop-
       suffix: __*.tar.gz
