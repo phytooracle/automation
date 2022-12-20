@@ -104,7 +104,7 @@ modules:
     container: 
       simg_name: rgb_flir_plant_detection.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plant_detection
-    command: singularity run rgb_flir_plant_detection.simg ./plotclip_orthos -m ./model_weights.pth -g ./season13_multi_latlon_geno.geojson -d ${DATE} -t RGB -c plant
+    command: singularity run rgb_flir_plant_detection.simg ./plotclip_orthos -m ./model_weights.pth -g ./season13_multi_latlon_geno.geojson -d ${DATE} -t RGB -c lettuce
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
