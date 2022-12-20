@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: rgb_bin_to_tif.simg
       dockerhub_path: docker://phytooracle/rgb_bin_to_tif:latest
-    command:  singularity run ${CWD}/rgb_bin_to_tif.simg ${CWD}/${FILE} -m ${CWD}/${UUID}_metadata.json
+    command:  singularity run --fakeroot ${CWD}/rgb_bin_to_tif.simg ${CWD}/${FILE} -m ${CWD}/${UUID}_metadata.json
     distribution_level: wq
     file_level:
     #input_dir: [./$RAW_DATA_PATH]
