@@ -103,12 +103,12 @@ modules:
     container: 
       simg_name: flir_plant_temp.simg
       dockerhub_path: docker://phytooracle/flir_plant_temp
-    command: singularity run -B $(pwd):/mnt --pwd /mnt flir_plant_temp.simg -d ${DATE} -g season14_multi_latlon_geno_updated.geojson -m model_weights_sorghum_flir.pth -c 20 -od detect_out -of ${DATE}_detection plotclip_orthos
+    command: singularity run -B $(pwd):/mnt --pwd /mnt flir_plant_temp.simg -d ${DATE} -g season14_multi_latlon_geno_updated.geojson -m model_weights_flir_v3_full.pth -c 20 -od detect_out -of ${DATE}_detection plotclip_orthos
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
     input_file: foo
-    inputs: [$FILE, ./season14_multi_latlon_geno_updated.geojson, ./model_weights.pth]
+    inputs: [$FILE, ./season14_multi_latlon_geno_updated.geojson, ./model_weights_flir_v3_full.pth]
     outputs: []  
 
 workload_manager:
@@ -136,7 +136,7 @@ workload_manager:
 
 paths:
   models:
-    detection:  /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_flir.pth
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_flir_v3_full.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     lid: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth
   pipeline_outpath: [.]
