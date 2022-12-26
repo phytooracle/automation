@@ -40,16 +40,11 @@ def download_file_from_cyverse(irods_path):
     """
     Download the single file given by irods_path to the current working directory.
     """
-
-    global hpc
-    cmd = f'iget -KPVT {os.path.join(irods_path)}'
-
-    if hpc: 
-        print(f"Using filexfer node to download file")
-        run_filexfer_node_commands([cmd])
+    # check if the file exists on cyverse
+    if not check_if_file_exists_on_cyverse(irods_path):
+        raise Exception(f"File not found on cyverse: {irods_path}")
     else:
-        print(f"Using current node/system to download file")
-        sp.call(cmd, shell=True)
+        print(f"Successfully downloaded file from cyverse: {irods_path}")
 
 def download_files_from_cyverse(files, experiment, force_overwrite=False):
     """
@@ -104,4 +99,31 @@ def untar_files(local_files, force_overwrite=False):
                 print(f"Unarchiving: {filename}")
                 file.extractall(".")
                 file.close()
+
+
+def check_if_file_exists_on_cyverse(irods_path):
+    """
+    Check if the file exists on cyverse. Return True if it does, False if it doesn't.
+    """
+    global hpc
+    cmd = f'iget -KPVT {os.path.join(irods_path)}'
+
+    if hpc:
+        print(f"Using filexfer node to download file")
+        print(':: Using data transfer node.')
+        _a = [f"'&& {x}'" for x in [cmd]]
+        command_string = " ".join(_a)
+        cwd = os.getcwd()
+        result = sp.run(f"ssh filexfer 'cd {cwd}' {command_string} '&& exit'", capture_output=True, text=True, shell=True)
+    
+    else:
+        print(f"Using current node/system to download file")
+        result = sp.run(cmd, capture_output=True, text=True, shell=True)
+
+    if "does not exist" in result.stderr:
+        return False
+    else:
+        return True
+
+   
 
