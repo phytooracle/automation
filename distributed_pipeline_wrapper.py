@@ -1642,7 +1642,7 @@ def main():
                         nodes=yaml_dictionary['workload_manager']['nodes'], 
                         time=yaml_dictionary['workload_manager']['time_minutes'], 
                         mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
-                        manager_name=''.join([yaml_dictionary['workload_manager']['manager_name'], user]), 
+                        manager_name='_'.join([yaml_dictionary['workload_manager']['manager_name'], user]), 
                         number_worker_array=yaml_dictionary['workload_manager']['number_worker_array'], 
                         cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
                         worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
