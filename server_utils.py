@@ -42,6 +42,7 @@ def download_file_from_cyverse(irods_path):
     """
     # check if the file exists on cyverse
     if not check_if_file_exists_on_cyverse(irods_path):
+        print("ERROR: File not found on cyverse.")
         raise Exception(f"File not found on cyverse: {irods_path}")
     else:
         print(f"Successfully downloaded file from cyverse: {irods_path}")
