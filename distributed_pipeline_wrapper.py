@@ -1531,7 +1531,7 @@ def generate_megastitch_config(cwd, yaml_dictionary):
 # --------------------------------------------------
 def main():
     """Run distributed data processing here"""
-
+    user = os.environ['LOGNAME']
     args = get_args()
     cctools_path = download_cctools(cctools_version=args.cctools_version)
     create_mf_monitor(cctools_path)
@@ -1635,7 +1635,7 @@ def main():
 
             if args.hpc:
                 kill_workers(yaml_dictionary['workload_manager']['job_name'])
-                user = os.environ['LOGNAME']
+          
                 launch_workers(cctools_path = cctools_path,
                         account=yaml_dictionary['workload_manager']['account'], 
                         job_name='_'.join([yaml_dictionary['workload_manager']['job_name'], user]), 
@@ -1667,7 +1667,7 @@ def main():
                     
                 write_file_list(files_list)
                 json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=yaml_dictionary['tags']['sensor'], yaml_dictionary=yaml_dictionary, json_out_path=f'wf_file_{k}.json')
-                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name=yaml_dictionary['workload_manager']['manager_name'], retries=yaml_dictionary['workload_manager']['retries'], port=yaml_dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
+                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name='_'.join([yaml_dictionary['workload_manager']['manager_name'], user]), retries=yaml_dictionary['workload_manager']['retries'], port=yaml_dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
 
                 if not args.noclean:
                     print(f"Cleaning directory")
