@@ -42,7 +42,6 @@ def download_file_from_cyverse(irods_path):
     """
     # check if the file exists on cyverse
     if not check_if_file_exists_on_cyverse(irods_path):
-        print("ERROR: File not found on cyverse.")
         raise Exception(f"File not found on cyverse: {irods_path}")
     else:
         print(f"Successfully downloaded file from cyverse: {irods_path}")
@@ -113,8 +112,7 @@ def check_if_file_exists_on_cyverse(irods_path):
         print(f"Using filexfer node to download file")
         print(':: Using data transfer node.')
         cwd = os.getcwd()
-        print("Running command: ", f"ssh filexfer 'cd {cwd}' && {cmd} '&& exit")
-        result = sp.run(f"ssh filexfer 'cd {cwd}' && {cmd} '&& exit'", capture_output=True, text=True, shell=True)
+        result = sp.run(f"ssh filexfer 'cd {cwd}' '&& {cmd}' '&& exit'", capture_output=True, text=True, shell=True)
     
     else:
         print(f"Using current node/system to download file")
