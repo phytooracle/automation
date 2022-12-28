@@ -112,10 +112,9 @@ def check_if_file_exists_on_cyverse(irods_path):
     if hpc:
         print(f"Using filexfer node to download file")
         print(':: Using data transfer node.')
-        _a = [f"'&& {x}'" for x in [cmd]]
-        command_string = " ".join(_a)
         cwd = os.getcwd()
-        result = sp.run(f"ssh filexfer 'cd {cwd}' {command_string} '&& exit'", capture_output=True, text=True, shell=True)
+        print("Running command: ", f"ssh filexfer 'cd {cwd}' && {cmd} '&& exit")
+        result = sp.run(f"ssh filexfer 'cd {cwd}' && {cmd} '&& exit'", capture_output=True, text=True, shell=True)
     
     else:
         print(f"Using current node/system to download file")
