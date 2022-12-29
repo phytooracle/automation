@@ -114,6 +114,7 @@ def check_if_file_exists_on_cyverse(irods_path):
         _a = [f"'&& {x}'" for x in [cmd]]
         command_string = " ".join(_a)
         cwd = os.getcwd()
+        print('RUNNING COMMAND: ', f"ssh filexfer 'cd {cwd}' {command_string} '&& exit'")
         result = sp.run(f"ssh filexfer 'cd {cwd}' {command_string} '&& exit'", capture_output=True, text=True, shell=True)
     
     else:
