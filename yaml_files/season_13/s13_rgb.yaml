@@ -79,7 +79,7 @@ modules:
   6:
     container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
-      dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson
+      dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
     command: singularity run --fakeroot rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season13_multi_latlon_geno.geojson -sen rgb
     distribution_level: local
     file_level: 
@@ -91,7 +91,7 @@ modules:
   7:
     container: 
       simg_name: stitch_plots.simg
-      dockerhub_path: docker://phytooracle/stitch_plots
+      dockerhub_path: docker://phytooracle/stitch_plots:latest
     command: singularity run --fakeroot stitch_plots.simg plotclip_out/
     distribution_level: local
     file_level: dir
@@ -103,7 +103,7 @@ modules:
   8:
     container: 
       simg_name: rgb_flir_plant_detection.simg
-      dockerhub_path: docker://phytooracle/rgb_flir_plant_detection
+      dockerhub_path: docker://phytooracle/rgb_flir_plant_detection:latest
     command: singularity run --fakeroot rgb_flir_plant_detection.simg ./plotclip_orthos -m ./model_weights.pth -g ./season13_multi_latlon_geno.geojson -d ${DATE} -t RGB -c lettuce
     distribution_level: local
     file_level: dir

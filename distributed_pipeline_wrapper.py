@@ -1432,6 +1432,7 @@ def move_outputs(scan_date, yaml_dictionary):
 
 # --------------------------------------------------
 def handle_date_failure(args, date, yaml_dictionary):
+    user = os.environ['LOGNAME']
     slack_notification(message=f"PIPELINE ERROR. Stopping now.", date=date)
     if not args.noclean:
         slack_notification(message=f"PIPELINE ERROR. Cleaning inputs.", date=date)
@@ -1440,7 +1441,7 @@ def handle_date_failure(args, date, yaml_dictionary):
         clean_inputs(date, yaml_dictionary)  
         slack_notification(message=f"PIPELINE ERROR. Cleaning inputs complete.", date=date)
 
-    kill_workers(yaml_dictionary['workload_manager']['job_name'])
+    kill_workers('_'.join([yaml_dictionary['workload_manager']['job_name'], user]))
     
 
 # --------------------------------------------------
@@ -1634,7 +1635,7 @@ def main():
             ###########################################################
 
             if args.hpc:
-                kill_workers(yaml_dictionary['workload_manager']['job_name'])
+                kill_workers('_'.join([yaml_dictionary['workload_manager']['job_name'], user]))
           
                 launch_workers(cctools_path = cctools_path,
                         account=yaml_dictionary['workload_manager']['account'], 
@@ -1676,7 +1677,7 @@ def main():
                 slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])} complete.", date=date)
 
             slack_notification(message=f"All processing steps complete.", date=date)
-            kill_workers(yaml_dictionary['workload_manager']['job_name'])
+            kill_workers('_'.join([yaml_dictionary['workload_manager']['job_name'], user]))
             if not args.noupload:
                 # Archive output directories
                 slack_notification(message=f"Archiving data.", date=date)
