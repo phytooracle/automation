@@ -148,6 +148,8 @@ def check_if_file_exists_on_cyverse(irods_path):
 
 def check_if_file_exists_on_cyverse_2(irods_path):
     r = requests.head('https://data.cyverse.org/dav-anon/' + irods_path.lstrip('/'))
+    print("STATUS CODE: ", r.status_code)
+    print('RETURNING: ', r.status_code == requests.codes.ok)
     return r.status_code == requests.codes.ok
 
    
