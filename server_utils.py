@@ -56,6 +56,7 @@ def download_file_from_cyverse(irods_path):
     cmd = f'iget -KPVT {os.path.join(irods_path)}'
 
     if not check_if_file_exists_on_cyverse_2(irods_path):
+        print(f"ERROR: File not found on cyverse: {irods_path}")
         raise Exception(f"File not found on cyverse: {irods_path}")
 
     if hpc: 
