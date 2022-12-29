@@ -4,6 +4,7 @@ import subprocess as sp
 import shutil
 import glob
 import tarfile
+import requests
 
 hpc = False
 
@@ -36,15 +37,33 @@ def get_filenames_in_dir_from_cyverse(irods_dir_path):
     dir_files = [x.strip() for x in cyverse_ls.decode('utf-8').splitlines()][1:]
     return dir_files
 
+# def download_file_from_cyverse(irods_path):
+#     """
+#     Download the single file given by irods_path to the current working directory.
+#     """
+#     # check if the file exists on cyverse
+#     if not check_if_file_exists_on_cyverse(irods_path):
+#         raise Exception(f"File not found on cyverse: {irods_path}")
+#     else:
+#         print(f"Successfully downloaded file from cyverse: {irods_path}")\
+
 def download_file_from_cyverse(irods_path):
     """
     Download the single file given by irods_path to the current working directory.
     """
-    # check if the file exists on cyverse
-    if not check_if_file_exists_on_cyverse(irods_path):
+
+    global hpc
+    cmd = f'iget -KPVT {os.path.join(irods_path)}'
+
+    if check_if_file_exists_on_cyverse_2(irods_path):
         raise Exception(f"File not found on cyverse: {irods_path}")
+
+    if hpc: 
+        print(f"Using filexfer node to download file")
+        run_filexfer_node_commands([cmd])
     else:
-        print(f"Successfully downloaded file from cyverse: {irods_path}")
+        print(f"Using current node/system to download file")
+        sp.call(cmd, shell=True)
 
 def download_files_from_cyverse(files, experiment, force_overwrite=False):
     """
@@ -125,6 +144,11 @@ def check_if_file_exists_on_cyverse(irods_path):
         return False
     else:
         return True
+
+
+def check_if_file_exists_on_cyverse_2(irods_path):
+    r = requests.head('https://data.cyverse.org/dav-anon/' + irods_path.lstrip('/'))
+    return r.status_code == requests.codes.ok
 
    
 
