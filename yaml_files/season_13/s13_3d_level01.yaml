@@ -34,18 +34,17 @@ modules:
 
 
 workload_manager:
-  account: dukepauli
+  account: windfall
   high_priority_settings:
-    use: True
+    use: False
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
-    use: False
-    partition: standard
+    use: True
+    partition: windfall
     
   job_name: phytooracle_worker_3d
   nodes: 1
-  total_submission: 2
   number_worker_array: 300
   cores_per_worker: 5
   time_minutes: 1440
