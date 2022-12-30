@@ -4,6 +4,7 @@ import subprocess as sp
 import shutil
 import glob
 import tarfile
+import requests
 
 hpc = False
 
@@ -43,6 +44,10 @@ def download_file_from_cyverse(irods_path):
 
     global hpc
     cmd = f'iget -KPVT {os.path.join(irods_path)}'
+
+    if not check_if_file_exists_on_cyverse(irods_path):
+        print(f"ERROR: File not found on cyverse: {irods_path}")
+        raise Exception(f"File not found on cyverse: {irods_path}")
 
     if hpc: 
         print(f"Using filexfer node to download file")
@@ -104,4 +109,10 @@ def untar_files(local_files, force_overwrite=False):
                 print(f"Unarchiving: {filename}")
                 file.extractall(".")
                 file.close()
+
+def check_if_file_exists_on_cyverse(irods_path):
+    r = requests.head('https://data.cyverse.org/dav-anon' + irods_path.replace('home/shared/', 'projects/'))
+    return r.status_code == requests.codes.ok
+
+   
 
