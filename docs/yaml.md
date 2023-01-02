@@ -10,6 +10,7 @@ Tags which will are used for documentation purposes. They include descriptions o
   * [sensor] | Name of sensor being processed
   * [season] | Season number (i.e. 10, 11, 12, etc)
   * [season_name] | Season name as found on CyVerse (i.e. season_11_sorghum_yr_2020)
+  * [experiment] | Experiment name (i.e. Sorghum, Sunflower), empty if not specified
   * [slack_notifications] | Send out Slack notifications
     * [use] | Use notification system (True/False)
     * [channel] | Slack channel on which to post
