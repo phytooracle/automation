@@ -6,7 +6,7 @@ tags:
   runby: Nathan
   sensor: scanner3DTop
   season: 15
-  season_name: season_13_lettuce_yr_2022
+  season_name: season_15_lettuce_yr_2022
   slack_notifications: 
     use: True
     channel: gantry_data_updates
@@ -64,7 +64,7 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/necessary_files/gcp_season_15_bucket.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_15_lettuce_yr_2022/level_0/necessary_files/gcp_season_15_bucket.txt]
       level: level_0
       prefix: scanner3DTop-
       suffix: __*.tar.gz
