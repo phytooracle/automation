@@ -28,7 +28,9 @@ On your computer/server, run the following command:
 ```
 
 ### Running on HPC clusters
-#### Interactive node
+There are three options when running POA on HPC clusters: interactive, non-interactice, and Cron.
+
+#### Interactive
 The pipeline can use a data transfer node to download data, which speeds up processing. You must first launch an interactive node using the following command on UA HPC Puma: 
 ```
 ./shell_scripts/interactive_node.sh
@@ -44,7 +46,7 @@ Data will be downloaded and workflows will be launched. You view progress inform
 ./shell_scripts/mf_monitor.sh 1
 ```
 
-#### Non-interactive SLURM job submission
+#### Non-interactive 
 To submit a date for processing in a non-interactive node, run:
 ```shell
 sbatch shell_scripts/slurm_submission.sh <yaml_file>
@@ -57,5 +59,5 @@ sbatch shell_scripts/slurm_submission.sh yaml_files/example_machinelearning_work
 
 Make sure to change the `account` and `partition` values as needed in the YAML file. 
 
-#### Cron job submission
+#### Cron
 To schedule Cron jobs, follow the directions [here](https://github.com/phytooracle/automation/blob/main/docs/cron.md).
