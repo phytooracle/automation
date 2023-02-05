@@ -1,10 +1,10 @@
 # <p align="center"><b>PhytoOracle | Modular, Scalable Phenomic Data Processing Pipeline</b></p>
 <p align="center"><img src="docs/IMG_0102.PNG" height="200"></p>
-PhytoOracle (PO) Automation is general-use, distributed computing pipeline for phenomic data. PO can be run on local or HPC resources and is capable of processing large phenomic datasets such as those collected by the Field Scanner at the University of Arizona's Maricopa Agricultural Center (pictured below, Photo: Jesse Rieser for The Wall Street Journal).
+PhytoOracle Automation (POA) is general-use, distributed computing pipeline for phenomic data. POA can be run on local or HPC resources and is capable of processing large phenomic datasets such as those collected by the Field Scanner at the University of Arizona's Maricopa Agricultural Center (pictured below, Photo: Jesse Rieser for The Wall Street Journal).
 
 <p align="center"><img src="docs/gantry_wsj.jpg" height="300"></p>
 
-PO's distributed framework, leveraging [CCTools' Makeflow and Workqueue](https://cctools.readthedocs.io/en/stable/), allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```).
+POA's distributed framework, leveraging [CCTools' Makeflow and Workqueue](https://cctools.readthedocs.io/en/stable/), allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```).
 
 ## Required Dependencies
   * Linux-based computer, cluster, or server
@@ -18,7 +18,7 @@ For more information on YAML file key/value pairs, [click here](https://github.c
 ## Arguments/Flags
 For more information on arguments/flags, [click here](https://github.com/phytooracle/automation/blob/main/docs/arguments.md).
 
-## Running the pipeline
+## Running POA
 The script ```distributed_pipeline_wrapper.py``` is used to run the pipeline. This script downloads and extracts bundled test data, runs containers, and bundles output data.
 
 ### Running on local computers/servers
@@ -56,3 +56,6 @@ sbatch shell_scripts/slurm_submission.sh yaml_files/example_machinelearning_work
 ```
 
 Make sure to change the `account` and `partition` values as needed in the YAML file. 
+
+#### Cron job submission
+To schedule Cron jobs, follow the directions [here](https://github.com/phytooracle/automation/blob/main/docs/cron.md)
