@@ -19,7 +19,7 @@ The first section of a Cron file is the scheduling specification. The scheduling
 
 |minute|hour|day of month|month|day of week|
 |------|----|------------|-----|-----------|
-|0-60  |0-23|1-31|1-12|1-7|
+|0-59  |0-23|1-31|1-12|0 - 6|
 
 For example, if you want to schedule a job to run at midnight every Monday, your Cron scheduling syntax would be:
 

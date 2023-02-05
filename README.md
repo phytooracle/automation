@@ -58,4 +58,4 @@ sbatch shell_scripts/slurm_submission.sh yaml_files/example_machinelearning_work
 Make sure to change the `account` and `partition` values as needed in the YAML file. 
 
 #### Cron job submission
-To schedule Cron jobs, follow the directions [here](https://github.com/phytooracle/automation/blob/main/docs/cron.md)
+To schedule Cron jobs, follow the directions [here](https://github.com/phytooracle/automation/blob/main/docs/cron.md).
