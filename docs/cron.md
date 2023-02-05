@@ -59,3 +59,6 @@ This will open a VIM editor. To edit the file, click ```i``` on your keyboard to
 ```
 
 Then, hit ```Esc``` to exit edit mode. To save your file, type ```:wq``` to save and quit.
+
+# Confirm Cron processing
+POA automatically sends notifications to Slack. In our team's case, these notifications go to the ```gantry_data_processing``` channel of the CyVerse Slack group. Keep a close eye on these notifications to ensure adequate processing.
