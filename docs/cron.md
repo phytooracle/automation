@@ -33,6 +33,8 @@ If you want to schedule a job to run at 5:30 PM every Saturday, your Cron schedu
 30 17 * * 6
 ```
 
+For more help with figuring out Cron scheduling, check out [CronTab](https://crontab.cronhub.io/).
+
 ## Command
 The second field of a Cron file is the command specification. This field can be any command, but in our case, we would want the general format:
 
