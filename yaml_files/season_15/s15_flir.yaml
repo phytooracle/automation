@@ -72,7 +72,7 @@ modules:
     file_level: dir
     input_dir: [edited_tifs]
     input_file: _left_corrected.tif
-    inputs: [season13_multi_latlon_geno.geojson] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
+    inputs: [season15_multi_latlon_geno.geojson] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
     outputs: [$DATE/$DATE_thermal_ortho_10pct_cubic.tif] 
 
   6:
