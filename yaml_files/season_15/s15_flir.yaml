@@ -43,7 +43,7 @@ modules:
     container: 
       simg_name: full_geocorrection.simg
       dockerhub_path: docker://ariyanzarei/full_geocorrection:latest
-    command: mkdir -p image_stiching/${DATE} && singularity exec -B $(pwd):/mnt --pwd /mnt full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_FLIR.py -d image_stiching -b ./flir2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_13_bucket.txt -r ./Lettuce_Image_Stitching
+    command: mkdir -p image_stiching/${DATE} && singularity exec -B $(pwd):/mnt --pwd /mnt full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_FLIR.py -d image_stiching -b ./flir2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_15_bucket.txt -r ./Lettuce_Image_Stitching
     distribution_level: local
     file_level: dir
     input_dir: [./flir2tif_out]
@@ -79,7 +79,7 @@ modules:
     container: 
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson
-    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season13_multi_latlon_geno.geojson -sen rgb
+    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season15_multi_latlon_geno.geojson -sen rgb
     distribution_level: local
     file_level: 
     input_dir: [./edited_tifs]
