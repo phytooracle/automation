@@ -122,7 +122,7 @@ modules:
     input_dir: [./bin2tif_out]
     input_file: _left.tif
     inputs: [$DATE/$DATE_ortho_10pct_cubic.tif]
-    outputs: [${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.png]
+    outputs: [$DATE/$DATE_ortho_10pct_cubic.png]
 
 workload_manager:
   account: ericlyons
