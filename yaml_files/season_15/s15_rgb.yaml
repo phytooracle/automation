@@ -116,7 +116,7 @@ modules:
     container: 
       simg_name: rgb_orthomosaic_converter.simg
       dockerhub_path: docker://phytooracle/phytooracle/rgb_orthomosaic_converter:latest
-    command: singularity run rgb_orthomosaic_converter.simg -t ${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.tif
+    command: singularity run rgb_orthomosaic_converter.simg -t ${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.tif && singularity run slack_notifications.simg -f ${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.png -m 'Orthomosaic for ${DATE} -c gantry_data_updates'
     distribution_level: local
     file_level: dir
     input_dir: [./bin2tif_out]
