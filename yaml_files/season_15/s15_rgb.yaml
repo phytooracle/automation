@@ -9,7 +9,7 @@ tags:
   season_name: season_15_lettuce_yr_2022
   slack_notifications: 
     use: True
-    channel: gantry_test
+    channel: gantry_data_updates
     container:
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
@@ -111,6 +111,18 @@ modules:
     input_file: foo
     inputs: [$FILE, ./season15_multi_latlon_geno.geojson, ./model_weights.pth]
     outputs: []  
+
+  9:
+    container: 
+      simg_name: rgb_orthomosaic_converter.simg
+      dockerhub_path: docker://phytooracle/phytooracle/rgb_orthomosaic_converter:latest
+    command: singularity run rgb_orthomosaic_converter.simg -t ${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.tif
+    distribution_level: local
+    file_level: dir
+    input_dir: [./bin2tif_out]
+    input_file: _left.tif
+    inputs: [$DATE/$DATE_ortho_10pct_cubic.tif]
+    outputs: [${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.png]
 
 workload_manager:
   account: ericlyons
