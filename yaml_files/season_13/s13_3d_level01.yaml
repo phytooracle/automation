@@ -44,7 +44,6 @@ modules:
     inputs: [gcp_season_14_bucket.txt]
     outputs: []
 
-
 workload_manager:
   account: ericlyons
   high_priority_settings:
