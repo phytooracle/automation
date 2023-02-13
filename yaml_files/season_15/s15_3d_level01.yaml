@@ -45,7 +45,7 @@ modules:
     outputs: []
 
 workload_manager:
-  account: dukepauli
+  account: ericlyons
   high_priority_settings:
     use: False
     qos_group: user_qos_ericlyons
