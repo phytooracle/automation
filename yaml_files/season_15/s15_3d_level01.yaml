@@ -24,13 +24,13 @@ modules:
     file_level: 
     input_file: -west_0.ply
     inputs: [gcp_season_15_bucket.txt]
-    outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
-              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
-              alignment/merged/$SUBDIR__Top-heading-merged.ply,
-              alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
-              alignment/west/$SUBDIR__Top-heading-west.ply,
-              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
-              alignment/metadata/$SUBDIR_updated-metadata.json]
+    outputs: [preprocessing/east/$SUBDIR__Top-heading-east.ply,
+              preprocessing/east_downsampled/$SUBDIR__Top-heading-east.ply, 
+              preprocessing/merged/$SUBDIR__Top-heading-merged.ply,
+              preprocessing/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+              preprocessing/west/$SUBDIR__Top-heading-west.ply,
+              preprocessing/west_downsampled/$SUBDIR__Top-heading-west.ply,
+              preprocessing/metadata/$SUBDIR_updated-metadata.json]
   2: 
     container: 
       simg_name: 3d_sequential_align.simg
