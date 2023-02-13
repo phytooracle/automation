@@ -31,6 +31,7 @@ modules:
               preprocessing/west/$SUBDIR__Top-heading-west.ply,
               preprocessing/west_downsampled/$SUBDIR__Top-heading-west.ply,
               preprocessing/metadata/$SUBDIR_updated-metadata.json]
+              
   2: 
     container: 
       simg_name: 3d_sequential_align.simg
