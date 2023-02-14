@@ -32,17 +32,17 @@ modules:
               preprocessing/west_downsampled/$SUBDIR__Top-heading-west.ply,
               preprocessing/metadata/$SUBDIR_updated-metadata.json]
 
-  2: 
-    container: 
-      simg_name: 3d_sequential_align.simg
-      dockerhub_path: docker://phytooracle/3d_sequential_align:latest
-    command: singularity run ${CWD}/3d_sequential_align.simg -o ${CWD}/alignment -i ${CWD}/preprocessing
-    distribution_level: local
-    file_level: dir
-    input_dir: [preprocessing, west_downsampled]
-    input_file: -west.ply
-    inputs: [gcp_season_13_bucket.txt]
-    outputs: []
+#   2: 
+#     container: 
+#       simg_name: 3d_sequential_align.simg
+#       dockerhub_path: docker://phytooracle/3d_sequential_align:latest
+#     command: singularity run ${CWD}/3d_sequential_align.simg -o ${CWD}/alignment -i ${CWD}/preprocessing
+#     distribution_level: local
+#     file_level: dir
+#     input_dir: [preprocessing, west_downsampled]
+#     input_file: -west.ply
+#     inputs: [gcp_season_13_bucket.txt]
+#     outputs: []
 
 workload_manager:
   account: ericlyons
@@ -69,7 +69,7 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
-  pipeline_outpath: [alignment]
+  pipeline_outpath: [preprocessing] #[alignment]
   outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled, merged, merged_downsampled, metadata]
 
   cyverse: 
