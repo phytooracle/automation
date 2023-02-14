@@ -63,7 +63,7 @@ workload_manager:
   port: 0
   mem_per_core: 5
   manager_name: phytooracle_manager_3d
-  worker_timeout_seconds: 86400
+  worker_timeout_seconds: 1800
 
 paths:
   models:
