@@ -1143,6 +1143,9 @@ def clean_inputs(date, yaml_dictionary):
     Output: 
         - Clean working directory
     '''
+    if os.path.isdir('preprocessing'):
+        shutil.rmtree('preprocessing')
+    
     if os.path.isdir('alignment'):
         shutil.rmtree('alignment')
 
