@@ -20,16 +20,16 @@ modules:
     container: 
       simg_name: rnaseq_spectral_plsr.simg
       dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:random_forest_vs #:latest #:train_test
-    command: singularity run ${CWD}/rnaseq_spectral_plsr.simg -c ${CWD}/${FILE} -o ${CWD}/plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones -sam
+    command: singularity run ${CWD}/rnaseq_spectral_plsr.simg -c ${CWD}/${FILE} -o ${CWD}/plsr_outputs_wl #-sam
     distribution_level: wq
     file_level: 
-    input_dir: [rnaseq_spectra]
+    input_dir: [rnaseq_spectra_wl]
     input_file: _tpm_spectra.csv
     inputs: [$FILE]
 
-    outputs: [plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/correlation_scores/$UUID,
-              plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/plots/$UUID,
-              plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/models/$UUID]
+    outputs: [plsr_outputs_wl/correlation_scores/$UUID,
+              plsr_outputs_wl/plots/$UUID,
+              plsr_outputs_wl/models/$UUID]
 
 workload_manager:
   account: dukepauli
@@ -45,6 +45,7 @@ workload_manager:
   job_name: phytooracle_worker_rna_seq
   nodes: 1                  # Just do one.  (each array is on a distinct node)
   number_worker_array: 498 #94      # This is number of arrays (workers)
+  total_submission: 2
   cores_per_worker: 1       # This is how many cores (cpu/gpu) per array, used to increase tot mem
   time_minutes: 1440
   retries: 1
@@ -57,15 +58,15 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
-  pipeline_outpath: [plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones]
-  outpath_subdirs: [correlation_scores, plots, models] #, permutation]
+  pipeline_outpath: [plsr_outputs_wl]
+  outpath_subdirs: [correlation_scores, plots] #, models] #, permutation]
 
   cyverse:
     basename: /iplant/home/shared/phytooracle/
     input: 
       necessary_files: [level_3/stereoTop/season_11_clustering.csv, level_0/necessary_files/gcp_season_11.txt]
       prefix: 
-      suffix: _rnaseq_spectra.tar
+      suffix: _rnaseq_spectra_wl.tar
       level: level_1
       input_dir: raw_data
     output: 
