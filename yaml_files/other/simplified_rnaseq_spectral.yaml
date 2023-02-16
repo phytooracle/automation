@@ -32,14 +32,14 @@ modules:
               plsr_outputs_wl/models/$UUID]
 
 workload_manager:
-  account: dukepauli
+  account: ericlyons
   
   high_priority_settings:
     use: True
-    qos_group: user_qos_dukepauli
+    qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: False #True
+    use: False
     partition: standard
     
   job_name: phytooracle_worker_rna_seq
@@ -64,7 +64,7 @@ paths:
   cyverse:
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [level_3/stereoTop/season_11_clustering.csv, level_0/necessary_files/gcp_season_11.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/2019_cotton/level_0/gene.Ghir.JGI.gff3]
       prefix: 
       suffix: _rnaseq_spectra_wl.tar
       level: level_1
