@@ -19,18 +19,18 @@ modules:
     container: 
       simg_name: 3d_preprocessing.simg
       dockerhub_path: docker://phytooracle/3d_preprocessing:test
-    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_13_bucket.txt -o ${CWD}/preprocessing -i ${CWD}/${INPUT_DIR}
+    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_13_bucket.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR}
     distribution_level: wq
     file_level: 
     input_file: -west_0.ply
     inputs: [gcp_season_13_bucket.txt]
-    outputs: [preprocessing/east/$SUBDIR__Top-heading-east.ply,
-              preprocessing/east_downsampled/$SUBDIR__Top-heading-east.ply, 
-              preprocessing/merged/$SUBDIR__Top-heading-merged.ply,
-              preprocessing/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
-              preprocessing/west/$SUBDIR__Top-heading-west.ply,
-              preprocessing/west_downsampled/$SUBDIR__Top-heading-west.ply,
-              preprocessing/metadata/$SUBDIR_updated-metadata.json]
+    outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
+              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
+              alignment/merged/$SUBDIR__Top-heading-merged.ply,
+              alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+              alignment/west/$SUBDIR__Top-heading-west.ply,
+              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
+              alignment/metadata/$SUBDIR_updated-metadata.json]
 
 #   2: 
 #     container: 
@@ -56,7 +56,7 @@ workload_manager:
     
   job_name: phytooracle_worker_3d
   nodes: 1
-  number_worker_array: 300
+  number_worker_array: 10 #300
   cores_per_worker: 5
   time_minutes: 360
   retries: 1
@@ -69,7 +69,7 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
-  pipeline_outpath: [preprocessing] #[alignment]
+  pipeline_outpath: [alignment] #[preprocessing] 
   outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled, merged, merged_downsampled, metadata]
 
   cyverse: 
