@@ -22,10 +22,9 @@ modules:
     command: singularity run rnaseq_spectral_pre_processing.simg -t WL -o cotton_rnaseq_data/WL
     distribution_level: local
     file_level: dir
-    input_dir: [./bin2tif_out]
+    input_dir: [./shell_scripts]
     input_file: _left.tif
     inputs: [rnaseq_spectral_pre_processing.simg]
-    # inputs: [$UUID_left.tif, ./gcp_season_14_bucket.txt, ./Lettuce_Image_Stitching, ]
     outputs: [cotton_rnaseq_data/WL]
 
   # 2: 
