@@ -35,11 +35,11 @@ workload_manager:
   account: ericlyons
   
   high_priority_settings:
-    use: False
+    use: True
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: True
+    use: False
     partition: standard
     
   job_name: phytooracle_worker_rna_seq
