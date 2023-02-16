@@ -15,32 +15,21 @@ tags:
       dockerhub_path: docker://phytooracle/slack_notifications:latest
 
 modules:
-  1:
+
+  1: 
     container: 
-      simg_name: rnaseq_spectral_pre_processing.simg
-      dockerhub_path: docker://phytooracle/rnaseq_spectral_pre_processing:latest
-    command: singularity run rnaseq_spectral_pre_processing.simg -t WL -o cotton_rnaseq_data/WL
-    distribution_level: local
-    file_level: dir
-    input_dir: [./shell_scripts]
-    input_file: _left.tif
-    inputs: [rnaseq_spectral_pre_processing.simg]
-    outputs: [cotton_rnaseq_data/WL]
+      simg_name: rnaseq_spectral_plsr.simg
+      dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:random_forest_vs #:latest #:train_test
+    command: singularity run ${CWD}/rnaseq_spectral_plsr.simg -c ${CWD}/${FILE} -o ${CWD}/plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones -sam
+    distribution_level: wq
+    file_level: 
+    input_dir: [rnaseq_spectra]
+    input_file: _tpm_spectra.csv
+    inputs: [$FILE]
 
-  # 2: 
-  #   container: 
-  #     simg_name: rnaseq_spectral_plsr.simg
-  #     dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:random_forest_vs #:latest #:train_test
-  #   command: singularity run ${CWD}/rnaseq_spectral_plsr.simg -c ${CWD}/${FILE} -o ${CWD}/plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones -sam
-  #   distribution_level: wq
-  #   file_level: 
-  #   input_dir: [rnaseq_spectra]
-  #   input_file: _tpm_spectra.csv
-  #   inputs: [$FILE]
-
-  #   outputs: [plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/correlation_scores/$UUID,
-  #             plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/plots/$UUID,
-  #             plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/models/$UUID]
+    outputs: [plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/correlation_scores/$UUID,
+              plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/plots/$UUID,
+              plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones/models/$UUID]
 
 workload_manager:
   account: dukepauli
@@ -68,10 +57,8 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
-    pipeline_outpath: [cotton_rnaseq_data]
-    outpath_subdirs: [WL]
-  # pipeline_outpath: [plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones]
-  # outpath_subdirs: [correlation_scores, plots, models] #, permutation]
+  pipeline_outpath: [plsr_outputs_update_permutation_no_band_selection_deriv_spectral_zones]
+  outpath_subdirs: [correlation_scores, plots, models] #, permutation]
 
   cyverse:
     basename: /iplant/home/shared/phytooracle/
