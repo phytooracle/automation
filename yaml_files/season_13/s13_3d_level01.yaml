@@ -9,7 +9,7 @@ tags:
   season_name: season_13_lettuce_yr_2022
   slack_notifications: 
     use: True
-    channel: gantry_test
+    channel: gantry_data_updates
     container:
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
@@ -56,7 +56,7 @@ workload_manager:
     
   job_name: phytooracle_worker_3d
   nodes: 1
-  number_worker_array: 10 #300
+  number_worker_array: 300
   cores_per_worker: 5
   time_minutes: 360
   retries: 1
