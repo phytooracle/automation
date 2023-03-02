@@ -33,13 +33,13 @@ If you are running POA on the UA HPC, you will need to set up SSH keys to gain a
 ## Running POA
 The script ```distributed_pipeline_wrapper.py``` is used to run the pipeline. This script downloads and extracts bundled test data, runs containers, and bundles output data.
 
-### Running on local computers/servers
+### Local computer
 On your computer/server, run the following command:
 ```
 ./distributed_pipeline_wrapper.py -d 2020-02-14 -y yaml_files/example_machinelearning_workflow.yaml
 ```
 
-### Running on HPC clusters
+### HPC cluster
 There are three options when running POA on HPC clusters: interactive, non-interactice, and Cron.
 
 #### Interactive
