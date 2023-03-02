@@ -22,7 +22,7 @@ For more information on arguments/flags, [click here](https://github.com/phytoor
 
 ### iRODS 
 
-The POA Automation workflow requires iRODS. Follow the documentation [here](https://emmanuelgonz.github.io/posts/2022/01/irods-setup/) to install iRODS. 
+The POA workflow requires iRODS. Follow the documentation [here](https://emmanuelgonz.github.io/posts/2022/01/irods-setup/) to install iRODS. 
 
 ### Data transfer node
 
