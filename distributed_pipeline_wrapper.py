@@ -5,11 +5,12 @@ Date   : 2021-12-17
 Purpose: PhytoOracle | Scalable, modular phenomic data processing pipelines
 """
 
+import os
+import sys
+sp.call(f'{sys.executable} -m pip install --user pyyaml requests')
 import argparse
 from genericpath import isfile
 import pdb # pdb.set_trace()
-import os
-import sys
 import json
 import subprocess as sp
 import yaml
@@ -1547,7 +1548,7 @@ def main():
     cctools_path = download_cctools(cctools_version=args.cctools_version)
     create_mf_monitor(cctools_path)
     create_wq_status(cctools_path)
-    download_packages()
+    # download_packages()
     cwd = os.getcwd()
 
 
