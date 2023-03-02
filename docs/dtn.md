@@ -16,7 +16,7 @@ puma
 ```bash
 ssh-keygen -t rsa
 ```
-
+>NOTE: You will be prompted for a filename and password. Just press Enter/Return to all prompts, **do not fill fill out filename or password prompts**.
 4. Copy the SSH key to the Bastion Host:
 
 ```bash
