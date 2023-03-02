@@ -7,12 +7,12 @@ Purpose: PhytoOracle | Scalable, modular phenomic data processing pipelines
 
 import os
 import sys
+import subprocess as sp
 sp.call(f'{sys.executable} -m pip install --user pyyaml requests')
 import argparse
 from genericpath import isfile
 import pdb # pdb.set_trace()
 import json
-import subprocess as sp
 import yaml
 import shutil
 import glob
