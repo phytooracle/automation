@@ -1533,6 +1533,13 @@ def generate_megastitch_config(cwd, yaml_dictionary):
 
 
 # --------------------------------------------------
+def download_packages():
+    """
+    Installs Python packages required by POA.
+    """
+    sp.call(f'{sys.executable} -m pip install --user pyyaml requests')
+
+# --------------------------------------------------
 def main():
     """Run distributed data processing here"""
     user = os.environ['LOGNAME']
@@ -1540,6 +1547,7 @@ def main():
     cctools_path = download_cctools(cctools_version=args.cctools_version)
     create_mf_monitor(cctools_path)
     create_wq_status(cctools_path)
+    download_packages()
     cwd = os.getcwd()
 
 
