@@ -24,6 +24,8 @@ For more information on arguments/flags, [click here](https://github.com/phytoor
 
 The POA workflow requires iRODS. Follow the documentation [here](https://emmanuelgonz.github.io/posts/2022/01/irods-setup/) to install iRODS. 
 
+If you are running POA on the UA HPC, iRODS is already installed so there is not need to reinstall it. Skip to section "Linux & Windows Subsystem for Linux 2 (WSL2) users", bullet # 3.
+
 ### Data transfer node
 
 If you are running POA on the UA HPC, you will need to set up SSH keys to gain access to data transfer nodes (DTNs). To get SSH keys set up, follow the steps below [here](https://github.com/phytooracle/automation/blob/main/docs/dtn.md)
