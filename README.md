@@ -18,6 +18,16 @@ For more information on YAML file key/value pairs, [click here](https://github.c
 ## Arguments/Flags
 For more information on arguments/flags, [click here](https://github.com/phytooracle/automation/blob/main/docs/arguments.md).
 
+## Required setup
+
+### iRODS 
+
+The POA Automation workflow requires iRODS. Follow the documentation [here](https://emmanuelgonz.github.io/posts/2022/01/irods-setup/) to install iRODS. 
+
+### Data transfer node
+
+If you are running POA on the UA HPC, you will need to set up SSH keys to gain access to data transfer nodes (DTNs). To get SSH keys set up, follow the steps below [here](https://github.com/phytooracle/automation/blob/main/docs/dtn.md)
+
 ## Running POA
 The script ```distributed_pipeline_wrapper.py``` is used to run the pipeline. This script downloads and extracts bundled test data, runs containers, and bundles output data.
 
