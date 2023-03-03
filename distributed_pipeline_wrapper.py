@@ -1092,8 +1092,9 @@ def upload_outputs(date, yaml_dictionary):
 
     if args.hpc: 
         print(':: Using data transfer node.')
-        sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
-
+        # sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
+        sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfk {date}' '&& exit'", shell=True) #-X upload_log --retries 2 
+        
     else:
         
         cmd1 = f'imkdir -p {irods_output_path}'
