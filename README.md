@@ -43,7 +43,12 @@ On your computer/server, run the following command:
 There are three options when running POA on HPC clusters: interactive, non-interactice, and Cron.
 
 #### Interactive
-The pipeline can use a data transfer node to download data, which speeds up processing. You must first launch an interactive node using the following command on UA HPC Puma: 
+The pipeline can use a data transfer node to download data, which speeds up processing. 
+
+Interactive jobs should be run on tmux to enable a persistent connection. To install tmux on the UA HPC head node, follow the directions [here](https://github.com/phytooracle/automation/blob/main/docs/tmux.md).
+
+You must first launch an interactive node using the following command on UA HPC Puma: 
+
 ```
 ./shell_scripts/interactive_node.sh
 ```
