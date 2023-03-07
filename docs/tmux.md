@@ -50,3 +50,5 @@ At this point, tmux should be installed. You can now run it:
 ```bash
 tmux
 ```
+
+For more information about tmux, [click here](https://tmuxcheatsheet.com/).
