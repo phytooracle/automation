@@ -1035,6 +1035,9 @@ def create_pipeline_logs(scan_date):
     if os.path.isfile('geo_correction_config.txt'):
         shutil.move('geo_correction_config.txt', os.path.join(cwd, scan_date, 'logs', 'geo_correction_config.txt'))
 
+    if os.path.isfile('upload_log.txt'):
+        shutil.move('upload_log.txt', os.path.join(cwd, scan_date, 'logs', 'upload_log.txt'))
+
 
 
 # --------------------------------------------------
