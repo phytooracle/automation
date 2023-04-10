@@ -45,16 +45,16 @@ def download_file_from_cyverse(irods_path):
     global hpc
     cmd = f'iget -KPVT {os.path.join(irods_path)}'
 
-    if not check_if_file_exists_on_cyverse(irods_path):
-        print(f"ERROR: File not found on cyverse: {irods_path}")
-        raise Exception(f"File not found on cyverse: {irods_path}")
-
     if hpc: 
         print(f"Using filexfer node to download file")
         run_filexfer_node_commands([cmd])
     else:
         print(f"Using current node/system to download file")
         sp.call(cmd, shell=True)
+
+    if not check_if_file_was_downloaded(irods_path):
+        print(f"ERROR: Was not able to download file: {irods_path}")
+        raise Exception(f"Was not able to download file: {irods_path}")
 
 def download_files_from_cyverse(files, experiment, force_overwrite=False):
     """
@@ -110,9 +110,16 @@ def untar_files(local_files, force_overwrite=False):
                 file.extractall(".")
                 file.close()
 
-def check_if_file_exists_on_cyverse(irods_path):
-    r = requests.head('https://data.cyverse.org/dav-anon' + irods_path.replace('home/shared/', 'projects/'))
-    return r.status_code == requests.codes.ok
+def check_if_file_was_downloaded(irods_path):
+    """
+    Check if a file was downloaded by checking if it exists in the current
+    working directory.
+    """
 
+    filename = os.path.basename(irods_path)
+    if os.path.isfile(filename):
+        return True
+    else:
+        return False
    
 
