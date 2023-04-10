@@ -117,6 +117,7 @@ def check_if_file_was_downloaded(irods_path):
     """
 
     filename = os.path.basename(irods_path)
+    print(f"Checking if file was downloaded: {filename}")
     if os.path.isfile(filename):
         return True
     else:
