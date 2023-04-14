@@ -141,11 +141,9 @@ def check_if_file_exists_on_cyverse(irods_path):
 
     global hpc
     print(':: Using data transfer node to check if file exists on cyverse.')
-    # create file to save output 
-    sp.call("touch filexfer_output.txt", shell=True)
     # run command on filexfer node
     cwd = os.getcwd()
-    sp.call(f"ssh filexfer 'cd {cwd} && icd {irods_path} && ils > filexfer_output.txt' && exit'", shell=True)
+    sp.call(f"ssh filexfer 'cd {cwd}' '&& icd {irods_path}' '&& ils > filexfer_output.txt' '&& exit'", shell=True)
 
     # read output file and check if file exists
     with open("filexfer_output.txt", "r") as f:
