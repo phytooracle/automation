@@ -154,7 +154,7 @@ def check_if_file_exists_on_cyverse(irods_path):
                 found = True
                 break
                 
-    sp.call("rm filexfer_output.txt", shell=True)
+    #sp.call("rm filexfer_output.txt", shell=True)
 
     return found
 
