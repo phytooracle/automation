@@ -46,8 +46,8 @@ def download_file_from_cyverse(irods_path):
     cmd = f'iget -KPVT {os.path.join(irods_path)}'
 
     if not check_if_file_exists_on_cyverse(irods_path):
-        print(f"ERROR: Was not able to download file: {irods_path}")
-        raise Exception(f"Was not able to download file: {irods_path}")
+        print(f"ERROR: File doesn't exist on cyverse: {irods_path}")
+        raise Exception(f"File doesn't exist on cyverse: {irods_path}")
     
     if hpc: 
         print(f"Using filexfer node to download file")
