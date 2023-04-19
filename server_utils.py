@@ -129,30 +129,32 @@ def check_if_file_exists_on_cyverse(irods_path):
     else:
         return False
     """
-
     found = False
 
     # parse irods path to get directory and filename
     irods_dir = os.path.dirname(irods_path)
     filename = os.path.basename(irods_path)
-
-    print("Directory: ", irods_dir)
-    print("Filename: ", filename)
+    cwd = os.getcwd()
 
     global hpc
-    print(':: Using data transfer node to check if file exists on cyverse.')
-    # run command on filexfer node
-    cwd = os.getcwd()
-    sp.call(f"ssh filexfer 'cd {cwd}' '&& icd {irods_dir}' '&& ils > filexfer_output.txt' '&& exit'", shell=True)
 
+    if hpc:
+        print(':: Using data transfer node to check if file exists on cyverse.')
+        # run command on filexfer node
+        sp.call(f"ssh filexfer 'cd {cwd}' '&& icd {irods_dir}' '&& ils > filexfer_output.txt' '&& exit'", shell=True)
+
+    else:
+        print(':: Using local irods to check if file exists on cyverse.')
+        sp.call(f"cd {cwd} && icd {irods_dir} && ils > filexfer_output.txt", shell=True)
+                    
     # read output file and check if file exists
     with open("filexfer_output.txt", "r") as f:
         for line in f:
             if filename in line:
                 found = True
                 break
-                
-    #sp.call("rm filexfer_output.txt", shell=True)
+    
+    sp.call("rm filexfer_output.txt", shell=True)
 
     return found
 
