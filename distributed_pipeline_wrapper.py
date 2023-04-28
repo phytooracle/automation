@@ -50,11 +50,11 @@ def get_args():
 
     # Season 12 and on should have a value for experiment set (e.g. sorghum, sunflower)
     # For Season 11 it should be left '' (so no experiment dir is created)
-    parser.add_argument('-x',
-                        '--experiment',
-                        help='Experiment (e.g. Sorghum, Sunflower)',
-                        type=str,
-                        default='')
+    # parser.add_argument('-x',
+    #                     '--experiment',
+    #                     help='Experiment (e.g. Sorghum, Sunflower)',
+    #                     type=str,
+    #                     default='')
 
     parser.add_argument('-c',
                         '--cctools_version',
@@ -250,7 +250,7 @@ def build_irods_path_to_sensor_from_yaml(yaml_dictionary, args):
             sensor
     )
 
-    experiment = args.experiment
+    experiment = yaml_dictionary['tags']['experiment']
 
     # If level is greater than level zero, then we need to add
     # two directories: .../expirment/date
@@ -297,7 +297,9 @@ def download_irods_input_dir(yaml_dictionary, date, args):
 
     os.chdir(input_dir)
 
-    server_utils.download_files_from_cyverse(files=file_paths, experiment=args.experiment)
+    experiment = yaml_dictionary['tags']['experiment'] if yaml_dictionary['tags']['experiment'] else ""
+
+    server_utils.download_files_from_cyverse(files=file_paths, experiment=experiment)
 
     # Step (2)
 
@@ -320,7 +322,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
 
 
     args = get_args()
-    experiment        = args.experiment
+    experiment        = yaml_dictionary['tags']['experiment']
     cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
     prefix            = yaml_dictionary['paths']['cyverse']['input']['prefix']
     suffix            = yaml_dictionary['paths']['cyverse']['input']['suffix']
@@ -328,7 +330,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
     all_files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_dl_dir)
     # Now lets see if our file is in all_files_in_dir
 
-    if args.experiment:
+    if experiment:
         date_sub = match = re.search(r'\d{4}-\d{2}-\d{2}', date)
         date_sub = str(datetime.strptime(date_sub.group(), '%Y-%m-%d').date())
         pattern = (prefix if prefix else "") + date_sub + (suffix if suffix else "")
@@ -345,7 +347,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
         return None
     if len(matching_files) > 1:
         
-        if args.experiment:
+        if experiment:
             matching_files = [item for item in matching_files if date in item]
 
         else:
@@ -1046,7 +1048,7 @@ def get_irods_data_path(yaml_dictionary):
 
     #season_name = yaml_dictionary['tags']['season_name']
     season_name = get_season_name()
-    experiment  = args.experiment
+    experiment  = yaml_dictionary['tags']['experiment']
     sensor      = yaml_dictionary['tags']['sensor']
     cyverse_basename  = yaml_dictionary['paths']['cyverse']['basename']
     cyverse_datalevel = yaml_dictionary['paths']['cyverse']['output']['level']
@@ -1289,18 +1291,19 @@ def clean_inputs(date, yaml_dictionary):
 def return_date_list(level_0_list):
     args= get_args()
     date_list = []
+    experiment = yaml_dictionary['tags']['experiment']
     for item in level_0_list:
         try:
             
-            if args.experiment:
+            if experiment:
                 match = re.search(r'\d{4}-\d{2}-\d{2}__\d{2}-\d{2}-\d{2}-\d{3}', item)
             else:
                 match = re.search(r'\d{4}-\d{2}-\d{2}', item)
 
             if match:
-                if args.experiment:
+                if experiment:
                     date = str(match.group())
-                    date = '_'.join([date, args.experiment])
+                    date = '_'.join([date, experiment])
                 else:
                     date = str(datetime.strptime(match.group(), '%Y-%m-%d').date())
                 
@@ -1317,6 +1320,7 @@ def get_process_date_list(yaml_dictionary):
     args= get_args()
     basename = yaml_dictionary['paths']['cyverse']['basename']
     input_level = yaml_dictionary['paths']['cyverse']['input']['level']
+    experiment = yaml_dictionary['tags']['experiment']
 
     try:
         pre, input_num = input_level.split('_')
@@ -1327,7 +1331,7 @@ def get_process_date_list(yaml_dictionary):
     
     input_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], input_level, yaml_dictionary['tags']['sensor'])
 
-    if args.experiment:
+    if experiment:
         output_path = os.path.join(basename, yaml_dictionary['tags']['season_name'], output_level, yaml_dictionary['tags']['sensor'], args.experiment)
      
         if int(str(yaml_dictionary['paths']['cyverse']['input']['level']).split('_')[1]) >= 1:
@@ -1340,10 +1344,10 @@ def get_process_date_list(yaml_dictionary):
     level_0_list, level_1_list = [os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {input_path}').readlines()][1:]] \
                                 ,[os.path.splitext(os.path.basename(item))[0].lstrip() for item in [line.rstrip() for line in os.popen(f'ils {output_path}').readlines()][1:]]
     
-    if args.experiment:
+    if experiment:
 
-        level_0_list = [item for item in level_0_list if args.experiment in item]
-        level_1_list = [item for item in level_1_list if args.experiment in item]
+        level_0_list = [item for item in level_0_list if experiment in item]
+        level_1_list = [item for item in level_1_list if experiment in item]
     
     level_0_dates, level_1_dates = return_date_list(level_0_list) \
                                 , return_date_list(level_1_list) 
