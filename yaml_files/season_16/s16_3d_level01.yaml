@@ -1,12 +1,12 @@
 ---
 tags:
-  pipeline: season15_scanner3DTop
-  description: testing_season15_preprocessing
-  notes: Test processing of Season 15 scanner3DTop data
+  pipeline: season16_scanner3DTop
+  description: testing_season16_preprocessing
+  notes: Test processing of Season 16 scanner3DTop data
   runby: Nathan
   sensor: scanner3DTop
-  season: 15
-  season_name: season_15_lettuce_yr_2022
+  season: 16
+  season_name: season_16_lettuce_yr_2023
   slack_notifications: 
     use: True
     channel: gantry_data_updates
@@ -20,11 +20,11 @@ modules:
     container: 
       simg_name: 3d_preprocessing.simg
       dockerhub_path: docker://phytooracle/3d_preprocessing:y_position_fix
-    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_15_bucket.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR}
+    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_16_bucket.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR}
     distribution_level: wq
     file_level: 
     input_file: -west_0.ply
-    inputs: [gcp_season_15_bucket.txt]
+    inputs: [gcp_season_16_bucket.txt]
     outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
               alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
               alignment/merged/$SUBDIR__Top-heading-merged.ply,
@@ -92,7 +92,7 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_15_lettuce_yr_2022/level_0/necessary_files/gcp_season_15_bucket.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_16_lettuce_yr_2023/level_0/necessary_files/gcp_season_16_bucket.txt]
       level: level_0
       prefix: scanner3DTop-
       suffix: __*.tar.gz
