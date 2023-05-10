@@ -19,7 +19,7 @@ modules:
   1: 
     container: 
       simg_name: 3d_preprocessing.simg
-      dockerhub_path: docker://phytooracle/3d_preprocessing:dx_fix #y_position_fix
+      dockerhub_path: docker://phytooracle/3d_preprocessing:main #dx_fix #y_position_fix
     command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_15_bucket.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR}
     distribution_level: wq
     file_level: 
