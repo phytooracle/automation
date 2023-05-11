@@ -1541,44 +1541,26 @@ def generate_megastitch_config(cwd, yaml_dictionary):
 def edit_ssh_config_file():
     ssh_config_path = os.path.expanduser('~/.ssh/config')
     host_line = 'Host *'
-    server_alive_line = '    ServerAliveInterval 10'
+    server_alive_line = '    ServerAliveInterval 30'
     
     # Check if the file exists
     if os.path.exists(ssh_config_path):
-        # Check if the Host * section and ServerAliveInterval line are already present in the file
+        # Comment out all existing Host * sections and ServerAliveInterval lines from the file
         with open(ssh_config_path, 'r') as f:
             lines = f.readlines()
-            if host_line in lines:
-                host_index = lines.index(host_line)
-                lines[host_index] = host_line + '\n'
-                server_alive_index = None
-                for i in range(host_index + 1, len(lines)):
-                    if lines[i].startswith('Host'):
-                        break
-                    if lines[i].startswith('    ServerAliveInterval'):
-                        server_alive_index = i
-                        break
-                if server_alive_index is not None:
-                    lines[server_alive_index] = server_alive_line + '\n'
+            new_lines = []
+            for line in lines:
+                if "Host" or "ServerAliveInterval" in line.strip():
+                    new_lines.append('#' + line)
                 else:
-                    lines.insert(host_index + 1, server_alive_line + '\n')
-                with open(ssh_config_path, 'w') as f:
-                    f.writelines(lines)
-                return
-            else:
-                lines.append(host_line + '\n')
-                lines.append(server_alive_line + '\n')
-                with open(ssh_config_path, 'w') as f:
-                    f.writelines(lines)
-                return
-    else:
-        # Create the file if it does not exist
-        open(ssh_config_path, 'w').close()
+                    new_lines.append(line)
+        with open(ssh_config_path, 'w') as f:
+            f.writelines(new_lines)
     
-        # Add the Host * section and ServerAliveInterval line to the file
-        with open(ssh_config_path, 'a') as f:
-            f.write(host_line + '\n')
-            f.write(server_alive_line + '\n')
+    # Add the Host * section and ServerAliveInterval line to the file
+    with open(ssh_config_path, 'a') as f:
+        f.write(host_line + '\n')
+        f.write(server_alive_line + '\n')
 
 
 # --------------------------------------------------
