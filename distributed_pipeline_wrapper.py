@@ -1545,7 +1545,7 @@ def edit_ssh_config_file():
     
     # Check if the file exists
     if os.path.exists(ssh_config_path):
-        # Check if the lines are already present in the file
+        # Check if the Host * section and ServerAliveInterval line are already present in the file
         with open(ssh_config_path, 'r') as f:
             lines = f.readlines()
             if host_line in lines:
@@ -1560,14 +1560,20 @@ def edit_ssh_config_file():
                     with open(ssh_config_path, 'w') as f:
                         f.writelines(lines)
                     return
+            else:
+                lines.append(host_line + '\n')
+                lines.append(server_alive_line + '\n')
+                with open(ssh_config_path, 'w') as f:
+                    f.writelines(lines)
+                return
     else:
         # Create the file if it does not exist
         open(ssh_config_path, 'w').close()
     
-    # Add the lines to the file
-    with open(ssh_config_path, 'a') as f:
-        f.write(host_line + '\n')
-        f.write(server_alive_line + '\n')
+        # Add the Host * section and ServerAliveInterval line to the file
+        with open(ssh_config_path, 'a') as f:
+            f.write(host_line + '\n')
+            f.write(server_alive_line + '\n')
 
 
 # --------------------------------------------------
