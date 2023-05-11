@@ -1549,17 +1549,22 @@ def edit_ssh_config_file():
         with open(ssh_config_path, 'r') as f:
             lines = f.readlines()
             if host_line in lines:
-                index = lines.index(host_line)
-                if index + 1 < len(lines) and lines[index + 1].startswith('    ServerAliveInterval'):
-                    lines[index + 1] = server_alive_line + '\n'
-                    with open(ssh_config_path, 'w') as f:
-                        f.writelines(lines)
-                    return
+                host_index = lines.index(host_line)
+                lines[host_index] = host_line + '\n'
+                server_alive_index = None
+                for i in range(host_index + 1, len(lines)):
+                    if lines[i].startswith('Host'):
+                        break
+                    if lines[i].startswith('    ServerAliveInterval'):
+                        server_alive_index = i
+                        break
+                if server_alive_index is not None:
+                    lines[server_alive_index] = server_alive_line + '\n'
                 else:
-                    lines.insert(index + 1, server_alive_line + '\n')
-                    with open(ssh_config_path, 'w') as f:
-                        f.writelines(lines)
-                    return
+                    lines.insert(host_index + 1, server_alive_line + '\n')
+                with open(ssh_config_path, 'w') as f:
+                    f.writelines(lines)
+                return
             else:
                 lines.append(host_line + '\n')
                 lines.append(server_alive_line + '\n')
