@@ -1534,7 +1534,40 @@ def generate_megastitch_config(cwd, yaml_dictionary):
             f.write('LID_ERR_STD:1e-9\n')
             f.write(f'LID_MODEL_PATH:{os.path.join(cwd, os.path.basename(lid_model_path))}\n')
             f.write('SAVE_COORDS_ON_CSV:True\n')
-            f.write('SAVE_NEW_TIFF_FILES:False\n')     
+            f.write('SAVE_NEW_TIFF_FILES:False\n')
+
+
+# --------------------------------------------------
+def edit_ssh_config_file():
+    ssh_config_path = os.path.expanduser('~/.ssh/config')
+    host_line = 'Host *'
+    server_alive_line = '    ServerAliveInterval 10'
+    
+    # Check if the file exists
+    if os.path.exists(ssh_config_path):
+        # Check if the lines are already present in the file
+        with open(ssh_config_path, 'r') as f:
+            lines = f.readlines()
+            if host_line in lines:
+                index = lines.index(host_line)
+                if index + 1 < len(lines) and lines[index + 1].startswith('    ServerAliveInterval'):
+                    lines[index + 1] = server_alive_line + '\n'
+                    with open(ssh_config_path, 'w') as f:
+                        f.writelines(lines)
+                    return
+                else:
+                    lines.insert(index + 1, server_alive_line + '\n')
+                    with open(ssh_config_path, 'w') as f:
+                        f.writelines(lines)
+                    return
+    else:
+        # Create the file if it does not exist
+        open(ssh_config_path, 'w').close()
+    
+    # Add the lines to the file
+    with open(ssh_config_path, 'a') as f:
+        f.write(host_line + '\n')
+        f.write(server_alive_line + '\n')
 
 
 # --------------------------------------------------
@@ -1546,7 +1579,7 @@ def main():
     create_mf_monitor(cctools_path)
     create_wq_status(cctools_path)
     cwd = os.getcwd()
-
+    edit_ssh_config_file()
 
     with open(args.yaml, 'r') as stream:
         global original_yaml_dictionary
