@@ -108,7 +108,7 @@ modules:
     file_level: dir
     input_dir: [./plotclip_orthos]
     input_file: foo
-    inputs: [$FILE, ./season15_multi_latlon_geno.geojson, ./model_weights_flir_v3_full.pth]
+    inputs: [$FILE, ./season16_multi_latlon_geno_updated.geojson, ./model_weights_flir_v3_full.pth]
     outputs: []  
 
   9:
