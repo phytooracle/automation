@@ -19,12 +19,12 @@ modules:
     container: 
       simg_name: 3d_postprocessing.simg
       dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_15_clustering.csv -s 15 -d ${DATE} -l ${CWD}/gcp_season_15.txt
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_15_clustering.csv -s 15 -d ${DATE} -l ${CWD}/gcp_season_15_bucket.txt
     distribution_level: wq
     file_level: 
     input_dir: [alignment, west_downsampled]
     input_file: -west.ply
-    inputs: [gcp_season_15.txt]
+    inputs: [gcp_season_15_bucket.txt]
     outputs: [postprocessing_out/east/$SUBDIR-east.ply,
               postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
               postprocessing_out/merged/$SUBDIR-merged.ply,
@@ -53,7 +53,7 @@ modules:
     file_level: 
     input_dir: [postprocessing_out, west]
     input_file: -west.ply
-    inputs: [gcp_season_15.txt] 
+    inputs: [gcp_season_15_bucket.txt] 
     outputs: []
 
   4: 
@@ -65,7 +65,7 @@ modules:
     file_level: subdir
     input_dir: [individual_plants_out, west]
     input_file: _cropped.ply
-    inputs: [gcp_season_15.txt]
+    inputs: [gcp_season_15_bucket.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
               individual_plants_out/plant_reports/$PLANT_NAME]
 
@@ -78,7 +78,7 @@ modules:
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
-    inputs: [gcp_season_15.txt]
+    inputs: [gcp_season_15_bucket.txt]
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
 
 workload_manager:
@@ -113,7 +113,7 @@ paths:
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/season_15_lettuce_yr_2022/level_3/stereoTop/thresh_098/season_15_clustering.csv,
 #                         /iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_3/stereoTop/season_12_clustering.csv, 
-                        /iplant/home/shared/phytooracle/season_15_lettuce_yr_2022/level_0/necessary_files/gcp_season_15.txt]
+                        /iplant/home/shared/phytooracle/season_15_lettuce_yr_2022/level_0/necessary_files/gcp_season_15_bucket.txt]
       level: level_1
       input_dir: alignment
     output: 
