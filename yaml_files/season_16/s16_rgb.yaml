@@ -130,11 +130,11 @@ modules:
         outputs: [$DATE/$DATE_ortho_10pct_cubic.png]
 
 workload_manager:
-    account: ericlyons
+    account: dukepauli
 
     high_priority_settings:
         use: True
-        qos_group: user_qos_ericlyons
+        qos_group: user_qos_dukepauli
         partition: high_priority
     standard_settings:
         use: False
