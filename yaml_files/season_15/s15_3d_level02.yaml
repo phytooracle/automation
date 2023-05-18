@@ -3,7 +3,7 @@ tags:
   pipeline: season15_scanner3DTop
   description: season15_postprocessing
   notes: Post landmark selection processing of Season 15 scanner3DTop data
-  runby: Unspecified Paulilab member
+  runby: Pauli Lab Member
   sensor: scanner3DTop 
   season: 15
   season_name: season_15_lettuce_yr_2022
