@@ -6,7 +6,7 @@ tags:
   runby: Unspecified Paulilab member
   sensor: scanner3DTop 
   season: 16
-  season_name: season_16_lettuce_yr_2023
+  season_name: season_16_sorghum_yr_2023
   slack_notifications: 
     use: True
     channel: gantry_data_updates
@@ -104,16 +104,16 @@ workload_manager:
 
 paths:
   models:
-    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
-    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+    #detection: contained within the Docker container (sorgum, season 12 onwards)
+    #segmentation: contained within the Docker container (sorgum, season 12 onwards)
   pipeline_outpath: [individual_plants_out]
   outpath_subdirs: [segmentation_pointclouds, plant_reports]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_16_lettuce_yr_2023/level_3/stereoTop/thresh_098/season_16_clustering.csv,
+      necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_3/stereoTop/thresh_098/season_16_clustering.csv,
 #                         /iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_3/stereoTop/season_12_clustering.csv, 
-                        /iplant/home/shared/phytooracle/season_16_lettuce_yr_2023/level_0/necessary_files/gcp_season_16.txt]
+                        /iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/necessary_files/gcp_season_16.txt]
       level: level_1
       input_dir: alignment
     output: 
