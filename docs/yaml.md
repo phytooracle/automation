@@ -73,3 +73,96 @@ You can specify any number of modules. Each module runs a single container and g
       * [suffix] | Suffix tag of raw data (OPTIONAL)
     * [output]
       * [level] | Level for processed data, path to where it will be uploaded onto CyVerse
+
+## Summary of models used in YAML for various species
+There are a number of models available on the datastore:
+* [Lettuce]
+  * /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+  * /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  * /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth
+  * /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_flir_v3_full.pth
+  * /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights.pth
+* [Sorghum]
+  * /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
+  * /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_flir.pth
+  * /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_rgb.pth
+For a given season, it is necessary that the appropriate models for the given species (e.g., lettuce, sorghum) be used. For a given pipeline, not all models will be used. 
+
+### RGB
+* [Plant Detection]
+  * Sorghum: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_rgb.pth
+  * Lettuce: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights.pth
+* [Segmentation]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Lid Detection]
+  * Sorghum: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth	
+  * Lettuce: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
+
+### FLIR
+* [Plant Detection]
+  * Sorghum: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_flir.pth	
+  * Lettuce: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_flir_v3_full.pth	
+* [Segmentation]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Lid Detection]
+  * Sorghum: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth	
+  * Lettuce: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth	
+
+### 3D - Level 1
+* [Plant Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Segmentation]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Lid Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
+
+### 3D - Level 2
+Prior to Season 12:
+* [Plant Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Segmentation]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Lid Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
+
+From Season 12 onwards:
+* [Plant Detection]
+  * Sorghum: Contained within the Docker container
+  * Lettuce: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth 
+* [Segmentation]
+  * Sorghum: Contained within the Docker container
+  * Lettuce: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth 
+* [Lid Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
+
+### 3D - Level 3
+This was the final stage for seasons 10 and 11, but was not performed for season 12 onwards.
+* [Plant Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Segmentation]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Lid Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
+
+### PSII
+* [Plant Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Segmentation]
+  * Sorghum: Not used
+  * Lettuce: Not used
+* [Lid Detection]
+  * Sorghum: Not used
+  * Lettuce: Not used
