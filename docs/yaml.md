@@ -57,6 +57,7 @@ You can specify any number of modules. Each module runs a single container and g
   * [models] | CyVerse paths to machine learning models used during data processing
     * [detection] | CyVerse path to object detection model
     * [segmentation] | CyVerse path to segmentation model
+    * [lid] | CyVerse path to lid detection model
   * [pipeline_outpath] | List of output directories which you want to save (i.e. [individual_plants_out])
   * [outpath_subdirs] | List of output subdirectories which you want to save (i.e. [segmentation_pointclouds, plant_reports])
   * [cyverse]
@@ -75,7 +76,7 @@ You can specify any number of modules. Each module runs a single container and g
       * [level] | Level for processed data, path to where it will be uploaded onto CyVerse
 
 ## Summary of models used in YAML for various species
-There are a number of models available on the datastore:
+There are a number of models available on CyVerse:
 * [Lettuce]
   * /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
   * /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
