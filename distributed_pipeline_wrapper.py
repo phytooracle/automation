@@ -541,39 +541,37 @@ def get_support_files(yaml_dictionary, date):
     Output: 
         - Downloaded files/directories in the current working directory
     '''
-    try:
-        #season_name = yaml_dictionary['tags']['season_name']
-        season_name = get_season_name()
-        cyverse_basename  = yaml_dictionary['paths']['cyverse']['basename']
 
-        irods_basename = os.path.join(
-                cyverse_basename,
-                season_name
-        )
+    #season_name = yaml_dictionary['tags']['season_name']
+    season_name = get_season_name()
+    cyverse_basename  = yaml_dictionary['paths']['cyverse']['basename']
 
-        support_files = yaml_dictionary['paths']['cyverse']['input']['necessary_files']
+    irods_basename = os.path.join(
+            cyverse_basename,
+            season_name
+    )
 
-        for file_path in support_files:
-            print(f"Looking for {file_path}...")
-            filename = os.path.basename(file_path)
-            #pdb.set_trace()
-            if not os.path.isfile(filename):
-                cyverse_path = os.path.join(irods_basename, file_path)
-                print(f"    We need to get: {cyverse_path}")
-                server_utils.download_file_from_cyverse(os.path.join(irods_basename, file_path))
-            else:
-                print(f"FOUND")
-            server_utils.untar_files([filename])
+    support_files = yaml_dictionary['paths']['cyverse']['input']['necessary_files']
 
-        sensor = yaml_dictionary["tags"]["sensor"]
+    for file_path in support_files:
+        print(f"Looking for {file_path}...")
+        filename = os.path.basename(file_path)
+        #pdb.set_trace()
+        if not os.path.isfile(filename):
+            cyverse_path = os.path.join(irods_basename, file_path)
+            print(f"    We need to get: {cyverse_path}")
+            server_utils.download_file_from_cyverse(os.path.join(irods_basename, file_path))
+        else:
+            print(f"FOUND")
+        server_utils.untar_files([filename])
+
+    sensor = yaml_dictionary["tags"]["sensor"]
+
+    if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
+        if not os.path.isdir('Lettuce_Image_Stitching'):
+            sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
     
-        if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
-            if not os.path.isdir('Lettuce_Image_Stitching'):
-                sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
-    
-    except:
 
-        print("ERROR IN SUPPORT FILES.")
 
 
 # --------------------------------------------------
@@ -1665,10 +1663,13 @@ def main():
                         cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
                         worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
                         cwd=cwd)
+                
+                slack_notification(message=f"Workers launched.", date=date)
 
             global seg_model_name, det_model_name
             seg_model_name, det_model_name = get_model_files(yaml_dictionary)
-
+            slack_notification(message=f"Model files downloaded.", date=date)
+            
             for k, v in yaml_dictionary['modules'].items():
                 
                 if 'input_dir' in v.keys():
