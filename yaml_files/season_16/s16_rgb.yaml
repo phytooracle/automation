@@ -20,12 +20,12 @@ modules:
       simg_name: rgb_bin_to_tif.simg
       dockerhub_path: docker://phytooracle/rgb_bin_to_tif:latest
     command: singularity run --fakeroot ${CWD}/rgb_bin_to_tif.simg ${CWD}/${FILE} -m ${CWD}/${UUID}_metadata.json
-    distribution_level: wq
+    distribution_level: local
     file_level:
     #input_dir: [./$RAW_DATA_PATH]
     input_file: _left.bin
     inputs: [$UUID_left.bin, $UUID_metadata.json]
-    outputs: [bin2tif_out/$FILE_BASE.tif]
+    outputs: [bin2tif_out/$FILE_BASE.tif,]
 
   # 2:
   #   container:
@@ -151,6 +151,7 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_rgb.pth
     lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
   pipeline_outpath: [.]
   outpath_subdirs: [plotclip_orthos, image_stiching, detect_out, img_coords_out, edited_tifs]
 
