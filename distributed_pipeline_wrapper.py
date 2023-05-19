@@ -590,9 +590,11 @@ def get_model_files(yaml_dictionary):
     Input:
         - seg_model_path: CyVerse path to the segmentation model (.pth file)
         - det_model_path: CyVerse path to the object detection model (.pth file)
+        - lid_model_path: CyVerse path to the object detection model specific to lid detection (.pth file)
         
     Output: 
-        - Downloaded model weight files.
+        - Downloaded model weight files OR nothing if paths are not specified in the YAML file.
+        - Variables of segmentation, plant detection, and lid detection paths OR np.nan values if not specified in the YAML file.
     """
     
     if 'segmentation' in yaml_dictionary['paths']['models'].keys():
@@ -602,6 +604,8 @@ def get_model_files(yaml_dictionary):
         if not os.path.isfile(os.path.basename(seg_model_path)):
             cmd1 = f'iget -fKPVT {seg_model_path}'
             sp.call(cmd1, shell=True)
+    else:
+        seg_model_path = np.nan
 
     if 'detection' in yaml_dictionary['paths']['models'].keys():
         
@@ -610,6 +614,8 @@ def get_model_files(yaml_dictionary):
         if not os.path.isfile(os.path.basename(det_model_path)):
             cmd1 = f'iget -fKPVT {det_model_path}'
             sp.call(cmd1, shell=True)
+    else:
+        det_model_path = np.nan
 
     if 'lid' in yaml_dictionary['paths']['models'].keys():
         
@@ -618,8 +624,10 @@ def get_model_files(yaml_dictionary):
         if not os.path.isfile(os.path.basename(lid_model_path)):
             cmd1 = f'iget -fKPVT {lid_model_path}'
             sp.call(cmd1, shell=True)
+    else:
+        lid_model_path = np.nan
 
-    return os.path.basename(seg_model_path), os.path.basename(det_model_path) 
+    return os.path.basename(seg_model_path), os.path.basename(det_model_path), os.path.basename(lid_model_path)
 
 
 # --------------------------------------------------
@@ -1655,7 +1663,7 @@ def main():
                         cwd=cwd)
 
             global seg_model_name, det_model_name
-            seg_model_name, det_model_name = get_model_files(yaml_dictionary)
+            seg_model_name, det_model_name, _ = get_model_files(yaml_dictionary)
 
             for k, v in yaml_dictionary['modules'].items():
                 
