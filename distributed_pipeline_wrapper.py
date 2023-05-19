@@ -607,7 +607,7 @@ def get_model_files(yaml_dictionary):
             cmd1 = f'iget -fKPVT {seg_model_path}'
             sp.call(cmd1, shell=True)
     else:
-        seg_model_path = np.nan
+        seg_model_path = ''
 
     if 'detection' in yaml_dictionary['paths']['models'].keys():
         
@@ -617,7 +617,7 @@ def get_model_files(yaml_dictionary):
             cmd1 = f'iget -fKPVT {det_model_path}'
             sp.call(cmd1, shell=True)
     else:
-        det_model_path = np.nan
+        det_model_path = ''
 
     if 'lid' in yaml_dictionary['paths']['models'].keys():
         
@@ -627,7 +627,7 @@ def get_model_files(yaml_dictionary):
             cmd1 = f'iget -fKPVT {lid_model_path}'
             sp.call(cmd1, shell=True)
     else:
-        lid_model_path = np.nan
+        lid_model_path = ''
 
     return os.path.basename(seg_model_path), os.path.basename(det_model_path) #, os.path.basename(lid_model_path)
 
