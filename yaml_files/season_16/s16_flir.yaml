@@ -6,7 +6,7 @@ tags:
   runby: Pauli Lab Member
   sensor: flirIrCamera
   season: 16
-  season_name: season_16_lettuce_yr_2023
+  season_name: season_16_sorghum_yr_2023
   slack_notifications: 
     use: True
     channel: gantry_data_updates
@@ -72,7 +72,7 @@ modules:
     file_level: dir
     input_dir: [edited_tifs]
     input_file: _left_corrected.tif
-    inputs: [season16_multi_latlon_geno.geojson] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
+    inputs: [season16_multi_latlon_geno_updated.geojson] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
     outputs: [$DATE/$DATE_thermal_ortho_10pct_cubic.tif] 
 
   6:
@@ -84,7 +84,7 @@ modules:
     file_level: 
     input_dir: [./edited_tifs]
     input_file: .tif
-    inputs: [$FILE, ./season16_multi_latlon_geno.geojson]
+    inputs: [$FILE, ./season16_multi_latlon_geno_updated.geojson]
     outputs: [] 
 
   7:
@@ -103,12 +103,12 @@ modules:
     container: 
       simg_name: flir_plant_temp.simg
       dockerhub_path: docker://phytooracle/flir_plant_temp
-    command: singularity run -B $(pwd):/mnt --pwd /mnt flir_plant_temp.simg -d ${DATE} -g season16_multi_latlon_geno.geojson -m model_weights_flir_v3_full.pth -c 20 -od detect_out -of ${DATE}_detection plotclip_orthos
+    command: singularity run -B $(pwd):/mnt --pwd /mnt flir_plant_temp.simg -d ${DATE} -g season16_multi_latlon_geno_updated.geojson -m model_weights_flir_v3_full.pth -c 20 -od detect_out -of ${DATE}_detection plotclip_orthos
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
     input_file: foo
-    inputs: [$FILE, ./season15_multi_latlon_geno.geojson, ./model_weights_flir_v3_full.pth]
+    inputs: [$FILE, ./season16_multi_latlon_geno_updated.geojson, ./model_weights_flir_v3_full.pth]
     outputs: []  
 
   9:
@@ -127,11 +127,11 @@ workload_manager:
   account: dukepauli
 
   high_priority_settings:
-    use: False
+    use: True
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
-    use: True
+    use: False
     partition: standard
 
   job_name: phytooracle_worker_flir
@@ -147,8 +147,8 @@ workload_manager:
 
 paths:
   models:
-    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_flir_v3_full.pth
-    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    detection: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_flir.pth
+    #segmentation: not used (sorghum)
     lid: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth
   pipeline_outpath: [.]
   outpath_subdirs: [flir2tif_out, plotclip_orthos, image_stiching, detect_out, img_coords_out, edited_tifs]
@@ -157,8 +157,8 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_16_lettuce_yr_2023/level_0/season16_multi_latlon_geno.geojson,
-                        /iplant/home/shared/phytooracle/season_16_lettuce_yr_2023/level_0/necessary_files/gcp_season_16_bucket.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/season16_multi_latlon_geno_updated.geojson,
+                        /iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/necessary_files/gcp_season_16_bucket.txt]
       prefix: flirIrCamera-
       suffix: __*.tar.gz
       level: level_0 
