@@ -150,7 +150,6 @@ workload_manager:
 paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_rgb.pth
-    segmentation: 
     lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
   pipeline_outpath: [.]
   outpath_subdirs: [plotclip_orthos, image_stiching, detect_out, img_coords_out, edited_tifs]
