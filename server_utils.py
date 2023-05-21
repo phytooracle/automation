@@ -46,15 +46,17 @@ def download_file_from_cyverse(irods_path):
     cmd = f'iget -KPVT {os.path.join(irods_path)}'
 
     if not check_if_file_exists_on_cyverse(irods_path):
-        print(f"ERROR: File not found on cyverse: {irods_path}")
-        raise Exception(f"File not found on cyverse: {irods_path}")
-
+        print(f"ERROR: File doesn't exist on cyverse: {irods_path}")
+        raise Exception(f"File doesn't exist on cyverse: {irods_path}")
+    
     if hpc: 
         print(f"Using filexfer node to download file")
         run_filexfer_node_commands([cmd])
     else:
         print(f"Using current node/system to download file")
         sp.call(cmd, shell=True)
+
+    
 
 def download_files_from_cyverse(files, experiment, force_overwrite=False):
     """
@@ -111,8 +113,55 @@ def untar_files(local_files, force_overwrite=False):
                 file.close()
 
 def check_if_file_exists_on_cyverse(irods_path):
-    r = requests.head('https://data.cyverse.org/dav-anon' + irods_path.replace('home/shared/', 'projects/'))
-    return r.status_code == requests.codes.ok
+    """
+    Check if a file was downloaded by checking if it exists in the current
+    working directory.
+    """
 
+    """
+    filename = os.path.basename(irods_path)
+    print(f"Checking if file was downloaded: {os.getcwd() + filename}")
+
+    print("check result = ", os.path.isfile(os.getcwd() + filename))
+
+    if os.path.isfile(os.getcwd() + filename):
+        return True
+    else:
+        return False
+    """
+    found = False
+
+    # parse irods path to get directory and filename
+    irods_dir = os.path.dirname(irods_path)
+    filename = os.path.basename(irods_path)
+    cwd = os.getcwd()
+
+    global hpc
+
+    if hpc:
+        print(':: Using data transfer node to check if file exists on cyverse.')
+        # run command on filexfer node
+        sp.call(f"ssh filexfer 'cd {cwd}' '&& icd {irods_dir}' '&& ils > filexfer_output.txt' '&& exit'", shell=True)
+
+    else:
+        print(':: Using local irods to check if file exists on cyverse.')
+        sp.call(f"cd {cwd} && icd {irods_dir} && ils > filexfer_output.txt", shell=True)
+                    
+    # read output file and check if file exists
+    with open("filexfer_output.txt", "r") as f:
+        for line in f:
+            if filename in line:
+                found = True
+                break
+    
+    sp.call("rm filexfer_output.txt", shell=True)
+
+    return found
+
+
+
+    
+
+    
    
 

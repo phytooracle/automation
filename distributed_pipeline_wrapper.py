@@ -566,10 +566,12 @@ def get_support_files(yaml_dictionary, date):
         server_utils.untar_files([filename])
 
     sensor = yaml_dictionary["tags"]["sensor"]
-   
+
     if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
         if not os.path.isdir('Lettuce_Image_Stitching'):
             sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
+    
+
 
 
 # --------------------------------------------------
@@ -590,9 +592,11 @@ def get_model_files(yaml_dictionary):
     Input:
         - seg_model_path: CyVerse path to the segmentation model (.pth file)
         - det_model_path: CyVerse path to the object detection model (.pth file)
+        - lid_model_path: CyVerse path to the object detection model specific to lid detection (.pth file)
         
     Output: 
-        - Downloaded model weight files.
+        - Downloaded model weight files OR nothing if paths are not specified in the YAML file.
+        - Variables of segmentation, plant detection, and lid detection paths OR np.nan values if not specified in the YAML file.
     """
     
     if 'segmentation' in yaml_dictionary['paths']['models'].keys():
@@ -602,6 +606,8 @@ def get_model_files(yaml_dictionary):
         if not os.path.isfile(os.path.basename(seg_model_path)):
             cmd1 = f'iget -fKPVT {seg_model_path}'
             sp.call(cmd1, shell=True)
+    else:
+        seg_model_path = ''
 
     if 'detection' in yaml_dictionary['paths']['models'].keys():
         
@@ -610,6 +616,8 @@ def get_model_files(yaml_dictionary):
         if not os.path.isfile(os.path.basename(det_model_path)):
             cmd1 = f'iget -fKPVT {det_model_path}'
             sp.call(cmd1, shell=True)
+    else:
+        det_model_path = ''
 
     if 'lid' in yaml_dictionary['paths']['models'].keys():
         
@@ -618,8 +626,10 @@ def get_model_files(yaml_dictionary):
         if not os.path.isfile(os.path.basename(lid_model_path)):
             cmd1 = f'iget -fKPVT {lid_model_path}'
             sp.call(cmd1, shell=True)
+    else:
+        lid_model_path = ''
 
-    return os.path.basename(seg_model_path), os.path.basename(det_model_path) 
+    return os.path.basename(seg_model_path), os.path.basename(det_model_path) #, os.path.basename(lid_model_path)
 
 
 # --------------------------------------------------
@@ -1096,7 +1106,7 @@ def upload_outputs(date, yaml_dictionary):
     if args.hpc: 
         print(':: Using data transfer node.')
         # sp.call(f"ssh filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfKPVT {date}' '&& exit'", shell=True)
-        sp.call(f"ssh -vvv filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfkVP {date}' '&& exit'", shell=True) #-X upload_log --retries 2 
+        sp.call(f"ssh -o ServerAliveInterval=30 filexfer 'cd {cwd}' '&& imkdir -p {irods_output_path}' '&& icd {irods_output_path}' '&& iput -rfkP {date}' '&& exit'", shell=True) #-X upload_log --retries 2 
         
     else:
         
@@ -1682,10 +1692,13 @@ def main():
                         cores_per_worker=yaml_dictionary['workload_manager']['cores_per_worker'], 
                         worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
                         cwd=cwd)
+                
+                slack_notification(message=f"Workers launched.", date=date)
 
             global seg_model_name, det_model_name
             seg_model_name, det_model_name = get_model_files(yaml_dictionary)
-
+            slack_notification(message=f"Model files downloaded.", date=date)
+            
             for k, v in yaml_dictionary['modules'].items():
                 
                 if 'input_dir' in v.keys():
