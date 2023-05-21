@@ -1045,6 +1045,9 @@ def create_pipeline_logs(scan_date):
     if os.path.isfile('geo_correction_config.txt'):
         shutil.move('geo_correction_config.txt', os.path.join(cwd, scan_date, 'logs', 'geo_correction_config.txt'))
 
+    if os.path.isfile('upload_log.txt'):
+        shutil.move('upload_log.txt', os.path.join(cwd, scan_date, 'logs', 'upload_log.txt'))
+
 
 
 # --------------------------------------------------
@@ -1541,7 +1544,33 @@ def generate_megastitch_config(cwd, yaml_dictionary):
             f.write('LID_ERR_STD:1e-9\n')
             f.write(f'LID_MODEL_PATH:{os.path.join(cwd, os.path.basename(lid_model_path))}\n')
             f.write('SAVE_COORDS_ON_CSV:True\n')
-            f.write('SAVE_NEW_TIFF_FILES:False\n')     
+            f.write('SAVE_NEW_TIFF_FILES:False\n')
+
+
+# --------------------------------------------------
+def edit_ssh_config_file():
+    ssh_config_path = os.path.expanduser('~/.ssh/config')
+    host_line = 'Host *'
+    server_alive_line = '    ServerAliveInterval 30'
+    
+    # Check if the file exists
+    if os.path.exists(ssh_config_path):
+        # Comment out all existing Host * sections and ServerAliveInterval lines from the file
+        with open(ssh_config_path, 'r') as f:
+            lines = f.readlines()
+            new_lines = []
+            for line in lines:
+                if "Host" or "ServerAliveInterval" in line.strip():
+                    new_lines.append('#' + line)
+                else:
+                    new_lines.append(line)
+        with open(ssh_config_path, 'w') as f:
+            f.writelines(new_lines)
+    
+    # Add the Host * section and ServerAliveInterval line to the file
+    with open(ssh_config_path, 'a') as f:
+        f.write(host_line + '\n')
+        f.write(server_alive_line + '\n')
 
 
 # --------------------------------------------------
@@ -1553,7 +1582,7 @@ def main():
     create_mf_monitor(cctools_path)
     create_wq_status(cctools_path)
     cwd = os.getcwd()
-
+    edit_ssh_config_file()
 
     with open(args.yaml, 'r') as stream:
         global original_yaml_dictionary
