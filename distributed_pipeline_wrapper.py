@@ -1571,8 +1571,14 @@ def edit_ssh_config_file():
     with open(ssh_config_path, 'a') as f:
         f.write(host_line + '\n')
         f.write(server_alive_line + '\n')
-
-
+        
+        
+# --------------------------------------------------
+def clean_singularity_cache():
+    
+    sp.run(['singularity', 'cache', 'clean', '-f'])
+    
+    
 # --------------------------------------------------
 def main():
     """Run distributed data processing here"""
@@ -1582,6 +1588,7 @@ def main():
     create_mf_monitor(cctools_path)
     create_wq_status(cctools_path)
     cwd = os.getcwd()
+    clean_singularity_cache()
     #edit_ssh_config_file()
 
     with open(args.yaml, 'r') as stream:
