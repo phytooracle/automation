@@ -1576,7 +1576,8 @@ def edit_ssh_config_file():
 # --------------------------------------------------
 def clean_singularity_cache():
     
-    sp.run(['singularity', 'cache', 'clean', '-f'])
+    #sp.run(['singularity', 'cache', 'clean', '-f'])
+    sp.call('singularity cache clean -f', shell=True)
     
     
 # --------------------------------------------------
