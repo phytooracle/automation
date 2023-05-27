@@ -90,7 +90,7 @@ modules:
     file_level: 
     input_dir: [segmentation_pointclouds]
     input_file: ml_crop.ply
-    inputs: [gcp_season_10.txt]
+    inputs: [gcp_season_15_bucket.txt]
     # inputs: [segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
     #          segmentation_pointclouds/$PLANT_NAME/ml_crop.ply]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
