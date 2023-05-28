@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: 3d_postprocessing.simg
       dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_15_clustering.csv -s 15 -d ${DATE} -l ${CWD}/gcp_season_15_bucket.txt
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_15_clustering.csv -s 10 -d ${DATE} -l ${CWD}/gcp_season_15_bucket.txt
     distribution_level: wq
     file_level: 
     input_dir: [alignment, west_downsampled]
@@ -32,17 +32,17 @@ modules:
               postprocessing_out/west/$SUBDIR-west.ply,
               postprocessing_out/west_downsampled/$SUBDIR-west.ply]
   
-#   2: 
-#     container: 
-#       simg_name: 3d_crop_individual_plants.simg
-#       dockerhub_path: docker://phytooracle/3d_crop_individual_plants:fix_date_search #latest
-#     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_15_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 15 -d ${DATE} && tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
-#     distribution_level: wq
-#     file_level: 
-#     input_dir: [postprocessing_out, west_downsampled]
-#     input_file: -west.ply
-#     inputs: [gcp_season_15_bucket.txt]
-#     outputs: [$BASENAME_individual_plants.tar]
+  2: 
+    container: 
+      simg_name: 3d_crop_individual_plants.simg
+      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:fix_date_search #latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_15_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 15 -d ${DATE} #&& tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
+    distribution_level: wq
+    file_level: 
+    input_dir: [postprocessing_out, west_downsampled]
+    input_file: -west.ply
+    inputs: [gcp_season_15_bucket.txt]
+    outputs: [$BASENAME_individual_plants.tar]
 
 #   3: 
 #     container: 
