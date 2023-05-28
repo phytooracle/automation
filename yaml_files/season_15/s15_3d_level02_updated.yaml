@@ -156,7 +156,7 @@ paths:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
   pipeline_outpath: [individual_plants_out]
-  outpath_subdirs: [east, east_downsampled, west, west_downsampled, segmentation_pointclouds, plant_reports, 3d_volumes_entropy_v009]
+  outpath_subdirs: [segmentation_pointclouds, plant_reports, 3d_volumes_entropy_v009] #east, east_downsampled, west, west_downsampled, 
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
