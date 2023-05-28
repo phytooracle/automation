@@ -57,18 +57,18 @@ modules:
 #     inputs: [gcp_season_15_bucket.txt] 
 #     outputs: []
 
-#   4: 
-#     container: 
-#       simg_name: 3d_individual_plant_registration.simg
-#       dockerhub_path: docker://phytooracle/3d_individual_plant_registration:multiway_registration
-#     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_individual_plant_registration.simg -i ${CWD}/individual_plants_out/ -p ${PLANT_NAME} -r individual_plants_out/plant_reports/${PLANT_NAME} -o individual_plants_out/segmentation_pointclouds/${PLANT_NAME}
-#     distribution_level: wq
-#     file_level: subdir
-#     input_dir: [individual_plants_out, west]
-#     input_file: _cropped.ply
-#     inputs: [gcp_season_15_bucket.txt]
-#     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
-#               individual_plants_out/plant_reports/$PLANT_NAME]
+  4: 
+    container: 
+      simg_name: 3d_individual_plant_registration.simg
+      dockerhub_path: docker://phytooracle/3d_individual_plant_registration:multiway_registration
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_individual_plant_registration.simg -i ${CWD}/individual_plants_out/ -p ${PLANT_NAME} -r individual_plants_out/plant_reports/${PLANT_NAME} -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}
+    distribution_level: wq
+    file_level: subdir
+    input_dir: [individual_plants_out, west]
+    input_file: _cropped.ply
+    inputs: [gcp_season_15_bucket.txt]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
+              individual_plants_out/plant_reports/$PLANT_NAME]
 
 #   5:
 #     container: 
