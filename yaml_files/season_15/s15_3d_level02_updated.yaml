@@ -42,7 +42,7 @@ modules:
     input_dir: [postprocessing_out, west_downsampled]
     input_file: -west.ply
     inputs: [gcp_season_15_bucket.txt]
-    outputs: [$BASENAME_individual_plants.tar]
+    #outputs: [$BASENAME_individual_plants.tar]
 
 #   3: 
 #     container: 
