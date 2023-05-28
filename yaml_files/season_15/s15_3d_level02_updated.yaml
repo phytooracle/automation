@@ -69,15 +69,29 @@ modules:
     input_file: combined_multiway_registered.ply
     inputs: [gcp_season_15_bucket.txt]
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
-
+    
   5:
+    container:
+      simg_name: heatmap_ml_based_cropping.simg
+      dockerhub_path: docker://phytooracle/heatmap_ml_based_cropping:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/heatmap_ml_based_cropping.simg -p ${CWD}/${PLANT_PATH} -m ${CWD}/${DET_MODEL_PATH} -c 0.5 -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: _registered.ply
+    inputs: [gcp_season_15_bucket.txt] #[individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
+              individual_plants_out/plant_reports/$PLANT_NAME/heatmap.jpg,
+              individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg]
+
+  6:
     container: 
       simg_name: dgcnn_single_plant_soil_segmentation_pipeline.simg
       dockerhub_path: docker://phytooracle/dgcnn_single_plant_soil_segmentation_pipeline:latest
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${CWD}/${PLANT_PATH} --model_path ${CWD}/${SEG_MODEL_PATH} -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports -ef ml_crop
     distribution_level: wq
     file_level: 
-    input_dir: [segmentation_pointclouds]
+    input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: ml_crop.ply
     inputs: [gcp_season_15_bucket.txt]
     # inputs: [segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
