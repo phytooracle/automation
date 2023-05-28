@@ -9,7 +9,7 @@ tags:
   season_name: season_15_lettuce_yr_2022
   slack_notifications: 
     use: True
-    channel: gantry_data_updates
+    channel: gantry_test #gantry_data_updates
     container:
       simg_name: slack_notifications.simg
       dockerhub_path: docker://phytooracle/slack_notifications:latest
