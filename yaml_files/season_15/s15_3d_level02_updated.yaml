@@ -36,7 +36,7 @@ modules:
     container: 
       simg_name: 3d_crop_individual_plants.simg
       dockerhub_path: docker://phytooracle/3d_crop_individual_plants:fix_date_search #latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_15_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 15 -d ${DATE} #&& tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_15_clustering.csv -f ${SUBDIR} -o individual_plants_out -s 10 -d ${DATE} #&& tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
     distribution_level: wq
     file_level: 
     input_dir: [postprocessing_out, west_downsampled]
