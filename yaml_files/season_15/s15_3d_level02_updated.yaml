@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: 3d_postprocessing.simg
       dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_15_clustering.csv -s 10 -d ${DATE} -l ${CWD}/gcp_season_15_bucket.txt
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o ${CWD}/postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_15_clustering.csv -s 10 -d ${DATE} -l ${CWD}/gcp_season_15_bucket.txt
     distribution_level: wq
     file_level: 
     input_dir: [alignment, west_downsampled]
