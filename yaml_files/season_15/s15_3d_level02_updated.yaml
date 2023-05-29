@@ -148,7 +148,7 @@ workload_manager:
   alt_number_worker_array: 333
   alt_cores_per_worker: 20
   time_minutes: 1440
-  retries: 0 #1
+  retries: 1
   port: 0
   mem_per_core: 5
   manager_name: phytooracle_manager_3d
