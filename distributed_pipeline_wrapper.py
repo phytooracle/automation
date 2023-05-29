@@ -1711,7 +1711,23 @@ def main():
                 
                 if 'input_dir' in v.keys():
                     dir_name = os.path.join(*v['input_dir'])
+                    
+                if 'alternate_worker_settings' in v.keys():
+                    if v['alternate_worker_settings'] == True:
+                        kill_workers('_'.join([yaml_dictionary['workload_manager']['job_name'], user]))
 
+                        launch_workers(cctools_path = cctools_path,
+                                account=yaml_dictionary['workload_manager']['account'], 
+                                job_name='_'.join([yaml_dictionary['workload_manager']['job_name'], user]), 
+                                nodes=yaml_dictionary['workload_manager']['nodes'], 
+                                time=yaml_dictionary['workload_manager']['time_minutes'], 
+                                mem_per_core=yaml_dictionary['workload_manager']['mem_per_core'], 
+                                manager_name='_'.join([yaml_dictionary['workload_manager']['manager_name'], user]), 
+                                number_worker_array=yaml_dictionary['workload_manager']['alt_number_worker_array'], 
+                                cores_per_worker=yaml_dictionary['workload_manager']['alt_cores_per_worker'], 
+                                worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
+                                cwd=cwd)
+            
                 slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])}.", date=date)
 
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
