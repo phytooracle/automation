@@ -73,7 +73,7 @@ modules:
   5:
     container:
       simg_name: heatmap_ml_based_cropping.simg
-      dockerhub_path: docker://phytooracle/heatmap_ml_based_cropping:latest
+      dockerhub_path: docker://phytooracle/heatmap_ml_based_cropping:season_15 #latest
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/heatmap_ml_based_cropping.simg -p ${CWD}/${PLANT_PATH} -m ${CWD}/${DET_MODEL_PATH} -c 0.5 -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports
     distribution_level: wq
     file_level: 
