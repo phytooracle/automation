@@ -1727,6 +1727,8 @@ def main():
                                 cores_per_worker=yaml_dictionary['workload_manager']['alt_cores_per_worker'], 
                                 worker_timeout=yaml_dictionary['workload_manager']['worker_timeout_seconds'], 
                                 cwd=cwd)
+                        
+                        slack_notification(message=f"Workers launched with alternate settings.", date=date)
             
                 slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])}.", date=date)
 
