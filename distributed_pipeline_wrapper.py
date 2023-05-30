@@ -1589,7 +1589,7 @@ def main():
     create_mf_monitor(cctools_path)
     create_wq_status(cctools_path)
     cwd = os.getcwd()
-#     clean_singularity_cache()
+    clean_singularity_cache()
 #     edit_ssh_config_file()
 
     with open(args.yaml, 'r') as stream:
