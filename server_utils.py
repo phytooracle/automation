@@ -43,7 +43,7 @@ def download_file_from_cyverse(irods_path):
     """
 
     global hpc
-    cmd = f'iget -KPVT {os.path.join(irods_path)}'
+    cmd = f'iget -PVT {os.path.join(irods_path)}'
 
     if not check_if_file_exists_on_cyverse(irods_path):
         print(f"ERROR: File doesn't exist on cyverse: {irods_path}")
