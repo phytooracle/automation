@@ -131,15 +131,15 @@ modules:
     outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
 
 workload_manager:
-  account: windfall
+  account: ericlyons
 
   high_priority_settings:
-    use: False
+    use: True
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: True
-    partition: windfall
+    use: False
+    partition: standard
 
   job_name: phytooracle_worker_3d
   nodes: 1
