@@ -39,7 +39,6 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_15_clustering.csv -f ${SUBDIR} -o ${CWD}/individual_plants_out -s 10 -d ${DATE} #&& tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
     distribution_level: wq
     file_level: 
-    alternate_worker_settings: True
     input_dir: [postprocessing_out, west_downsampled]
     input_file: -west.ply
     inputs: [gcp_season_15_bucket.txt]
@@ -111,6 +110,7 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
     distribution_level: wq
     file_level: 
+    alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: segmentation_plant.ply
     inputs: [gcp_season_15_bucket.txt]
