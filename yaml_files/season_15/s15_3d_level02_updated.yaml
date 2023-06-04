@@ -146,7 +146,7 @@ workload_manager:
   number_worker_array: 300
   cores_per_worker: 5
   alt_number_worker_array: 333
-  alt_cores_per_worker: 10
+  alt_cores_per_worker: 20
   time_minutes: 1440
   retries: 1
   port: 0
