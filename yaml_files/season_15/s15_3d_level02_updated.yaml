@@ -131,14 +131,14 @@ modules:
     outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
 
 workload_manager:
-  account: ericlyons
+  account: dukepauli
 
   high_priority_settings:
-    use: True
+    use: False
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: False
+    use: True
     partition: standard
 
   job_name: phytooracle_worker_3d
