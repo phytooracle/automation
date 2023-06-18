@@ -739,7 +739,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     '''
     args = get_args()
     files_list = [file.replace('-west.ply', '').replace('-east.ply', '').replace('-merged.ply', '').replace('__Top-heading-west_0.ply', '') for file in files_list]
-    timeout = f'timeout {args.timeout}h '
+    timeout = f'timeout -s SIGKILL {args.timeout}h '
     cwd = os.getcwd()
     command = command.replace('${CWD}', cwd)
     
