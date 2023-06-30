@@ -18,7 +18,7 @@ modules:
   1: 
     container: 
       simg_name: 3d_preprocessing.simg
-      dockerhub_path: docker://phytooracle/3d_preprocessing:latest
+      dockerhub_path: docker://phytooracle/3d_preprocessing:transformation_gui_integration #latest
     command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_14_bucket.txt -o ${CWD}/preprocessing -i ${CWD}/${INPUT_DIR}
     distribution_level: wq
     file_level: 
@@ -32,17 +32,17 @@ modules:
               preprocessing/west_downsampled/$SUBDIR__Top-heading-west.ply,
               preprocessing/metadata/$SUBDIR_updated-metadata.json]
 
-  2: 
-    container: 
-      simg_name: 3d_sequential_align.simg
-      dockerhub_path: docker://phytooracle/3d_sequential_align:latest
-    command: singularity run ${CWD}/3d_sequential_align.simg -o ${CWD}/alignment -i ${CWD}/preprocessing
-    distribution_level: local
-    file_level: dir
-    input_dir: [preprocessing, west_downsampled]
-    input_file: -west.ply
-    inputs: [gcp_season_14_bucket.txt]
-    outputs: []
+  # 2: 
+  #   container: 
+  #     simg_name: 3d_sequential_align.simg
+  #     dockerhub_path: docker://phytooracle/3d_sequential_align:latest
+  #   command: singularity run ${CWD}/3d_sequential_align.simg -o ${CWD}/alignment -i ${CWD}/preprocessing
+  #   distribution_level: local
+  #   file_level: dir
+  #   input_dir: [preprocessing, west_downsampled]
+  #   input_file: -west.ply
+  #   inputs: [gcp_season_14_bucket.txt]
+  #   outputs: []
 #     outputs: [sequential_alignment/east/$SUBDIR__Top-heading-east.ply,
 #               sequential_alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
 #               sequential_alignment/merged/$SUBDIR__Top-heading-merged.ply,
