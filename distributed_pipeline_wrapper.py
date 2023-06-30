@@ -599,35 +599,34 @@ def get_model_files(yaml_dictionary):
         - Variables of segmentation, plant detection, and lid detection paths OR np.nan values if not specified in the YAML file.
     """
     
-    if 'segmentation' in yaml_dictionary['paths']['models'].keys():
-
-        seg_model_path = yaml_dictionary['paths']['models']['segmentation']
-
-        if not os.path.isfile(os.path.basename(seg_model_path)):
-            cmd1 = f'iget -fKPVT {seg_model_path}'
-            sp.call(cmd1, shell=True)
-    else:
-        seg_model_path = ''
-
-    if 'detection' in yaml_dictionary['paths']['models'].keys():
+    if 'paths' in yaml_dictionary and 'models' in yaml_dictionary['paths']:
+        models = yaml_dictionary['paths']['models']
         
-        det_model_path = yaml_dictionary['paths']['models']['detection']
+        if 'segmentation' in models.keys():
+            seg_model_path = models['segmentation']
+            if not os.path.isfile(os.path.basename(seg_model_path)):
+                cmd1 = f'iget -fKPVT {seg_model_path}'
+                sp.call(cmd1, shell=True)
+        else:
+            seg_model_path = ''
 
-        if not os.path.isfile(os.path.basename(det_model_path)):
-            cmd1 = f'iget -fKPVT {det_model_path}'
-            sp.call(cmd1, shell=True)
+        if 'detection' in models.keys():
+            det_model_path = models['detection']
+            if not os.path.isfile(os.path.basename(det_model_path)):
+                cmd1 = f'iget -fKPVT {det_model_path}'
+                sp.call(cmd1, shell=True)
+        else:
+            det_model_path = ''
+
+        if 'lid' in models.keys():
+            lid_model_path = models['lid']
+            if not os.path.isfile(os.path.basename(lid_model_path)):
+                cmd1 = f'iget -fKPVT {lid_model_path}'
+                sp.call(cmd1, shell=True)
+        else:
+            lid_model_path = ''
     else:
-        det_model_path = ''
-
-    if 'lid' in yaml_dictionary['paths']['models'].keys():
-        
-        lid_model_path = yaml_dictionary['paths']['models']['lid']
-
-        if not os.path.isfile(os.path.basename(lid_model_path)):
-            cmd1 = f'iget -fKPVT {lid_model_path}'
-            sp.call(cmd1, shell=True)
-    else:
-        lid_model_path = ''
+        seg_model_path, det_model_path, lid_model_path = '', '', ''
 
     return os.path.basename(seg_model_path), os.path.basename(det_model_path) #, os.path.basename(lid_model_path)
 
@@ -742,6 +741,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
     timeout = f'timeout -s SIGKILL {args.timeout}h '
     cwd = os.getcwd()
     command = command.replace('${CWD}', cwd)
+    date_time = date
     
     if sensor=='scanner3DTop':
 
@@ -782,7 +782,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                 jx_dict = {
                     "rules": [
                                 {
-                                    "command" : timeout + command.replace('${FILE}', file).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${DET_MODEL_PATH}', det_model_name).replace('${PLANT_NAME}', file),
+                                    "command" : timeout + command.replace('${FILE}', file).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${DET_MODEL_PATH}', det_model_name).replace('${PLANT_NAME}', file).replace('${DATE_TIME}', date_time),
                                     "outputs" : [out.replace('$PLANT_NAME', file) for out in outputs],
                                     "inputs"  : [input.replace('$PLANT_NAME', file) for input in inputs if os.path.isdir(input.replace('$PLANT_NAME', file))]
                                                 # [container, 
@@ -799,7 +799,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                     "rules": [
                                 {
                                     "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date)\
-                                                .replace('${INPUT_DIR}', os.path.dirname(file)),
+                                                .replace('${INPUT_DIR}', os.path.dirname(file)).replace('${DATE_TIME}', date_time),
                                     "outputs" : [out.replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
                                     "inputs"  : [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date)\
                                                                         .replace('$FILE', file).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for input in inputs]
@@ -820,7 +820,8 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                         .replace('${M_DATA_FILE}', file.replace(file[-15:], 'metadata.json'))\
                                         .replace('${FILE_DIR}', os.path.dirname(file))\
                                         .replace('${UUID}', os.path.basename(file).replace('.tif', ''))\
-                                        .replace('${DATE}', date),
+                                        .replace('${DATE}', date)\
+                                        .replace('${DATE_TIME}', date_time),
 
                                     "outputs" : [out\
                                         .replace('$FILE_BASE', os.path.basename(file).replace('.bin', ''))\
@@ -847,7 +848,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
             jx_dict = {
                 'rules': [
                             {
-                                "command": timeout + command.replace('${FILE}', file).replace('${UUID}', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])).replace('${DATE}', date).replace('${FLIR_META}', file.replace('ir.bin', 'metadata.json')),
+                                "command": timeout + command.replace('${FILE}', file).replace('${UUID}', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])).replace('${DATE}', date).replace('${FLIR_META}', file.replace('ir.bin', 'metadata.json')).replace('${DATE_TIME}', date_time),
                                 "outputs": [out.replace('$FILE_BASE', os.path.basename(file).split('.')[0]).replace('$DATE', date).replace('$FLIR_TIF', file.replace('.bin', '.tif')) for out in outputs],
                                 "inputs": [container, seg_model_name, det_model_name] + [input.replace('$FILE', file).replace('$UUID', os.path.join(os.path.dirname(file), os.path.basename(file).split("_")[0])).replace('$FLIR_META', file.replace('ir.bin', 'metadata.json')) for input in inputs]
                             } for file in files_list
@@ -859,7 +860,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
             jx_dict = {
                 "rules": [
                             {
-                                "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date).replace('${INPUT_DIR}', os.path.dirname(file)),
+                                "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date).replace('${INPUT_DIR}', os.path.dirname(file)).replace('${DATE_TIME}', date_time),
                                 "outputs" : [out.replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file)))  for out in outputs],
                                 "inputs"  : [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$FILE', file).replace('$BASENAME', os.path.basename(os.path.dirname(file)))  for input in inputs]
                                             # [file, 
@@ -876,7 +877,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
         jx_dict = {
             "rules": [
                         {
-                                "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date).replace('${INPUT_DIR}', os.path.dirname(file)),
+                                "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date).replace('${INPUT_DIR}', os.path.dirname(file)).replace('${DATE_TIME}', date_time),
                                 "outputs" : [out.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file))) for out in outputs],
                                 "inputs"  : [seg_model_name,
                                              det_model_name]
@@ -1578,8 +1579,28 @@ def clean_singularity_cache():
     
     #sp.run(['singularity', 'cache', 'clean', '-f'])
     sp.call('singularity cache clean -f', shell=True)
-    
-    
+
+
+# --------------------------------------------------
+def extract_date(string: str) -> str:
+    match = re.search(r'\d{4}-\d{2}-\d{2}', string)
+    if match:
+        return match.group()
+    else:
+        return "No date found in the string"
+
+
+# --------------------------------------------------
+def get_transformation_files(yaml_dictionary, date):
+    if 'paths' in yaml_dictionary and 'cyverse' in yaml_dictionary['paths'] and 'input' in yaml_dictionary['paths']['cyverse']:
+        input = yaml_dictionary['paths']['cyverse']['input']
+        if "transformation_files" in input.keys():
+            date = extract_date(string=date)
+            path = os.path.join(input["transformation_files"], date)
+            print(path)
+            sp.call(f"iget -rfKPVT {path}", shell=True)
+
+
 # --------------------------------------------------
 def main():
     """Run distributed data processing here"""
@@ -1621,7 +1642,6 @@ def main():
                 )
             else:
                 yaml_dictionary = original_yaml_dictionary
-
             slack_notification(message=f"Starting data processing.", date=date)
 
             build_containers(yaml_dictionary)
@@ -1639,7 +1659,13 @@ def main():
                 return
             
             server_utils.hpc = args.hpc
-                
+            
+            global seg_model_name, det_model_name
+            seg_model_name, det_model_name = get_model_files(yaml_dictionary)
+            get_support_files(yaml_dictionary=yaml_dictionary, date=date)
+            get_transformation_files(yaml_dictionary=yaml_dictionary, date=date)
+            slack_notification(message=f"Necessary files downloaded.", date=date)
+
             ###############################################
             # Figure out what we need to DL
             # There are three scenarios...
@@ -1679,7 +1705,6 @@ def main():
             else:
                 raise Exception(f"Couldn't figure out what to do with yaml input")
 
-            get_support_files(yaml_dictionary=yaml_dictionary, date=date)
             slack_notification(message=f"Downloading raw data complete.", date=date)
 
             ###########################################################
@@ -1703,9 +1728,7 @@ def main():
                 
                 slack_notification(message=f"Workers launched.", date=date)
 
-            global seg_model_name, det_model_name
-            seg_model_name, det_model_name = get_model_files(yaml_dictionary)
-            slack_notification(message=f"Model files downloaded.", date=date)
+
             
             for k, v in yaml_dictionary['modules'].items():
                 

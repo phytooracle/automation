@@ -19,47 +19,28 @@ modules:
     container: 
       simg_name: 3d_preprocessing.simg
       dockerhub_path: docker://phytooracle/3d_preprocessing:transformation_gui_integration #latest
-    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_14_bucket.txt -o ${CWD}/preprocessing -i ${CWD}/${INPUT_DIR}
+    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_14_bucket.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR} -ewp ${CWD}/${DATE}/${DATE}_ew_positive_final_transformation.npy -ewn ${CWD}/${DATE}/${DATE}_ew_negative_final_transformation.npy -ns ${CWD}/${DATE}/${DATE}_ns_final_transformation.npy
     distribution_level: wq
     file_level: 
     input_file: -west_0.ply
     inputs: [gcp_season_14_bucket.txt]
-    outputs: [preprocessing/east/$SUBDIR__Top-heading-east.ply,
-              preprocessing/east_downsampled/$SUBDIR__Top-heading-east.ply, 
-              preprocessing/merged/$SUBDIR__Top-heading-merged.ply,
-              preprocessing/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
-              preprocessing/west/$SUBDIR__Top-heading-west.ply,
-              preprocessing/west_downsampled/$SUBDIR__Top-heading-west.ply,
-              preprocessing/metadata/$SUBDIR_updated-metadata.json]
-
-  # 2: 
-  #   container: 
-  #     simg_name: 3d_sequential_align.simg
-  #     dockerhub_path: docker://phytooracle/3d_sequential_align:latest
-  #   command: singularity run ${CWD}/3d_sequential_align.simg -o ${CWD}/alignment -i ${CWD}/preprocessing
-  #   distribution_level: local
-  #   file_level: dir
-  #   input_dir: [preprocessing, west_downsampled]
-  #   input_file: -west.ply
-  #   inputs: [gcp_season_14_bucket.txt]
-  #   outputs: []
-#     outputs: [sequential_alignment/east/$SUBDIR__Top-heading-east.ply,
-#               sequential_alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
-#               sequential_alignment/merged/$SUBDIR__Top-heading-merged.ply,
-#               sequential_alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
-#               sequential_alignment/west/$SUBDIR__Top-heading-west.ply,
-#               sequential_alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
-#               sequential_alignment/metadata/$SUBDIR_updated-metadata.json]
+    outputs: [alignment/merged_downsampled/$SUBDIR__Top-heading-merged.ply,
+              alignment/merged/$SUBDIR__Top-heading-merged.ply,
+              alignment/east/$SUBDIR__Top-heading-east.ply,
+              alignment/east_downsampled/$SUBDIR__Top-heading-east.ply,
+              alignment/west/$SUBDIR__Top-heading-west.ply,
+              alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
+              alignment/metadata/$SUBDIR_updated-metadata.json]
 
 workload_manager:
   account: ericlyons
   high_priority_settings:
-    use: True
+    use: False #True
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: False
-    partition: windfall
+    use: True #False
+    partition: standard #windfall
     
   job_name: phytooracle_worker_3d
   nodes: 1
@@ -84,6 +65,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/necessary_files/gcp_season_14_bucket.txt]
+      transformation_files: /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/scanner3DTop/scanner3DTop_Transformations/
       level: level_0
       prefix: scanner3DTop-
       suffix: __*_sorghum.tar.gz
