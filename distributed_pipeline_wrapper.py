@@ -1212,6 +1212,10 @@ def clean_inputs(date, yaml_dictionary):
 
     if os.path.isdir(date):
         shutil.rmtree(date, ignore_errors=True)
+    
+    date_str = extract_date(string=date)
+    if os.path.isdir(date_str):
+        shutil.rmtree(date_str, ignore_errors=True)
 
     if os.path.isdir('scanner3DTop'):
         shutil.rmtree('scanner3DTop')
@@ -1224,7 +1228,6 @@ def clean_inputs(date, yaml_dictionary):
 
             if os.path.isfile(item):
                 os.remove(item)
-
 
     if len(glob.glob(f'stereoTop-{date}*')) > 0:
 
