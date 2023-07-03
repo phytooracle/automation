@@ -83,7 +83,7 @@ workload_manager:
   worker_timeout_seconds: 86400
 
 paths:
-  models: # None used for sorghum's 3D level 1 YAML
+  # models: # None used for sorghum's 3D level 1 YAML
   pipeline_outpath: [alignment]
   outpath_subdirs: [east, east_downsampled, plant_reports, segmentation_pointclouds, west, west_downsampled, merged, merged_downsampled, metadata]
 
