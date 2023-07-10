@@ -73,7 +73,7 @@ modules:
     container: 
       simg_name: sorghum_soil_segmentation.simg
       dockerhub_path: docker://phytooracle/sorghum_soil_segmentation:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME} #mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && 
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME} -s 50000 #mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && 
     distribution_level: wq
     file_level: 
     alternate_worker_settings: True
