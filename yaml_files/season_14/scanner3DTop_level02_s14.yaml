@@ -73,7 +73,7 @@ modules:
     container: 
       simg_name: sorghum_soil_segmentation.simg
       dockerhub_path: docker://phytooracle/sorghum_soil_segmentation:latest
-    command: mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && singularity run ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME}
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME} #mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && 
     distribution_level: wq
     file_level: 
     alternate_worker_settings: True
@@ -97,18 +97,18 @@ workload_manager:
   nodes: 1
   number_worker_array: 300
   cores_per_worker: 5
-  alt_number_worker_array: 333
+  alt_number_worker_array: 150
   alt_cores_per_worker: 10
   time_minutes: 1440
   retries: 1
   port: 0
   mem_per_core: 5
   manager_name: phytooracle_manager_3d
-  worker_timeout_seconds: 7200 #86400
+  worker_timeout_seconds: 86400
 
 paths:
   pipeline_outpath: [individual_plants_out]
-  outpath_subdirs: [segmentation_pointclouds, plant_reports, east, west]
+  outpath_subdirs: [segmentation_pointclouds, plant_reports] #, east, west]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
