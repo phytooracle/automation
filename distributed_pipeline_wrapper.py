@@ -150,7 +150,7 @@ def build_containers(yaml_dictionary):
         container = v['container']
         if not os.path.isfile(container["simg_name"]):
             print(f'Building {container["simg_name"]}.')
-            sp.call(f'singularity build {container["simg_name"]} {container["dockerhub_path"]}', shell=True)
+            sp.call(f'singularity build --disable-cache {container["simg_name"]} {container["dockerhub_path"]}', shell=True)
 
 
 # --------------------------------------------------
@@ -1396,7 +1396,7 @@ def slack_notification(message, date):
 
             if not os.path.isfile(simg):
                 print(f'Building {simg}.')
-                sp.call(f"singularity build {simg} {dockerhub_path}", shell=True)
+                sp.call(f"singularity build --disable-cache {simg} {dockerhub_path}", shell=True)
             print('Sending message.')
             sp.call(f'singularity run {simg} -m "{message}" -c "{channel}"', shell=True)
 
