@@ -92,7 +92,7 @@ modules:
     alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
-    inputs: [model_weights_sorghum_rgb.pth]
+    inputs: [gcp_season_14_bucket.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
 
@@ -111,7 +111,7 @@ workload_manager:
   number_worker_array: 300
   cores_per_worker: 5
   alt_number_worker_array: 333
-  alt_cores_per_worker: 25
+  alt_cores_per_worker: 10
   time_minutes: 1440
   retries: 1
   port: 0
@@ -120,10 +120,6 @@ workload_manager:
   worker_timeout_seconds: 7200 #86400
 
 paths:
-  # models:
-  #   detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
-  #   segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
-  #   lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
   pipeline_outpath: [individual_plants_out]
   outpath_subdirs: [segmentation_pointclouds, plant_reports, east, west]
   cyverse: 
