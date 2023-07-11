@@ -831,9 +831,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                         .replace('$DATE', date)\
                                          for out in outputs],
 
-                                    "inputs"  : [container, 
-                                                seg_model_name, 
-                                                det_model_name] + [input\
+                                    "inputs"  : [container] + [input\
                                                     .replace('$FILE', file)\
                                                     .replace('$UUID', os.path.basename(file).replace('.tif', ''))\
                                                     .replace('$M_DATA_FILE', file.replace(file[-15:], 'metadata.json'))\
