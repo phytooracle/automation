@@ -27,54 +27,54 @@ modules:
     inputs: [$FILE, $M_DATA_FILE]
     outputs: [bin2tif_out/$FILE_BASE.tif]
 
-  # 2:
-  #   container:
-  #     simg_name: rgb_flir_plot_clip_geojson.simg
-  #     dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
-  #   command: singularity run rgb_flir_plot_clip_geojson.simg ${CWD}/${FILE} -sen psii -shp ${CWD}/season16_multi_latlon_geno_updated.geojson && tar -cvf ${UUID}.tar plotclip_out/
-  #   distribution_level: wq
-  #   file_level:
-  #   input_dir: [bin2tif_out]
-  #   input_file: .tif
-  #   inputs: [$FILE, season16_multi_latlon_geno_updated.geojson]
-  #   outputs: [$UUID.tar]
+  2:
+    container:
+      simg_name: rgb_flir_plot_clip_geojson.simg
+      dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt rgb_flir_plot_clip_geojson.simg ${CWD}/${FILE} -sen psii -shp ${CWD}/season16_multi_latlon_geno_updated.geojson && tar -cvf ${UUID}.tar plotclip_out/
+    distribution_level: wq
+    file_level:
+    input_dir: [bin2tif_out]
+    input_file: .tif
+    inputs: [$FILE, season16_multi_latlon_geno_updated.geojson]
+    outputs: [$UUID.tar]
 
-  # 3:
-  #   container:
-  #     simg_name: slack_notifications.simg
-  #     dockerhub_path: docker://phytooracle/slack_notifications:latest
-  #   command: tar -xvf ${CWD}/${UUID}.tar && rm ${CWD}/${UUID}.tar
-  #   distribution_level: local
-  #   file_level:
-  #   input_dir: [bin2tif_out]
-  #   input_file: .tif
-  #   inputs: [season16_multi_latlon_geno_updated.geojson]
-  #   outputs: []
+  3:
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+    command: tar -xvf ${CWD}/${UUID}.tar && rm ${CWD}/${UUID}.tar
+    distribution_level: local
+    file_level:
+    input_dir: [bin2tif_out]
+    input_file: .tif
+    inputs: [season16_multi_latlon_geno_updated.geojson]
+    outputs: []
 
-  # 4:
-  #   container:
-  #     simg_name: psii_segmentation.simg
-  #     dockerhub_path: docker://phytooracle/psii_segmentation
-  #   command: singularity run psii_segmentation.simg plotclip_out/*
-  #   distribution_level: local
-  #   file_level: dir
-  #   input_dir: [./plotclip_out]
-  #   input_file: foo
-  #   inputs: [./plotclip_out/$FILE]
-  #   # outputs wrong
-  #   outputs: []
+  4:
+    container:
+      simg_name: psii_segmentation.simg
+      dockerhub_path: docker://phytooracle/psii_segmentation
+    command: singularity run -B $(pwd):/mnt --pwd /mnt psii_segmentation.simg plotclip_out/*
+    distribution_level: local
+    file_level: dir
+    input_dir: [./plotclip_out]
+    input_file: foo
+    inputs: [./plotclip_out/$FILE]
+    # outputs wrong
+    outputs: []
 
-  # 5:
-  #   container:
-  #     simg_name: psii_fluorescence_aggregation.simg
-  #     dockerhub_path: docker://phytooracle/psii_fluorescence_aggregation
-  #   command: singularity run psii_fluorescence_aggregation.simg -od fluorescence_aggregation_out -of ${DATE}_fluorescence_aggregation -m multithresh.json psii_segmentation_out
-  #   distribution_level: local
-  #   file_level: dir
-  #   input_dir: [./psii_segmentation_out]
-  #   input_file: psii_segmentation_out
-  #   inputs: [./psii_segmentation_out, ./multithresh.json]
-  #   outputs: [./fluorescence_aggregation_out/$DATE_fluorescence_aggregation.csv]
+  5:
+    container:
+      simg_name: psii_fluorescence_aggregation.simg
+      dockerhub_path: docker://phytooracle/psii_fluorescence_aggregation
+    command: singularity run -B $(pwd):/mnt --pwd /mnt psii_fluorescence_aggregation.simg -od fluorescence_aggregation_out -of ${DATE}_fluorescence_aggregation -m multithresh.json psii_segmentation_out
+    distribution_level: local
+    file_level: dir
+    input_dir: [./psii_segmentation_out]
+    input_file: psii_segmentation_out
+    inputs: [./psii_segmentation_out, ./multithresh.json]
+    outputs: [./fluorescence_aggregation_out/$DATE_fluorescence_aggregation.csv]
 
 workload_manager:
   account: dukepauli
