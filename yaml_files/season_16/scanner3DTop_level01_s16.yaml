@@ -32,6 +32,19 @@ modules:
               alignment/west/$SUBDIR__Top-heading-west.ply,
               alignment/west_downsampled/$SUBDIR__Top-heading-west.ply,
               alignment/metadata/$SUBDIR_updated-metadata.json]
+
+  2: 
+    container: 
+      simg_name: 3d_orthomosaic_generator.simg
+      dockerhub_path: docker://phytooracle/3d_orthomosaic_generator:latest
+    command: singularity run ${CWD}/3d_orthomosaic_generator.simg alignment/
+    distribution_level: local
+    file_level: dir
+    input_dir: [./alignment]
+    input_file: .ply
+    inputs: [gcp_season_16_bucket.txt]
+    outputs: [combined_view.png]
+    
   # 1: 
   #   container: 
   #     simg_name: 3d_preprocessing.simg
