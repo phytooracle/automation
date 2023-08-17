@@ -19,12 +19,12 @@ modules:
     container: 
       simg_name: 3d_postprocessing.simg
       dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o ${CWD}/postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_13_clustering.csv -s 10 -d ${DATE} -l ${CWD}/gcp_season_13.txt
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o ${CWD}/postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_13_clustering.csv -s 10 -d ${DATE} -l ${CWD}/gcp_season_13_paint.txt
     distribution_level: wq
     file_level: 
     input_dir: [alignment, west_downsampled]
     input_file: -west.ply
-    inputs: [gcp_season_13.txt]
+    inputs: [gcp_season_13_paint.txt]
     outputs: [postprocessing_out/east/$SUBDIR-east.ply,
               postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
               postprocessing_out/merged/$SUBDIR-merged.ply,
@@ -41,7 +41,7 @@ modules:
     file_level: 
     input_dir: [postprocessing_out, west_downsampled]
     input_file: -west.ply
-    inputs: [gcp_season_13.txt]
+    inputs: [gcp_season_13_paint.txt]
     outputs: []
     #outputs: [$BASENAME_individual_plants.tar]
     
@@ -54,7 +54,7 @@ modules:
     file_level: subdir
     input_dir: [individual_plants_out, west]
     input_file: _cropped.ply
-    inputs: [gcp_season_13.txt]
+    inputs: [gcp_season_13_paint.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
               individual_plants_out/plant_reports/$PLANT_NAME]
 
@@ -67,7 +67,7 @@ modules:
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
-    inputs: [gcp_season_13.txt]
+    inputs: [gcp_season_13_paint.txt]
     outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
     
   5:
@@ -79,7 +79,7 @@ modules:
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: _registered.ply
-    inputs: [gcp_season_13.txt] #[individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+    inputs: [gcp_season_13_paint.txt] #[individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/ml_crop.ply,
               individual_plants_out/plant_reports/$PLANT_NAME/heatmap.jpg,
               individual_plants_out/plant_reports/$PLANT_NAME/identificaiton.jpg]
@@ -93,7 +93,7 @@ modules:
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: ml_crop.ply
-    inputs: [gcp_season_13.txt]
+    inputs: [gcp_season_13_paint.txt]
     # inputs: [segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
     #          segmentation_pointclouds/$PLANT_NAME/ml_crop.ply]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
@@ -113,7 +113,7 @@ modules:
     alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: segmentation_plant.ply
-    inputs: [gcp_season_13.txt]
+    inputs: [gcp_season_13_paint.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
 
@@ -126,7 +126,7 @@ modules:
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: final.ply
-    inputs: [gcp_season_13.txt]
+    inputs: [gcp_season_13_paint.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
     outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
 
@@ -163,8 +163,8 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_3/stereoTop/thresh_098/season_13_clustering.csv,
-                        /iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/necessary_files/gcp_season_13.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_2/stereoTop/season_13_plant_detection_combined/season_13_clustering.csv,
+                        /iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/necessary_files/gcp_season_13_paint.txt]
       level: level_1
       input_dir: alignment
     output: 
