@@ -75,6 +75,7 @@ sbatch shell_scripts/slurm_submission.sh yaml_files/example_machinelearning_work
 ```
 
 Make sure to change the `account` and `partition` values as needed in the YAML file. 
+For modules requiring a larger number of cores (e.g., Megastitch in the stereoTop and flirIrCamera), slurm_submission_large.sh should be used 
 
 #### Cron
 To schedule Cron jobs, follow the directions [here](https://github.com/phytooracle/automation/blob/main/docs/cron.md).
