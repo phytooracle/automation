@@ -67,7 +67,7 @@ paths:
     segmentation: #not used (sorghum)
     lid: #/iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth
   pipeline_outpath: [.]
-  outpath_subdirs: [flir2tif_out, plotclip_orthos, image_stiching, detect_out, img_coords_out, edited_tifs]
+  outpath_subdirs: [tgi_extraction_out]
   
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
