@@ -63,9 +63,9 @@ workload_manager:
 
 paths:
   models:
-    detection: #/iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_sorghum_flir.pth
-    segmentation: #not used (sorghum)
-    lid: #/iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth
+    detection:
+    segmentation:
+    lid:
   pipeline_outpath: [.]
   outpath_subdirs: [tgi_extraction_out]
   
