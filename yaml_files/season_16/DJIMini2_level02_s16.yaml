@@ -78,6 +78,6 @@ paths:
       prefix:
       suffix: __*.tif
       level: level_1
-      #input_dir: []
+      input_dir: ''
     output:
       level: level_2
