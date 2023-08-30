@@ -73,9 +73,10 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/season16_multi_latlon_geno_updated_utm.geojson, /iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/season_16_field_book.csv]
+      necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/season16_multi_latlon_geno_updated_utm.geojson,
+                        /iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/season_16_field_book.csv]
       prefix:
-      suffix: __*mosaic_group1.tif
+      suffix: __*.tif
       level: level_1
       #input_dir: []
     output:
