@@ -98,7 +98,7 @@ workload_manager:
   retries: 1
   port: 1738
   mem_per_core: 5
-  manager_name: phytooracle_manager_trav
+  manager_name: ps2Top_level01_s11
   worker_timeout_seconds: 900
 
 paths:
