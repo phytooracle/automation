@@ -144,7 +144,7 @@ workload_manager:
   port: 0
   #mem_per_core: 32
   mem_per_core: 5
-  manager_name: phytooracle_manager_rgb
+  manager_name: stereoTop_level01_s15_test
   worker_timeout_seconds: 43200
 
 paths:
