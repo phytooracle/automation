@@ -64,7 +64,7 @@ workload_manager:
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: phytooracle_manager_3d
+  manager_name: scanner3DTop_level01_s12
   worker_timeout_seconds: 86400
 
 paths:
