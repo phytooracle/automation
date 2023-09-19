@@ -92,7 +92,7 @@ workload_manager:
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: scanner3DTop_level01_s16
+  manager_name: scanner3DTop_level01_s16_y_position_fix
   worker_timeout_seconds: 86400
 
 paths:
