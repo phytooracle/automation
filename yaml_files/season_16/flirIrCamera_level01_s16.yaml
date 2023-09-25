@@ -142,7 +142,7 @@ workload_manager:
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: phytooracle_manager_flir
+  manager_name: flirIrCamera_level01_s16
   worker_timeout_seconds: 900
 
 paths:

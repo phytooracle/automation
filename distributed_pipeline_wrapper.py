@@ -1663,6 +1663,7 @@ def main():
             
             global seg_model_name, det_model_name
             seg_model_name, det_model_name = get_model_files(yaml_dictionary)
+            print(f'Segmentation model name: {seg_model_name}')
             get_support_files(yaml_dictionary=yaml_dictionary, date=date)
             get_transformation_files(yaml_dictionary=yaml_dictionary, date=date)
             slack_notification(message=f"Necessary files downloaded.", date=date)

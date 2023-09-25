@@ -19,7 +19,7 @@ modules:
   1: 
     container: 
       simg_name: 3d_preprocessing.simg
-      dockerhub_path: docker://phytooracle/3d_preprocessing:y_position_fix
+      dockerhub_path: docker://phytooracle/3d_preprocessing:transformation_gui_integration
     command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_16_bucket.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR}
     distribution_level: wq
     file_level: 
@@ -92,7 +92,7 @@ workload_manager:
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: phytooracle_manager_3d
+  manager_name: scanner3DTop_level01_s16
   worker_timeout_seconds: 86400
 
 paths:
