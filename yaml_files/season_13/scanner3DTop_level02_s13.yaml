@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: 3d_postprocessing.simg
       dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o ${CWD}/postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_13_clustering.csv -s 10 -d ${DATE} -l ${CWD}/gcp_season_13_paint.txt
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o ${CWD}/postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_13_clustering_updated.csv -s 10 -d ${DATE} -l ${CWD}/gcp_season_13_paint.txt
     distribution_level: wq
     file_level: 
     input_dir: [alignment, west_downsampled]
@@ -36,7 +36,7 @@ modules:
     container: 
       simg_name: 3d_crop_individual_plants.simg
       dockerhub_path: docker://phytooracle/3d_crop_individual_plants:season_15 #fix_date_search #latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_13_clustering.csv -f ${SUBDIR} -o ${CWD}/individual_plants_out -s 10 -d ${DATE} #&& tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_13_clustering_updated.csv -f ${SUBDIR} -o ${CWD}/individual_plants_out -s 10 -d ${DATE} #&& tar -cvf ${SUBDIR}_individual_plants.tar individual_plants_out/
     distribution_level: wq
     file_level: 
     input_dir: [postprocessing_out, west_downsampled]
@@ -163,7 +163,7 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_2/stereoTop/season_13_plant_detection_combined/season_13_clustering.csv,
+      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_2/stereoTop/season_13_plant_detection_combined/season_13_clustering_updated.csv
                         /iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/necessary_files/gcp_season_13_paint.txt]
       level: level_1
       input_dir: alignment
