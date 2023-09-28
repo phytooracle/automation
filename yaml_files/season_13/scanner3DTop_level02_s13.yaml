@@ -163,7 +163,7 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_2/stereoTop/season_13_plant_detection_combined/season_13_clustering_updated.csv
+      necessary_files: [/iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_2/stereoTop/season_13_plant_detection_combined/season_13_clustering_updated.csv,
                         /iplant/home/shared/phytooracle/season_13_lettuce_yr_2022/level_0/necessary_files/gcp_season_13_paint.txt]
       level: level_1
       input_dir: alignment
