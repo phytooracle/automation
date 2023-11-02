@@ -62,10 +62,10 @@ workload_manager:
   worker_timeout_seconds: 900
 
 paths:
-  models:
-    detection:
-    segmentation:
-    lid:
+  #models:
+    #detection:
+    #segmentation:
+    #lid:
   pipeline_outpath: [.]
   outpath_subdirs: [tgi_extraction_out]
   
