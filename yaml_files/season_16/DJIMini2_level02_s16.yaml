@@ -19,25 +19,25 @@ modules:
     container: 
       simg_name: uav_plot_clip.simg
       dockerhub_path: docker://phytooracle/uav_plot_clip:latest
-    command:  mkdir ${CWD}/uav_plot_clip_out && singularity run uav_plot_clip.simg ${CWD}/${FILE} -g ${CWD}/season16_multi_latlon_geno_updated_utm.geojson -c 94 && cp -r ${CWD}/${FILE_BASE}/* ${CWD}/uav_plot_clip_out/
+    command: mkdir -p ${CWD}/uav_plot_clip_out && singularity run uav_plot_clip.simg ${CWD}/${FILE} -g ${CWD}/season16_multi_latlon_geno_updated_utm.geojson -c 94 &&  mv ${CWD}/*_transparent_mosaic_group1/ ${CWD}/uav_plot_clip_out/
     distribution_level: local
     file_level:
     # input_dir: [./$RAW_DATA_PATH]
     input_file: _transparent_mosaic_group1.tif
-    inputs: [$FILE, season16_multi_latlon_geno_updated_utm.geojson] #?
-    outputs: [$FILE_BASE_transparent_mosaic_group1] #?
+    inputs: [$FILE, season16_multi_latlon_geno_updated_utm.geojson]
+    outputs: [uav_plot_clip_out]
     
   2:
     container: 
       simg_name: rgb_tgi_extraction.simg
       dockerhub_path: docker://phytooracle/rgb_tgi_extraction:latest
-    command: singularity run rgb_tgi_extraction.simg ${CWD}/${FILE} -f season_16_field_book.csv #?
+    command: singularity run rgb_tgi_extraction.simg ${CWD}/uav_plot_clip_out/*_transparent_mosaic_group1 -f season_16_field_book.csv
     distribution_level : local
-    file_level: dir
-    input_dir: [uav_plot_clip_out/]
-    input_file: _transparent_mosaic_group1 #?
-    inputs: [$FILE, season_16_field_book.csv] #?
-    outputs: [tgi_extraction_out/$DATE_tgi_extraction.csv] #?
+    file_level:
+    #input_dir: [uav_plot_clip_out/]
+    input_file: _transparent_mosaic_group1
+    inputs: [season_16_field_book.csv]
+    outputs: [tgi_extraction_out/$DATE_tgi_extraction.csv]
 
 workload_manager:
   account: dukepauli
@@ -50,7 +50,7 @@ workload_manager:
     use: False
     partition: standard
 
-  job_name: phytooracle_worker_DJIMini2  #??
+  job_name: phytooracle_worker_DJIMini2
   nodes: 1
   number_worker_array: 1
   cores_per_worker: 1
