@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: uav_plot_clip.simg
       dockerhub_path: docker://phytooracle/uav_plot_clip:latest
-    command:  singularity run uav_plot_clip.simg ${CWD}/${FILE} -g ${CWD}/season16_multi_latlon_geno_updated_utm.geojson -c 94
+    command:  mkdir ${CWD}/uav_plot_clip_out && singularity run uav_plot_clip.simg ${CWD}/${FILE} -g ${CWD}/season16_multi_latlon_geno_updated_utm.geojson -c 94 && cp -r ${CWD}/${FILE_BASE}/* ${CWD}/uav_plot_clip_out/
     distribution_level: local
     file_level:
     # input_dir: [./$RAW_DATA_PATH]
