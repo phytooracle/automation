@@ -26,12 +26,12 @@ modules:
     input_file: combined_multiway_registered.ply
     inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
-    outputs: [#individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
-              #individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
-              #individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
-              #individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
-              #individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
-              #individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
+              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
+              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
   
 workload_manager:
   account: dukepauli
