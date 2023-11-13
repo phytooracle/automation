@@ -42,9 +42,9 @@ modules:
     distribution_level: wq
     file_level: 
     #alternate_worker_settings: True
-    input_dir: [individual_plants_out, segmentation_pointclouds, $PLANT_NAME]
+    input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: no_soil_full.ply #segmentation_plant.ply
-    inputs: [gcp_season_14_bucket.txt, individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
+    inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
 
