@@ -22,8 +22,8 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${CWD}/${PLANT_PATH} --model_path ${CWD}/${SEG_MODEL_PATH} -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports -ef $PLANT_NAME_no_soil_full
     distribution_level: wq
     file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply #ml_crop.ply
+    input_dir: [individual_plants_out, segmentation_pointclouds, plant_reports]
+    input_file: _no_soil_full.ply #ml_crop.ply
     inputs: [gcp_season_14_bucket.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
@@ -32,31 +32,6 @@ modules:
               individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
   
-#  2:
-#    container: 
-#      simg_name: 3d_neighbor_removal.simg
-#      dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
-#    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
-#    distribution_level: wq
-#    file_level: 
-#    alternate_worker_settings: True
-#    input_dir: [segmentation_pointclouds]
-#    input_file: segmentation_plant.ply
-#    inputs: [gcp_season_14_bucket.txt]
-#    outputs: [segmentation_pointclouds/$PLANT_NAME/final.ply]             
-#
-#  3:
-#    container: 
-#      simg_name: 3d_entropy_features.simg
-#      dockerhub_path: docker://phytooracle/3d_entropy_features:latest
-#    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009
-#    distribution_level: wq
-#    file_level: 
-#    input_dir: [segmentation_pointclouds]
-#    input_file: final.ply
-#    inputs: [gcp_season_14_bucket.txt]
-#    outputs: [3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
-
 workload_manager:
   account: dukepauli
   high_priority_settings:
