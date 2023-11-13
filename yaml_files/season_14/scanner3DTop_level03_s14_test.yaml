@@ -89,6 +89,6 @@ paths:
       necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_3/stereoTop/season_14_clustering.csv,
                         /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/necessary_files/gcp_season_14_bucket.txt]
       level: level_2
-      input_dir: [individual_plants_out]
+      input_dir: individual_plants_out
     output: 
       level: level_3
