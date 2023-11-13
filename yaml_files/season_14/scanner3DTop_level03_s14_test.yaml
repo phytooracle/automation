@@ -42,18 +42,18 @@ modules:
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
 
-#  2:
-#    container: 
-#      simg_name: 3d_entropy_features.simg
-#      dockerhub_path: docker://phytooracle/3d_entropy_features:latest
-#    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009
-#    distribution_level: wq
-#    file_level: 
-#    input_dir: [individual_plants_out, segmentation_pointclouds]
-#    input_file: final.ply
-#    inputs: [gcp_season_15_bucket.txt]
-#    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
-#    outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
+  3:
+    container: 
+      simg_name: 3d_entropy_features.simg
+      dockerhub_path: docker://phytooracle/3d_entropy_features:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: final.ply
+    inputs: [gcp_season_15_bucket.txt]
+    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
+    outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
   
 workload_manager:
   account: dukepauli
