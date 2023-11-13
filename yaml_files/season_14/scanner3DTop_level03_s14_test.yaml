@@ -24,7 +24,7 @@ modules:
     file_level: 
     #alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: segmentation_plant.ply
+    input_file: no_soil_full.ply
     inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
     outputs: [individual_plants_out/segmentation_pointclouds_final/$PLANT_NAME/final.ply]             
