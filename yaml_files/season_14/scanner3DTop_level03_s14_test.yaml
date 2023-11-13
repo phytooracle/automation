@@ -19,15 +19,15 @@ modules:
     container: 
       simg_name: 3d_neighbor_removal.simg
       dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
-    command: find individual_plants_out/segmentation_pointclouds -type f -name "*no_soil_full.ply" -exec sh -c 'dir=$(dirname "{}"); mv -- "{}" "$dir/segmentation_plant.ply"' \; && singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
+    command: find individual_plants_out/segmentation_pointclouds -type f -name "*no_soil_full.ply" -exec sh -c 'dir=$(dirname "{}"); mv -- "{}" "$dir/segmentation_plant.ply"' \; && singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds_final -fod ${CWD}/individual_plants_out/plant_reports_final
     distribution_level: wq
     file_level: 
     #alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: no_soil_full.ply #segmentation_plant.ply
+    input_file: segmentation_plant.ply
     inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
+    outputs: [individual_plants_out/segmentation_pointclouds_final/$PLANT_NAME/final.ply]             
 
 #  2:
 #    container: 
@@ -67,7 +67,7 @@ workload_manager:
 
 paths:
   pipeline_outpath: [individual_plants_out]
-  outpath_subdirs: [segmentation_pointclouds, plant_reports, 3d_volumes_entropy_v009]
+  outpath_subdirs: [segmentation_pointclouds_final, plant_reports_final, 3d_volumes_entropy_v009]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
