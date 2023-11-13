@@ -22,17 +22,15 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${CWD}/${PLANT_PATH} --model_path ${CWD}/${SEG_MODEL_PATH} -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports -ef ml_crop
     distribution_level: wq
     file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_dir: [segmentation_pointclouds]
     input_file: ml_crop.ply
     inputs: [gcp_season_14_bucket.txt]
-    # inputs: [segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
-    #          segmentation_pointclouds/$PLANT_NAME/ml_crop.ply]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
-              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
-              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
-              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
-              individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
-              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
+    outputs: [segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
+              segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
+              segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
+              plant_reports/$PLANT_NAME/soil_segmentation.csv,
+              plant_reports/$PLANT_NAME/soil_segmentation.gif,
+              segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
   
   2:
     container: 
@@ -42,11 +40,10 @@ modules:
     distribution_level: wq
     file_level: 
     alternate_worker_settings: True
-    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_dir: [segmentation_pointclouds]
     input_file: segmentation_plant.ply
     inputs: [gcp_season_14_bucket.txt]
-    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
+    outputs: [segmentation_pointclouds/$PLANT_NAME/final.ply]             
 
   3:
     container: 
@@ -55,11 +52,10 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009
     distribution_level: wq
     file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_dir: [segmentation_pointclouds]
     input_file: final.ply
     inputs: [gcp_season_14_bucket.txt]
-    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
-    outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
+    outputs: [3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
 
 workload_manager:
   account: dukepauli
@@ -85,7 +81,7 @@ workload_manager:
   worker_timeout_seconds: 86400
 
 paths:
-  pipeline_outpath: [individual_plants_out]
+  pipeline_outpath: []
   outpath_subdirs: [segmentation_pointclouds, plant_reports, 3d_volumes_entropy_v009]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
