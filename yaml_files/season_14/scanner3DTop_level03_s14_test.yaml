@@ -22,7 +22,7 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${CWD}/${PLANT_PATH} --model_path ${CWD}/${SEG_MODEL_PATH} -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports -ef ml_crop
     distribution_level: wq
     file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_dir: [individual_plants_out, segmentation_pointclouds, $PLANT_NAME]
     input_file: $PLANT_NAME_no_soil_full.ply #ml_crop.ply
     inputs: [gcp_season_14_bucket.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
