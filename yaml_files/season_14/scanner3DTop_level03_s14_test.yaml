@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: 3d_neighbor_removal.simg
       dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
-    command: find individual_plants_out/segmentation_pointclouds -type f -name "*no_soil_full.ply" -exec sh -c 'dir=$(dirname "{}"); mv -- "{}" "$dir/segmentation_plant.ply"' \; && singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds_final -fod ${CWD}/individual_plants_out/plant_reports_final
+    command: find individual_plants_out/segmentation_pointclouds -type f -name "*no_soil_full.ply" -exec sh -c 'dir=$(dirname "{}"); mv -- "{}" "$dir/segmentation_plant.ply"' \; && singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
     distribution_level: local
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
