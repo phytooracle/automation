@@ -15,25 +15,6 @@ tags:
       dockerhub_path: docker://phytooracle/slack_notifications:latest
 
 modules:
-  #1: 
-  #  container: 
-  #    simg_name: dgcnn_single_plant_soil_segmentation_pipeline.simg
-  #    dockerhub_path: docker://phytooracle/dgcnn_single_plant_soil_segmentation_pipeline:latest
-  #  command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${CWD}/${PLANT_PATH} --model_path ${CWD}/${SEG_MODEL_PATH} -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports -ef combined_multiway_registered
-  #  distribution_level: wq
-  #  file_level: 
-  #  input_dir: [individual_plants_out, segmentation_pointclouds]
-  #  input_file: combined_multiway_registered.ply
-  #  inputs: [gcp_season_14_bucket.txt]
-  #  # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
-  #  outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
-  #            individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
-  #            individual_plants_out/segmentation_pointclouds/$PLANT_NAME/soil_segmentation.npy,
-  #            individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.csv,
-  #            individual_plants_out/plant_reports/$PLANT_NAME/soil_segmentation.gif,
-  #            individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply]
-
-    #soil segmentation and combined_multiway_registration already present in level 2; follow up with removal of neighbors and calculation of entropy features; if needed add modules 4-6
   1:
     container: 
       simg_name: 3d_neighbor_removal.simg
@@ -85,8 +66,6 @@ workload_manager:
   worker_timeout_seconds: 86400
 
 paths:
-  models:
-    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
   pipeline_outpath: [individual_plants_out]
   outpath_subdirs: [segmentation_pointclouds, plant_reports, 3d_volumes_entropy_v009]
   cyverse: 
