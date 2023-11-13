@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: dgcnn_single_plant_soil_segmentation_pipeline.simg
       dockerhub_path: docker://phytooracle/dgcnn_single_plant_soil_segmentation_pipeline:latest
-    command: echo "test" #singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${CWD}/${PLANT_PATH} --model_path ${CWD}/${SEG_MODEL_PATH} -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports -ef combined_multiway_registered
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/dgcnn_single_plant_soil_segmentation_pipeline.simg -p ${CWD}/${PLANT_PATH} --model_path ${CWD}/${SEG_MODEL_PATH} -po ${CWD}/individual_plants_out/segmentation_pointclouds -fo ${CWD}/individual_plants_out/plant_reports -ef combined_multiway_registered
     distribution_level: wq
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
