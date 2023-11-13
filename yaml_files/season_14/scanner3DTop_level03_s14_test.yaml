@@ -23,7 +23,7 @@ modules:
     distribution_level: wq
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: $PLANT_NAME_no_soil_full.ply #ml_crop.ply
+    input_file: individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply #ml_crop.ply
     inputs: [gcp_season_14_bucket.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply, 
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_soil.ply,
