@@ -41,9 +41,9 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
     distribution_level: wq
     file_level: 
-    alternate_worker_settings: True
+    #alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds, $PLANT_NAME]
-    input_file: no_soil_full.ply #segmentation_plant.ply
+    input_file: $PLANT_NAME_no_soil_full.ply #segmentation_plant.ply
     inputs: [gcp_season_15_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
