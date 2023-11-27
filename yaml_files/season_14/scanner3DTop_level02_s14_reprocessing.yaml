@@ -1,0 +1,120 @@
+---
+tags:
+  pipeline: season14_scanner3DTop_level_2
+  description: R2
+  notes: Season 14 3D level 2 processing
+  runby: Pauli Lab Member
+  sensor: scanner3DTop 
+  season: 14
+  season_name: season_14_sorghum_yr_2022_reprocessing
+  slack_notifications: 
+    use: True
+    channel: gantry_data_updates
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+
+modules:
+  1: 
+    container: 
+      simg_name: 3d_postprocessing.simg
+      dockerhub_path: docker://phytooracle/3d_postprocessing:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o ${CWD}/postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_14_clustering.csv -s 14 -d ${DATE} -l ${CWD}/gcp_season_14_bucket.txt
+    distribution_level: wq
+    file_level: 
+    input_dir: [alignment, west_downsampled]
+    input_file: -west.ply
+    inputs: [gcp_season_14_bucket.txt]
+    outputs: [postprocessing_out/east/$SUBDIR-east.ply,
+              postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
+              postprocessing_out/merged/$SUBDIR-merged.ply,
+              postprocessing_out/merged_downsampled/$SUBDIR-merged.ply,
+              postprocessing_out/west/$SUBDIR-west.ply,
+              postprocessing_out/west_downsampled/$SUBDIR-west.ply]
+  
+  2: 
+    container: 
+      simg_name: 3d_crop_individual_plants.simg
+      dockerhub_path: docker://phytooracle/3d_crop_individual_plants:fix_date_search #latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_14_clustering.csv -f ${SUBDIR} -o ${CWD}/individual_plants_out -s 14 -d ${DATE} #&& tar -cvf ${CWD}/${SUBDIR}_individual_plants.tar ${CWD}/individual_plants_out/
+    distribution_level: wq
+    file_level: 
+    input_dir: [postprocessing_out, west_downsampled]
+    input_file: -west.ply
+    inputs: [gcp_season_14_bucket.txt]
+    outputs: []
+
+  3: 
+    container: 
+      simg_name: 3d_individual_plant_registration.simg
+      dockerhub_path: docker://phytooracle/3d_individual_plant_registration:multiway_registration
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_individual_plant_registration.simg -i ${CWD}/individual_plants_out/ -p ${PLANT_NAME} -r individual_plants_out/plant_reports/${PLANT_NAME} -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}
+    distribution_level: wq
+    file_level: subdir
+    input_dir: [individual_plants_out, west]
+    input_file: _cropped.ply
+    inputs: [gcp_season_14_bucket.txt]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
+              individual_plants_out/plant_reports/$PLANT_NAME]
+
+  4:
+    container: 
+      simg_name: 3d_segmentation_dashboard_assets.simg
+      dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_segmentation_dashboard_assets.simg -i ${CWD}/${PLANT_PATH} -plant ${PLANT_NAME} -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: combined_multiway_registered.ply
+    inputs: [gcp_season_14_bucket.txt]
+    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
+
+  5:
+    container: 
+      simg_name: sorghum_soil_segmentation.simg
+      dockerhub_path: docker://phytooracle/sorghum_soil_segmentation:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME} -s 50000 #mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && 
+    distribution_level: wq
+    file_level: 
+    alternate_worker_settings: True
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: combined_multiway_registered.ply
+    inputs: [gcp_season_14_bucket.txt]
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
+              individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
+
+workload_manager:
+  account: dukepauli
+  high_priority_settings:
+    use: True
+    qos_group: user_qos_dukepauli
+    partition: high_priority
+  standard_settings:
+    use: False
+    partition: windfall
+
+  job_name: phytooracle_worker_3d
+  nodes: 1
+  number_worker_array: 300
+  cores_per_worker: 5
+  alt_number_worker_array: 150
+  alt_cores_per_worker: 10
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  mem_per_core: 5
+  manager_name: scanner3DTop_level02_s14
+  worker_timeout_seconds: 86400
+
+paths:
+  pipeline_outpath: [individual_plants_out]
+  outpath_subdirs: [segmentation_pointclouds, plant_reports] #, east, west]
+  cyverse: 
+    basename: /iplant/home/shared/phytooracle/
+    input: 
+      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_3/stereoTop/season_14_clustering.csv,
+                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/necessary_files/gcp_season_14_bucket.txt]
+      level: level_1
+      input_dir: alignment
+    output: 
+      level: level_2
