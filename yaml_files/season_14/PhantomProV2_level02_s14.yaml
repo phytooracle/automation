@@ -31,12 +31,12 @@ modules:
     container: 
       simg_name: rgb_tgi_extraction.simg
       dockerhub_path: docker://phytooracle/rgb_tgi_extraction:latest
-    command: singularity run rgb_tgi_extraction.simg ${CWD}/uav_plot_clip_out/*_transparent_mosaic_group1 -f North_gantry_fieldbook_2022_replants.xlsx #TODO: Check whether this needs to be a CSV and which fields
+    command: singularity run rgb_tgi_extraction.simg ${CWD}/uav_plot_clip_out/*_transparent_mosaic_group1 -f North_gantry_fieldbook_2022_replants.csv
     distribution_level : local
     file_level:
     #input_dir: [uav_plot_clip_out/]
     input_file: _transparent_mosaic_group1
-    inputs: [North_gantry_fieldbook_2022_replants.xlsx] #TODO: Check whether this needs to be a CSV and which fields
+    inputs: [North_gantry_fieldbook_2022_replants.csv]
     outputs: [tgi_extraction_out/$DATE_tgi_extraction.csv]
 
 workload_manager:
@@ -74,7 +74,7 @@ paths:
 
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/season14_multi_latlon_geno_correction_labeled.geojson,
-                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/North_gantry_fieldbook_2022_replants.xlsx] #TODO: Check whether this needs to be a CSV and which fields
+                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/North_gantry_fieldbook_2022_replants.csv]
       # prefix: PhantomProV2-
       # suffix: _RGB
       level: level_1
