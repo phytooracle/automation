@@ -19,12 +19,12 @@ modules:
     container: 
       simg_name: uav_plot_clip.simg
       dockerhub_path: docker://phytooracle/uav_plot_clip:latest
-    command: mkdir -p ${CWD}/uav_plot_clip_out && singularity run uav_plot_clip.simg ${CWD}/${FILE} -g ${CWD}/season16_multi_latlon_geno_updated_utm.geojson -c 94 &&  mv ${CWD}/*_transparent_mosaic_group1/ ${CWD}/uav_plot_clip_out/
+    command: mkdir -p ${CWD}/uav_plot_clip_out && singularity run uav_plot_clip.simg ${CWD}/${FILE} -g ${CWD}/season16_multi_latlon_geno_correction_labeled_utm.geojson -c 94 &&  mv ${CWD}/*_transparent_mosaic_group1/ ${CWD}/uav_plot_clip_out/
     distribution_level: local
     file_level:
     # input_dir: [./$RAW_DATA_PATH]
     input_file: _transparent_mosaic_group1.tif
-    inputs: [$FILE, season16_multi_latlon_geno_updated_utm.geojson]
+    inputs: [$FILE, season16_multi_latlon_geno_correction_labeled_utm.geojson]
     outputs: [uav_plot_clip_out]
     
   2:
@@ -73,7 +73,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/season16_multi_latlon_geno_updated_utm.geojson,
+      necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/season16_multi_latlon_geno_correction_labeled_utm.geojson,
                         /iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/season_16_field_book.csv]
       # prefix: DJIMini2-
       # suffix: _RGB
