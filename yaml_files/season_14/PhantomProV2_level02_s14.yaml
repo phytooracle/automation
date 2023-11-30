@@ -74,7 +74,7 @@ paths:
 
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/season14_multi_latlon_geno_correction_labeled.geojson,
-                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/North_gantry_fieldbook_2022_replants.csv]
+                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/North_gantry_fieldbook_2022_replants.csv]
       # prefix: PhantomProV2-
       # suffix: _RGB
       level: level_1
