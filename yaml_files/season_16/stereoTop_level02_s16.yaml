@@ -69,4 +69,4 @@ paths:
       level: level_1
       #input_dir: []
     output:
-      level: level_1
+      level: level_2
