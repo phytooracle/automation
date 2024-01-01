@@ -56,7 +56,7 @@ paths:
     lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
   pipeline_outpath: [.]
-  outpath_subdirs: [plotclip_orthos, image_stiching, detect_out, img_coords_out, edited_tifs]
+  outpath_subdirs: [detect_out]
 
   cyverse:
     basename: /iplant/home/shared/phytooracle/
