@@ -64,9 +64,9 @@ paths:
     input:
       necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/season16_multi_latlon_geno_correction_labeled.geojson,
                         /iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/necessary_files/gcp_season_16_bucket.txt]
-      prefix: stereoTop-
-      suffix: __*.tar.gz
-      level: level_0
+      # prefix: stereoTop-
+      suffix: __*plotclip_orthos.tar
+      level: level_1
       #input_dir: []
     output:
       level: level_1
