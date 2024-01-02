@@ -327,6 +327,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
 
     all_files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_dl_dir)
     print(all_files_in_dir)
+
     # Now lets see if our file is in all_files_in_dir
 
     if args.experiment:
@@ -1690,7 +1691,7 @@ def main():
                     _dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
                     irods_dl_dir = os.path.join(irods_dl_dir, date, _dir)
                     print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
-                    print(irods_dl_dir)
+                    # print(irods_dl_dir)
                 try:
                     file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
                 except:
