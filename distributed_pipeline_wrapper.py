@@ -326,6 +326,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
     suffix            = yaml_dictionary['paths']['cyverse']['input']['suffix']
 
     all_files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_dl_dir)
+    print(all_files_in_dir)
     # Now lets see if our file is in all_files_in_dir
 
     if args.experiment:
@@ -338,7 +339,6 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
 
     import pathlib
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
-    print(matching_files)
 
     if len(matching_files) < 1:
         print (f"WARNING Could not find appropriate tarball for date: {date}\n \
