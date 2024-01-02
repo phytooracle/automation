@@ -1691,7 +1691,11 @@ def main():
                     irods_dl_dir = os.path.join(irods_dl_dir, date, _dir)
                     print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
                     print(irods_dl_dir)
-                file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
+                try:
+                    file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
+                except:
+                    file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, os.path.join(irods_dl_dir, date))
+        
                 print(file_to_dl)
 
                 if file_to_dl is None:
