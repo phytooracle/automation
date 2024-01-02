@@ -338,6 +338,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
 
     import pathlib
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
+    print(matching_files)
 
     if len(matching_files) < 1:
         print (f"WARNING Could not find appropriate tarball for date: {date}\n \
