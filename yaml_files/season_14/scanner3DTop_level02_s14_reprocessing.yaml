@@ -112,7 +112,7 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_3/stereoTop/season_14_clustering.csv,
+      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_2/stereoTop/season_14_clustering.csv,
                         /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/necessary_files/gcp_season_14_bucket.txt]
       level: level_1
       input_dir: alignment
