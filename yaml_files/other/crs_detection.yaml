@@ -21,12 +21,15 @@ modules:
       simg_name: charcoal-dryrot-quantification.simg
       dockerhub_path: docker://phytooracle/charcoal-dryrot-quantification:individual_treatment
     command: singularity exec -B $(pwd):/mnt --pwd /mnt --nv crs.simg python3 /opt/model_training/inference_pipeline.py -i ${CWD}/${FILE} -o ${CWD}/crs_output
-    distribution_level: local
-    file_level: dir
+    distribution_level: wq
+    file_level: 
     input_dir: [images]
     input_file: .png
     inputs: [$FILE]
-    outputs: [crs_output/]
+    outputs: [crs_output/$UUID_crs_result.csv,
+              crs_output/$UUID_DeepLabV3_crs_prediction.png,
+              crs_output/$UUID_FCN_crs_prediction.png,
+              crs_output/$UUID_U-NET_crs_prediction.png]
 
 workload_manager:
   account: frost_lab
