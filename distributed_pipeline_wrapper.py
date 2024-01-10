@@ -828,14 +828,14 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                     "outputs" : [out\
                                         .replace('$FILE_BASE', os.path.basename(file).replace('.bin', ''))\
                                         .replace('$SEG', os.path.basename(file).replace('.tif', '_segmentation.csv'))\
-                                        .replace('$UUID', os.path.basename(file).replace('.tif', ''))\
+                                        .replace('$UUID', os.path.basename(file).replace('.tif', '').replace('.png', ''))\
                                         .replace('$FILE', file)\
                                         .replace('$DATE', date)\
                                          for out in outputs],
 
                                     "inputs"  : [container] + [input\
                                                     .replace('$FILE', file)\
-                                                    .replace('$UUID', os.path.basename(file).replace('.tif', ''))\
+                                                    .replace('$UUID', os.path.basename(file).replace('.tif', '').replace('.png', ''))\
                                                     .replace('$M_DATA_FILE', file.replace(file[-15:], 'metadata.json'))\
                                                     .replace('$FILE_DIR', os.path.dirname(file))\
                                                         for input in inputs]
