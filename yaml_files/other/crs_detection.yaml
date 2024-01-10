@@ -26,10 +26,10 @@ modules:
     input_dir: [images]
     input_file: .png
     inputs: [$FILE]
-    outputs: [crs_output/$UUID_crs_result.csv,
-              crs_output/$UUID_DeepLabV3_crs_prediction.png,
-              crs_output/$UUID_FCN_crs_prediction.png,
-              crs_output/$UUID_U-NET_crs_prediction.png]
+    outputs: [crs_output/$FILE_BASE_crs_result.csv,
+              crs_output/$FILE_BASE_DeepLabV3_crs_prediction.png,
+              crs_output/$FILE_BASE_FCN_crs_prediction.png,
+              crs_output/$FILE_BASE_U-NET_crs_prediction.png]
 
 workload_manager:
   account: frost_lab
