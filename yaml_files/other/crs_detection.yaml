@@ -58,8 +58,8 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
     segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
-  pipeline_outpath: [crs_output]
-  outpath_subdirs: []
+  pipeline_outpath: [.]
+  outpath_subdirs: [crs_output]
 
   cyverse:
     basename: /iplant/home/shared/phytooracle/
