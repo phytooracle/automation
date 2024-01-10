@@ -66,7 +66,7 @@ paths:
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/2019_cotton/level_0/gene.Ghir.JGI.gff3]
       prefix: 
-      suffix: __*images.tar
+      suffix: __*.tar
       level: level_0
       input_dir: raw_data
     output: 
