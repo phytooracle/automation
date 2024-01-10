@@ -828,14 +828,14 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                                     "outputs" : [out\
                                         .replace('$FILE_BASE', os.path.basename(file).replace('.bin', ''))\
                                         .replace('$SEG', os.path.basename(file).replace('.tif', '_segmentation.csv'))\
-                                        .replace('$UUID', os.path.basename(file).replace('.tif', '').replace('.png', ''))\
+                                        .replace('$UUID', os.path.basename(file).replace('.tif', ''))\
                                         .replace('$FILE', file)\
                                         .replace('$DATE', date)\
                                          for out in outputs],
 
                                     "inputs"  : [container] + [input\
                                                     .replace('$FILE', file)\
-                                                    .replace('$UUID', os.path.basename(file).replace('.tif', '').replace('.png', ''))\
+                                                    .replace('$UUID', os.path.basename(file).replace('.tif', ''))\
                                                     .replace('$M_DATA_FILE', file.replace(file[-15:], 'metadata.json'))\
                                                     .replace('$FILE_DIR', os.path.dirname(file))\
                                                         for input in inputs]
@@ -861,7 +861,7 @@ def generate_makeflow_json(cctools_path, level, files_list, command, container, 
                 "rules": [
                             {
                                 "command" : timeout + command.replace('${FILE}', file).replace('${PLANT_PATH}', os.path.dirname(file)).replace('${SEG_MODEL_PATH}', seg_model_name).replace('${PLANT_NAME}', os.path.basename(os.path.dirname(file))).replace('${DET_MODEL_PATH}', det_model_name).replace('${SUBDIR}', os.path.basename(os.path.dirname(file))).replace('${DATE}', date).replace('${INPUT_DIR}', os.path.dirname(file)).replace('${DATE_TIME}', date_time),
-                                "outputs" : [out.replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file)))  for out in outputs],
+                                "outputs" : [out.replace('$FILEBASE', os.path.splitext(os.path.basename(file))[0]).replace('$UUID', '_'.join(os.path.basename(file).split('_')[:2])).replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$BASENAME', os.path.basename(os.path.dirname(file)))  for out in outputs],
                                 "inputs"  : [input.replace('$PLANT_NAME', os.path.basename(os.path.dirname(file))).replace('$SUBDIR', os.path.join(os.path.basename(os.path.dirname(file)), os.path.basename(file))).replace('${DATE}', date).replace('$FILE', file).replace('$BASENAME', os.path.basename(os.path.dirname(file)))  for input in inputs]
                                             # [file, 
                                             #  container, 
