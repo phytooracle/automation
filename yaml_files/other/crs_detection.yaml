@@ -19,7 +19,7 @@ modules:
   1: 
     container: 
       simg_name: charcoal-dryrot-quantification.simg
-      dockerhub_path: docker://phytooracle/charcoal-dryrot-quantification:individual_treatment
+      dockerhub_path: docker://phytooracle/charcoal-dryrot-quantification:latest
     command: singularity exec -B $(pwd):/mnt --pwd /mnt --nv crs.simg python3 /opt/model_training/inference_pipeline.py -i ${CWD}/${FILE} -o ${CWD}/crs_output
     distribution_level: wq
     file_level: 
