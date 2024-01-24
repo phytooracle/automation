@@ -6,6 +6,8 @@ PhytoOracle Automation (POA) is general-use, distributed computing pipeline for 
 
 POA's distributed framework, leveraging [CCTools' Makeflow and Workqueue](https://cctools.readthedocs.io/en/stable/), allows users to leverage hundreds to thousands of computing cores for parallel processing of large data processing tasks. The pipeline is run using a YAML file, which specifies processing steps run by the pipeline wrapper script (```distributed_pipeline_wrapper.py```).
 
+Detailed documentation for gantry field operations from field preparation to extracting phenotype information can be found [here](https://github.com/phytooracle/pipeline_documentation/blob/b028777fa607614051af96fab73772764708d2a0/full_document.pdf).
+
 ## Required Dependencies
   * Linux-based computer, cluster, or server
   * [Singularity](https://github.com/apptainer/singularity/blob/master/INSTALL.md)
