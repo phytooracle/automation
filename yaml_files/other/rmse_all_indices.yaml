@@ -1,0 +1,73 @@
+---
+tags:
+  pipeline: RNA-Seq & Spectral PLSR
+  description: TPM
+  notes: Processing of 2019 cotton RNA-Seq TPM data and spectral data for gene expression prediction.
+  runby: Emmanuel Miguel Gonzalez
+  sensor: rnaseq_hyperspectral 
+  season: 2019_cotton
+  season_name: 2019_cotton
+  slack_notifications: 
+    use: True
+    channel: gantry_test
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+
+modules:
+
+  1: 
+    container: 
+      simg_name: rnaseq_spectral_plsr.simg
+      dockerhub_path: docker://phytooracle/rnaseq_spectral_plsr:individual_treatment_indices
+    command: singularity run ${CWD}/rnaseq_spectral_plsr.simg -c ${CWD}/${FILE} -o ${CWD}/plsr_outputs_all_indices #-sam
+    distribution_level: wq
+    file_level: 
+    input_dir: [rnaseq_spectra_all]
+    input_file: _tpm_spectra.csv
+    inputs: [$FILE]
+
+    outputs: [plsr_outputs_all_indices/correlation_scores/$UUID,
+              plsr_outputs_all_indices/plots/$UUID,
+              plsr_outputs_all_indices/models/$UUID]
+
+workload_manager:
+  account: frost_lab
+  
+  high_priority_settings:
+    use: False
+    qos_group: user_qos_ericlyons
+    partition: high_priority
+  standard_settings:
+    use: True
+    partition: standard
+    
+  job_name: phytooracle_worker_rna_seq
+  nodes: 1
+  number_worker_array: 498
+  total_submission: 2
+  cores_per_worker: 1
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  mem_per_core: 5
+  manager_name: phytooracle_manager_rna_seq
+  worker_timeout_seconds: 900   # 86400
+
+paths:
+  models:
+    detection: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
+    segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/dgcnn_3d_model.pth
+  pipeline_outpath: [plsr_outputs_all_indices]
+  outpath_subdirs: [correlation_scores, plots] #, models] #, permutation]
+
+  cyverse:
+    basename: /iplant/home/shared/phytooracle/
+    input: 
+      necessary_files: [/iplant/home/shared/phytooracle/2019_cotton/level_0/gene.Ghir.JGI.gff3]
+      prefix: 
+      suffix: _rnaseq_spectra_all.tar
+      level: level_1
+      input_dir: raw_data
+    output: 
+      level: level_3
