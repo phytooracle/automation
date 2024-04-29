@@ -20,7 +20,7 @@ modules:
     container: 
       simg_name: 3d_preprocessing.simg
       dockerhub_path: docker://phytooracle/3d_preprocessing:transformation_gui_integration
-    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_16_bucket.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR}
+    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_16_bucket.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR} -ewp ${CWD}/${DATE}/${DATE}_ew_positive_final_transformation.npy -ewn ${CWD}/${DATE}/${DATE}_ew_negative_final_transformation.npy -ns ${CWD}/${DATE}/${DATE}_ns_final_transformation.npy
     distribution_level: wq
     file_level: 
     input_file: -west_0.ply
