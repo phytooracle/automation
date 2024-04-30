@@ -104,6 +104,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/necessary_files/gcp_season_16_bucket.txt]
+      transformation_files: /iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/scanner3DTop/scanner3DTop_Transformations/
       level: level_0
       prefix: scanner3DTop-
       suffix: __*.tar.gz
