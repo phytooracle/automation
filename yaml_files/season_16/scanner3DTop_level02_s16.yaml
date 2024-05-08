@@ -103,7 +103,7 @@ workload_manager:
   worker_timeout_seconds: 86400 #900
 
 paths:
-  models:
+  #models:
     #detection: contained within the Docker container (sorgum, season 12 onwards)
     #segmentation: contained within the Docker container (sorgum, season 12 onwards)
   pipeline_outpath: [individual_plants_out]
@@ -111,8 +111,7 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_3/stereoTop/thresh_098/season_16_clustering.csv,
-#                         /iplant/home/shared/phytooracle/season_12_sorghum_soybean_sunflower_tepary_yr_2021/level_3/stereoTop/season_12_clustering.csv, 
+      necessary_files: [/iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_2/stereoTop/season_16_clustering.csv,
                         /iplant/home/shared/phytooracle/season_16_sorghum_yr_2023/level_0/necessary_files/gcp_season_16_bucket.txt]
       level: level_1
       input_dir: alignment
