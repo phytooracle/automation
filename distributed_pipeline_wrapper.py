@@ -1683,6 +1683,7 @@ def main():
             # figure out if yaml has prefix and/or sufix keys...
             cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
             irods_sensor_path = build_irods_path_to_sensor_from_yaml(yaml_dictionary, args)
+            print(irods_sensor_path)
             if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
                 print("Found prefix or suffix.  Building irods_path...")
                 irods_dl_dir = irods_sensor_path
