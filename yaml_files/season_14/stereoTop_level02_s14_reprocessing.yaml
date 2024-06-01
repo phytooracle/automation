@@ -65,6 +65,6 @@ paths:
       prefix: 
       suffix: __*plotclip_orthos.tar
       level: level_1
-      #input_dir: []
+      input_dir: []
     output:
       level: level_2
