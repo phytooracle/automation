@@ -31,11 +31,11 @@ workload_manager:
   account: ericlyons
 
   high_priority_settings:
-    use: True
+    use: False
     qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
-    use: False
+    use: True
     partition: standard
 
   job_name: phytooracle_worker_rgb
@@ -53,7 +53,7 @@ paths:
   models:
     detection: /iplant/home/shared/phytooracle/sorghum_panicle_detection_models/object_detection_model.pth
     # segmentation: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/detecto_heatmap_lettuce_detection_weights.pth
-    # lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
+    lid: /iplant/home/shared/phytooracle/season_11_sorghum_yr_2020/level_0/model_weights_rgb_lid_100epochs.pth
   pipeline_outpath: [.]
   outpath_subdirs: [detect_out]
   
@@ -65,6 +65,6 @@ paths:
       prefix: 
       suffix: __*plotclip_orthos.tar
       level: level_1
-      # input_dir: []
+      # input_dir: ['']
     output:
       level: level_2

@@ -243,6 +243,15 @@ def build_irods_path_to_sensor_from_yaml(yaml_dictionary, args):
     cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
     sensor            = yaml_dictionary['tags']['sensor']
 
+    yaml_input_keys = yaml_dictionary['paths']['cyverse']['input'].keys()
+
+    if 'input_dir' in yaml_input_keys:
+        input_dir = True
+
+    else:
+        input_dir = False
+
+
     path = os.path.join(
             cyverse_basename,
             season_name,
@@ -1072,7 +1081,13 @@ def get_irods_data_path(yaml_dictionary):
             season_name,
             cyverse_datalevel,
             sensor)
+    yaml_input_keys = yaml_dictionary['paths']['cyverse']['input'].keys()
 
+    if 'input_dir' in yaml_input_keys:
+        input_dir = True
+
+    else:
+        input_dir = False
     # If level is greater than level zero, then we need to add
     # two directories: .../experiment/date
     # for example: level_1/scanner3DTop/sunflower/2222-22-22
@@ -1648,8 +1663,8 @@ def main():
             slack_notification(message=f"Starting data processing.", date=date)
 
             build_containers(yaml_dictionary)
-            
             sensor = yaml_dictionary["tags"]["sensor"]
+            
    
             if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
                 generate_megastitch_config(cwd, yaml_dictionary)
@@ -1660,9 +1675,9 @@ def main():
             if args.archiveonly:
                 tar_outputs(date, yaml_dictionary)
                 return
-            
+
             server_utils.hpc = args.hpc
-            
+
             global seg_model_name, det_model_name
             seg_model_name, det_model_name = get_model_files(yaml_dictionary)
             print(f'Segmentation model name: {seg_model_name}')
@@ -1683,20 +1698,27 @@ def main():
             # figure out if yaml has prefix and/or sufix keys...
             cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
             irods_sensor_path = build_irods_path_to_sensor_from_yaml(yaml_dictionary, args)
-            print(irods_sensor_path)
+            
             if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
-                print("Found prefix or suffix.  Building irods_path...")
+                print("Found prefix or suffix.  Building irods_path...<>")
                 irods_dl_dir = irods_sensor_path
-                print(irods_dl_dir)
+                
+                level = int(cyverse_datalevel.split('_')[-1])
+
                 if 'input_dir' in yaml_input_keys:
                     _dir = yaml_dictionary['paths']['cyverse']['input']['input_dir']
                     irods_dl_dir = os.path.join(irods_dl_dir, date, _dir)
                     print(f"Adding input_dir ({_dir}) to irods_dl_dir...")
                     # print(irods_dl_dir)
+
+                elif level>=1:
+                    irods_dl_dir = os.path.join(irods_dl_dir, date)
+                # else:
+                #     irods_dl_dir = irods_dl_dir
                 #else:
                 #    irods_dl_dir = os.path.join(irods_dl_dir, date)
                 file_to_dl = find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir)
-                print(file_to_dl)
+                # print(file_to_dl)
 
                 if file_to_dl is None:
                     handle_date_failure(args, date, yaml_dictionary)
