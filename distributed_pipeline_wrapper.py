@@ -243,15 +243,6 @@ def build_irods_path_to_sensor_from_yaml(yaml_dictionary, args):
     cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
     sensor            = yaml_dictionary['tags']['sensor']
 
-    yaml_input_keys = yaml_dictionary['paths']['cyverse']['input'].keys()
-
-    if 'input_dir' in yaml_input_keys:
-        input_dir = True
-
-    else:
-        input_dir = False
-
-
     path = os.path.join(
             cyverse_basename,
             season_name,
@@ -1081,13 +1072,7 @@ def get_irods_data_path(yaml_dictionary):
             season_name,
             cyverse_datalevel,
             sensor)
-    yaml_input_keys = yaml_dictionary['paths']['cyverse']['input'].keys()
 
-    if 'input_dir' in yaml_input_keys:
-        input_dir = True
-
-    else:
-        input_dir = False
     # If level is greater than level zero, then we need to add
     # two directories: .../experiment/date
     # for example: level_1/scanner3DTop/sunflower/2222-22-22
