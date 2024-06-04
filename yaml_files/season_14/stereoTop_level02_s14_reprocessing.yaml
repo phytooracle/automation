@@ -18,13 +18,13 @@ modules:
   1:
     container: 
       simg_name: rgb_panicle_detection.simg
-      dockerhub_path: docker://phytooracle/rgb_panicle_detection:main
-    command: singularity run rgb_panicle_detection.simg ./plotclip_orthos -m ./object_detection_model.pth -g ./season14_multi_latlon_geno_correction_labeled.geojson -d ${DATE} -t RGB -c panicle
+      dockerhub_path: docker://phytooracle/rgb_panicle_detection:panicle_count_per_plant
+    command: singularity run rgb_panicle_detection.simg ./plotclip_orthos -m ./object_detection_model.pth -g ./season14_multi_latlon_geno_correction_labeled.geojson -d ${DATE} -t RGB -c panicle -cf season_14_clustering.csv
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
     input_file: foo
-    inputs: [$FILE, ./season14_multi_latlon_geno_correction_labeled.geojson, ./object_detection_model.pth]
+    inputs: [$FILE, ./season14_multi_latlon_geno_correction_labeled.geojson, ./object_detection_model.pth, season_14_clustering.csv]
     outputs: []  
 
 workload_manager:
@@ -61,7 +61,8 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/season14_multi_latlon_geno_correction_labeled.geojson]
+      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_0/season14_multi_latlon_geno_correction_labeled.geojson,
+                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_reprocessing/level_2/stereoTop/season_14_clustering.csv]
       prefix: 
       suffix: __*plotclip_orthos.tar
       level: level_1
