@@ -40,7 +40,7 @@ modules:
     input_file: segmentation_plant.ply
     inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-    #outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
 
   3:
     container: 
