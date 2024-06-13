@@ -58,12 +58,12 @@ modules:
 workload_manager:
   account: dukepauli
   high_priority_settings:
-    use: True
+    use: False
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
-    use: False
-    partition: windfall
+    use: True
+    partition: standard
 
   job_name: phytooracle_worker_3d
   nodes: 1
