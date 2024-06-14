@@ -59,7 +59,7 @@ modules:
     container: 
       simg_name: 3d_neighbor_removal.simg
       dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest  
-    command: find individual_plants_out/segmentation_pointclouds -type f -name "final.ply" -exec sh -c 'dir=$(dirname "{}"); mv -- "{}" "individual_plants_out/neighbors_removed/$dir/final.ply"' \;
+    command: find individual_plants_out/segmentation_pointclouds -type f -name "final.ply" -exec sh -c 'dir=$(dirname "{}"); mkdir -p individual_plants_out/neighbors_removed/$dir; mv -- "{}" "individual_plants_out/neighbors_removed/$dir/final.ply"';
     distribution_level: local
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
