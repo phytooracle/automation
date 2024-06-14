@@ -51,7 +51,7 @@ modules:
     distribution_level: wq
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds_neighbors_removed]
-    input_file: $PLANT_NAME_final.ply
+    input_file: final.ply
     inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
     outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
