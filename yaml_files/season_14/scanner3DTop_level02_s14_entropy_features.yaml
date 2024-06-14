@@ -40,7 +40,7 @@ modules:
     input_file: segmentation_plant.ply
     inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]             
+    outputs: [individual_plants_out/segmentation_pointclouds_neighbors_removed/$PLANT_NAME/final.ply]             
 
   3:
     container: 
@@ -49,7 +49,7 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009
     distribution_level: wq
     file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_dir: [individual_plants_out, segmentation_pointclouds_neighbors_removed]
     input_file: final.ply
     inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
@@ -80,7 +80,7 @@ workload_manager:
 
 paths:
   pipeline_outpath: [individual_plants_out]
-  outpath_subdirs: [segmentation_pointclouds, plant_reports, 3d_volumes_entropy_v009]
+  outpath_subdirs: [segmentation_pointclouds_neighbors_removed, 3d_volumes_entropy_v009]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
