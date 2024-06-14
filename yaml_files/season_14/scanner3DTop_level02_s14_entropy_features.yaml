@@ -21,7 +21,7 @@ modules:
       dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest  
     command: find individual_plants_out/segmentation_pointclouds -type f -name "*no_soil_full.ply" -exec sh -c 'dir=$(dirname "{}"); mv -- "{}" "$dir/segmentation_plant.ply"' \;
     distribution_level: local
-   file_level: 
+    file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: no_soil_full.ply
     inputs: [gcp_season_14_bucket.txt]
@@ -34,7 +34,7 @@ modules:
      dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
     distribution_level: local
-   file_level: 
+    file_level: 
     alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: segmentation_plant.ply
