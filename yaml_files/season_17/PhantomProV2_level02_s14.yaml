@@ -1,0 +1,83 @@
+---
+tags:
+  pipeline: season17_PhantomProV2
+  description: R1
+  notes: Season 17 PhantomProV2 processing
+  runby: Pauli Lab Member
+  sensor: drone
+  season: 17
+  season_name: season_17_lettuce_yr_2023
+  slack_notifications: 
+    use: True
+    channel: gantry_data_updates
+    container:
+      simg_name: slack_notifications.simg
+      dockerhub_path: docker://phytooracle/slack_notifications:latest
+
+modules:
+  1:
+    container: 
+      simg_name: uav_plot_clip.simg
+      dockerhub_path: docker://phytooracle/uav_plot_clip:latest
+    command: mkdir -p ${CWD}/uav_plot_clip_out && singularity run uav_plot_clip.simg ${CWD}/${FILE} -g ${CWD}/season17_multi_latlon_geno_utm.geojson -c 94 &&  mv ${CWD}/*_transparent_mosaic_group1/ ${CWD}/uav_plot_clip_out/
+    distribution_level: local
+    file_level:
+    # input_dir: [./$RAW_DATA_PATH]
+    input_file: _transparent_mosaic_group1.tif
+    inputs: [$FILE, season17_multi_latlon_geno_utm.geojson]
+    outputs: [uav_plot_clip_out]
+    
+  2:
+    container: 
+      simg_name: rgb_tgi_extraction.simg
+      dockerhub_path: docker://phytooracle/rgb_tgi_extraction:latest
+    command: singularity run rgb_tgi_extraction.simg ${CWD}/uav_plot_clip_out/*_transparent_mosaic_group1 -f season17_fieldbook.csv.csv
+    distribution_level : local
+    file_level:
+    #input_dir: [uav_plot_clip_out/]
+    input_file: _transparent_mosaic_group1
+    inputs: [season17_fieldbook.csv]
+    outputs: [tgi_extraction_out/$DATE_tgi_extraction.csv]
+
+workload_manager:
+  account: dukepauli
+
+  high_priority_settings:
+    use: True
+    qos_group: user_qos_dukepauli
+    partition: high_priority
+  standard_settings:
+    use: False
+    partition: standard
+
+  job_name: phytooracle_worker_PhantomProV2
+  nodes: 1
+  number_worker_array: 1
+  cores_per_worker: 1
+  time_minutes: 1440
+  retries: 1
+  port: 0
+  mem_per_core: 5
+  manager_name: PhantomProV2_level02_s14
+  worker_timeout_seconds: 900
+
+paths:
+  #models:
+    #detection:
+    #segmentation:
+    #lid:
+  pipeline_outpath: [.]
+  outpath_subdirs: [tgi_extraction_out, uav_plot_clip_out]
+  
+  cyverse: 
+    basename: /iplant/home/shared/phytooracle/
+
+    input: 
+      necessary_files: [/iplant/home/shared/phytooracle/season_17_lettuce_yr_2023/level_0/season17_multi_latlon_geno_utm.geojson,
+                        /iplant/home/shared/phytooracle/season_17_lettuce_yr_2023/season17_fieldbook.csv]
+      # prefix: PhantomProV2-
+      # suffix: _RGB
+      level: level_1
+      input_dir: orthomosaic
+    output:
+      level: level_2
