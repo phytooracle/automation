@@ -6,7 +6,7 @@ tags:
   runby: Pauli Lab Member
   sensor: scanner3DTop 
   season: 14
-  season_name: season_14_sorghum_yr_2022_dep
+  season_name: season_14_sorghum_yr_2022
   slack_notifications: 
     use: True
     channel: gantry_test
@@ -97,8 +97,8 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_dep/level_3/stereoTop/season_14_clustering.csv,
-                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022_dep/level_0/necessary_files/gcp_season_14_bucket.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_2/stereoTop/season_14_clustering.csv,
+                        /iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/necessary_files/gcp_season_14_bucket.txt]
       level: level_2
       input_dir: individual_plants_out
     output: 
