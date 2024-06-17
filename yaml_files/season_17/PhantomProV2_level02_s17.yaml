@@ -58,7 +58,7 @@ workload_manager:
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: PhantomProV2_level02_s14
+  manager_name: PhantomProV2_level02_s17
   worker_timeout_seconds: 900
 
 paths:
