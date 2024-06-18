@@ -25,8 +25,9 @@ modules:
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: no_soil_full.ply
     inputs: []
+    outputs: []
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]     
+    #outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]     
     
   #2:
   #  container: 
