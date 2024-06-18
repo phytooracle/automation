@@ -50,7 +50,7 @@ workload_manager:
     partition: high_priority
   standard_settings:
     use: True
-    partition: windfall
+    partition: standard
 
   job_name: phytooracle_worker_3d
   nodes: 1
