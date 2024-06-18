@@ -19,7 +19,7 @@ modules:
     container: 
      simg_name: 3d_neighbor_removal.simg
      dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
-    command: mkdir individual_plants_out/neighbors_removed; find individual_plants_out/seg -type f -name "*_no_soil_full.ply" -exec bash -c 'mv "$1" "$(dirname "$1")/segmentation_plant.ply"' _ {} \;
+    command: find individual_plants_out/seg -type f -name "*_no_soil_full.ply" -exec bash -c 'mv "$1" "$(dirname "$1")/segmentation_plant.ply"' _ {} \;
     distribution_level: local
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
@@ -46,7 +46,7 @@ modules:
   #  container: 
   #    simg_name: 3d_entropy_features.simg
   #    dockerhub_path: docker://phytooracle/3d_entropy_features:latest
-  #  command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009 && find individual_plants_out/segmentation_pointclouds -type f -name "*_final.ply" -exec mv {} individual_plants_out/neighbors_removed \;
+  #  command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009 && mkdir individual_plants_out/neighbors_removed; find individual_plants_out/segmentation_pointclouds -type f -name "*_final.ply" -exec mv {} individual_plants_out/neighbors_removed \;
   #  distribution_level: wq
   #  file_level: 
   #  input_dir: [individual_plants_out, segmentation_pointclouds]
