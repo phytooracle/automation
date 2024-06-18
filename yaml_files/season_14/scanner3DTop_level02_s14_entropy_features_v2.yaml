@@ -22,7 +22,6 @@ modules:
     command: mkdir individual_plants_out/neighbors_removed && find individual_plants_out/segmentation_pointclouds -type f -name "*_no_soil_full.ply" -exec sh -c 'mv "$1" "${1%_no_soil_full.ply}_final.ply"' _ {} \;
     distribution_level: local
     file_level: 
-    alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: no_soil_full.ply
     inputs: [gcp_season_14_bucket.txt]
