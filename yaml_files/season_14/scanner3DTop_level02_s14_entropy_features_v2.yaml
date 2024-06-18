@@ -20,14 +20,14 @@ modules:
      simg_name: 3d_neighbor_removal.simg
      dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
     command: mkdir individual_plants_out/neighbors_removed && find individual_plants_out/segmentation_pointclouds -type f -name "*_no_soil_full.ply" -exec sh -c 'mv "$1" "${1%_no_soil_full.ply}_final.ply"' _ {} \;
-    distribution_level: wq
+    distribution_level: local
     file_level: 
     alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: no_soil_full.ply
     inputs: [gcp_season_14_bucket.txt]
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]     
+    outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_final.ply]     
     
   #2:
   #  container: 
