@@ -20,7 +20,7 @@ modules:
      simg_name: 3d_neighbor_removal.simg
      dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
     command: find individual_plants_out/segmentation_pointclouds -type f -name "*no_soil_full.ply" -exec sh -c 'dir=$(dirname "{}"); mv -- "{}" "$dir/segmentation_plant.ply"' \; -quit
-    distribution_level: wq
+    distribution_level: local
     file_level: 
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: no_soil_full.ply
@@ -29,33 +29,47 @@ modules:
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
     #outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]     
     
-  #2:
+  2:
+    container: 
+     simg_name: 3d_neighbor_removal.simg
+     dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
+    distribution_level: wq
+    file_level: 
+    alternate_worker_settings: True
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: segmentation_plant.ply
+    inputs: [gcp_season_14_bucket.txt]
+    outputs: []
+    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
+    #outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]     
+    
+  3:
+    container: 
+      simg_name: 3d_entropy_features.simg
+      dockerhub_path: docker://phytooracle/3d_entropy_features:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009
+    distribution_level: wq
+    file_level: 
+    input_dir: [individual_plants_out, segmentation_pointclouds]
+    input_file: final.ply
+    inputs: [gcp_season_14_bucket.txt]
+    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
+    outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
+
+  #4:
   #  container: 
-  #   simg_name: 3d_neighbor_removal.simg
-  #   dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
-  #  command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
-  #  distribution_level: wq
-  #  file_level: 
-  #  alternate_worker_settings: True
-  #  input_dir: [individual_plants_out, segmentation_pointclouds]
-  #  input_file: no_soil_full.ply
-  #  inputs: [gcp_season_14_bucket.txt]
-  #  # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
-  #  outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]     
-  #  
-  #3:
-  #  container: 
-  #    simg_name: 3d_entropy_features.simg
-  #    dockerhub_path: docker://phytooracle/3d_entropy_features:latest
-  #  command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009 && mkdir individual_plants_out/neighbors_removed; find individual_plants_out/segmentation_pointclouds -type f -name "*_final.ply" -exec mv {} individual_plants_out/neighbors_removed \;
-  #  distribution_level: wq
+  #    simg_name: 3d_neighbor_removal.simg
+  #    dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest  
+  #  command: find individual_plants_out/segmentation_pointclouds -type f -name "final.ply" -exec sh -c 'mkdir -p individual_plants_out/neighbors_removed/$(dirname "{}" | sed "s#individual_plants_out/segmentation_pointclouds/##") && mv "{}" individual_plants_out/neighbors_removed/$(dirname "{}" | sed "s#individual_plants_out/segmentation_pointclouds/##")/' \;
+  #  distribution_level: local
   #  file_level: 
   #  input_dir: [individual_plants_out, segmentation_pointclouds]
   #  input_file: final.ply
-  #  inputs: [gcp_season_14_bucket.txt]
-  #  # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
-  #  outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv, individual_plants_out/neighbors_removed/$PLANT_NAME/final.ply]
- # 
+  #  inputs: []
+  #  # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/segmentation_plant.ply]
+  #  outputs: [individual_plants_out/neighbors_removed/$PLANT_NAME/final.ply]
+  
 workload_manager:
   account: dukepauli
   high_priority_settings:
@@ -81,7 +95,7 @@ workload_manager:
 
 paths:
   pipeline_outpath: [individual_plants_out]
-  outpath_subdirs: [3d_volumes_entropy_v009, neighbors_removed]
+  outpath_subdirs: [3d_volumes_entropy_v009]#, neighbors_removed]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
