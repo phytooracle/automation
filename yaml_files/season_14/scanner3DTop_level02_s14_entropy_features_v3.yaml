@@ -18,7 +18,7 @@ modules:
   1:
     container: 
      simg_name: 3d_neighbor_removal.simg
-     dockerhub_path: docker://phytooracle/3d_neighbor_removal:latest
+     dockerhub_path: docker://phytooracle/3d_neighbor_removal:sorghum_entropy
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
     distribution_level: wq
     file_level: 
