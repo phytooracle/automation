@@ -25,7 +25,7 @@ modules:
     alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
-    inputs: [gcp_season_11_bucket.txt]
+    inputs: [gcp_season_11.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
               
