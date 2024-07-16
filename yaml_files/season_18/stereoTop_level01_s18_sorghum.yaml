@@ -43,13 +43,13 @@ modules:
     container:
       simg_name: full_geocorrection.simg
       dockerhub_path: docker://ariyanzarei/full_geocorrection:latest
-    command: mkdir -p image_stiching && singularity exec -B $(pwd):/mnt --pwd /mnt full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_HPC.py -d image_stiching -b ./bin2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_18_bucket.txt -r ./Lettuce_Image_Stitching
+    command: mkdir -p image_stiching && singularity exec -B $(pwd):/mnt --pwd /mnt full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_HPC.py -d image_stiching -b ./bin2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_18_bucket_sorghum.txt -r ./Lettuce_Image_Stitching
     distribution_level: local
     file_level: dir
     input_dir: [./bin2tif_out]
     input_file: _left.tif
     inputs: [model_weights_sorghum_rgb.pth]
-    # inputs: [$UUID_left.tif, ./gcp_season_14_bucket.txt, ./Lettuce_Image_Stitching, ]
+    # inputs: [$UUID_left.tif, ./gcp_season_18_bucket_sorghum.txt, ./Lettuce_Image_Stitching, ]
     outputs: [image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
 
   4:
@@ -160,7 +160,7 @@ paths:
 
     input:
       necessary_files: [/iplant/home/shared/phytooracle/season_18_sorghum_yr_2024/level_0/season18_multi_latlon_geno.geojson,
-                        /iplant/home/shared/phytooracle/season_18_sorghum_yr_2024/level_0/necessary_files/gcp_season_18_bucket.txt]
+                        /iplant/home/shared/phytooracle/season_18_sorghum_yr_2024/level_0/necessary_files/gcp_season_18_bucket_sorghum.txt]
       prefix: stereoTop-
       suffix: __*.tar.gz
       level: level_0
