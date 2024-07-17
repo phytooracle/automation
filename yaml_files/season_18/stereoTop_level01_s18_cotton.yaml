@@ -53,28 +53,28 @@ modules:
   #  outputs: [image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
 
   #4:
-    container:
-      simg_name: rgb_flir_edit_gps.simg
-      dockerhub_path: docker://phytooracle/rgb_flir_edit_gps:latest
-    command: singularity run ${CWD}/rgb_flir_edit_gps.simg ${CWD}/${FILE} -c ${CWD}/image_stiching/${DATE}/${DATE}_coordinates_CORRECTED.csv -o edited_tifs
-    distribution_level: wq
-    file_level:
-    input_dir: [bin2tif_out]
-    input_file: _left.tif
-    inputs: [model_weights_sorghum_rgb.pth] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
-    outputs: [edited_tifs/$FILE_BASE_corrected.tif]
+  #  container:
+  #    simg_name: rgb_flir_edit_gps.simg
+  #    dockerhub_path: docker://phytooracle/rgb_flir_edit_gps:latest
+  #  command: singularity run ${CWD}/rgb_flir_edit_gps.simg ${CWD}/${FILE} -c ${CWD}/image_stiching/${DATE}/${DATE}_coordinates_CORRECTED.csv -o edited_tifs
+  #  distribution_level: wq
+  #  file_level:
+  #  input_dir: [bin2tif_out]
+  #  input_file: _left.tif
+  #  inputs: [model_weights_sorghum_rgb.pth] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
+  #  outputs: [edited_tifs/$FILE_BASE_corrected.tif]
 
   #5:
-  #  container:
-  #    simg_name: gdal.simg
-  #    dockerhub_path: docker://osgeo/gdal:ubuntu-full-3.1.3
-  #  command: singularity exec ${CWD}/gdal.simg bash ${CWD}/shell_scripts/ortho.sh ${CWD}/edited_tifs ${DATE} && mkdir ${CWD}/${DATE} && mv ${DATE}_ortho_10pct_cubic.tif ${CWD}/${DATE}
-  #  distribution_level: local
-  #  file_level: dir
-  #  input_dir: [edited_tifs]
-  #  input_file: _left_corrected.tif
-  #  inputs: [model_weights_sorghum_rgb.pth] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
-  #  outputs: [$DATE/$DATE_ortho_10pct_cubic.tif]
+    container:
+      simg_name: gdal.simg
+      dockerhub_path: docker://osgeo/gdal:ubuntu-full-3.1.3
+    command: singularity exec ${CWD}/gdal.simg bash ${CWD}/shell_scripts/ortho.sh ${CWD}/edited_tifs ${DATE} && mkdir ${CWD}/${DATE} && mv ${DATE}_ortho_10pct_cubic.tif ${CWD}/${DATE}
+    distribution_level: local
+    file_level: dir
+    input_dir: [edited_tifs]
+    input_file: _left_corrected.tif
+    inputs: [model_weights_sorghum_rgb.pth] #[$FILE, ./image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
+    outputs: [$DATE/$DATE_ortho_10pct_cubic.tif]
 
   #6:
   #  container:
