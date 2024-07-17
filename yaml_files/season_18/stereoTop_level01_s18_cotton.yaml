@@ -16,28 +16,28 @@ tags:
 
 modules:
   1:
-    container:
-      simg_name: rgb_bin_to_tif.simg
-      dockerhub_path: docker://phytooracle/rgb_bin_to_tif:latest
-    command: singularity run ${CWD}/rgb_bin_to_tif.simg ${CWD}/${FILE} -m ${CWD}/${UUID}_metadata.json -z 0.73 #z_offset south field
-    distribution_level: wq
-    file_level:
-    #input_dir: [./$RAW_DATA_PATH]
-    input_file: _left.bin
-    inputs: [$UUID_left.bin, $UUID_metadata.json]
-    outputs: [bin2tif_out/$FILE_BASE.tif]
+  #  container:
+  #    simg_name: rgb_bin_to_tif.simg
+  #    dockerhub_path: docker://phytooracle/rgb_bin_to_tif:latest
+  #  command: singularity run ${CWD}/rgb_bin_to_tif.simg ${CWD}/${FILE} -m ${CWD}/${UUID}_metadata.json -z 0.73 #z_offset south field
+  #  distribution_level: wq
+  #  file_level:
+  #  #input_dir: [./$RAW_DATA_PATH]
+  #  input_file: _left.bin
+  #  inputs: [$UUID_left.bin, $UUID_metadata.json]
+  #  outputs: [bin2tif_out/$FILE_BASE.tif]
 
   #2:
-  #  container:
-  #    simg_name: rgb_flir_collect_gps.simg
-  #    dockerhub_path: docker://phytooracle/rgb_flir_collect_gps:latest
-  #  command: singularity run ${CWD}/rgb_flir_collect_gps.simg ${CWD}/bin2tif_out/ -sd ${DATE}
-  #  distribution_level: local
-  #  file_level: dir
-  #  input_dir: [./bin2tif_out/]
-  #  input_file: _left.tif
-  #  inputs: [$UUID_left.tif]
-  #  outputs: [img_coords_out/$DATE_coordinates.csv]
+    container:
+      simg_name: rgb_flir_collect_gps.simg
+      dockerhub_path: docker://phytooracle/rgb_flir_collect_gps:latest
+    command: singularity run ${CWD}/rgb_flir_collect_gps.simg ${CWD}/bin2tif_out/ -sd ${DATE}
+    distribution_level: local
+    file_level: dir
+    input_dir: [./bin2tif_out/]
+    input_file: _left.tif
+    inputs: [$UUID_left.tif]
+    outputs: [img_coords_out/$DATE_coordinates.csv]
 
   #3:
   #  container:
