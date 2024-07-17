@@ -28,29 +28,29 @@ modules:
   #  outputs: [bin2tif_out/$FILE_BASE.tif]
 
   #2:
-    container:
-      simg_name: rgb_flir_collect_gps.simg
-      dockerhub_path: docker://phytooracle/rgb_flir_collect_gps:latest
-    command: singularity run ${CWD}/rgb_flir_collect_gps.simg ${CWD}/bin2tif_out/ -sd ${DATE}
-    distribution_level: local
-    file_level: dir
-    input_dir: [./bin2tif_out/]
-    input_file: _left.tif
-    inputs: [$UUID_left.tif]
-    outputs: [img_coords_out/$DATE_coordinates.csv]
-
-  #3:
   #  container:
-  #    simg_name: full_geocorrection.simg
-  #    dockerhub_path: docker://ariyanzarei/full_geocorrection:latest
-  #  command: mkdir -p image_stiching && singularity exec -B $(pwd):/mnt --pwd /mnt full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_HPC.py -d image_stiching -b ./bin2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_18_bucket_cotton.txt -r ./Lettuce_Image_Stitching
+  #    simg_name: rgb_flir_collect_gps.simg
+  #    dockerhub_path: docker://phytooracle/rgb_flir_collect_gps:latest
+  #  command: singularity run ${CWD}/rgb_flir_collect_gps.simg ${CWD}/bin2tif_out/ -sd ${DATE}
   #  distribution_level: local
   #  file_level: dir
-  #  input_dir: [./bin2tif_out]
+  #  input_dir: [./bin2tif_out/]
   #  input_file: _left.tif
-  #  inputs: [model_weights_sorghum_rgb.pth]
-  #  # inputs: [$UUID_left.tif, ./gcp_season_18_bucket_cotton.txt, ./Lettuce_Image_Stitching, ]
-  #  outputs: [image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
+  #  inputs: [$UUID_left.tif]
+  #  outputs: [img_coords_out/$DATE_coordinates.csv]
+
+  #3:
+    container:
+      simg_name: full_geocorrection.simg
+      dockerhub_path: docker://ariyanzarei/full_geocorrection:latest
+    command: mkdir -p image_stiching && singularity exec -B $(pwd):/mnt --pwd /mnt full_geocorrection.simg python3 ./Lettuce_Image_Stitching/Dockerized_GPS_Correction_HPC.py -d image_stiching -b ./bin2tif_out -s ${DATE} -c ./geo_correction_config.txt -l ./gcp_season_18_bucket_cotton.txt -r ./Lettuce_Image_Stitching
+    distribution_level: local
+    file_level: dir
+    input_dir: [./bin2tif_out]
+    input_file: _left.tif
+    inputs: [model_weights_sorghum_rgb.pth]
+    # inputs: [$UUID_left.tif, ./gcp_season_18_bucket_cotton.txt, ./Lettuce_Image_Stitching, ]
+    outputs: [image_stiching/$DATE/$DATE_coordinates_CORRECTED.csv]
 
   #4:
   #  container:
