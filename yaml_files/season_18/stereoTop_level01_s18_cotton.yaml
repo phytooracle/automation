@@ -77,28 +77,28 @@ modules:
   #  outputs: [$DATE/$DATE_ortho_10pct_cubic.tif]
 
   #6:
-    container:
-      simg_name: rgb_flir_plot_clip_geojson.simg
-      dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
-    command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season18_multi_latlon_geno_cotton.geojson -sen rgb
-    distribution_level: local
-    file_level:
-    input_dir: [./edited_tifs]
-    input_file: .tif
-    inputs: [$FILE, ./season18_multi_latlon_geno_cotton.geojson]
-    outputs: []
+  #  container:
+  #    simg_name: rgb_flir_plot_clip_geojson.simg
+  #    dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
+  #  command: singularity run rgb_flir_plot_clip_geojson.simg ${FILE} -shp ./season18_multi_latlon_geno_cotton.geojson -sen rgb
+  #  distribution_level: local
+  #  file_level:
+  #  input_dir: [./edited_tifs]
+  #  input_file: .tif
+  #  inputs: [$FILE, ./season18_multi_latlon_geno_cotton.geojson]
+  #  outputs: []
 
   #7:
-  #  container:
-  #    simg_name: stitch_plots.simg
-  #    dockerhub_path: docker://phytooracle/stitch_plots:latest
-  #  command: singularity run stitch_plots.simg plotclip_out/
-  # distribution_level: local
-  #  file_level: dir
-  #  input_dir: [./plotclip_out]
-  #  input_file: foo
-  #  inputs: [$FILE]
-  #  outputs: []
+    container:
+      simg_name: stitch_plots.simg
+      dockerhub_path: docker://phytooracle/stitch_plots:latest
+    command: singularity run stitch_plots.simg plotclip_out/
+    distribution_level: local
+    file_level: dir
+    input_dir: [./plotclip_out]
+    input_file: foo
+    inputs: [$FILE]
+    outputs: []
 
   #8:
   #  container:
@@ -113,16 +113,17 @@ modules:
   #  outputs: []
   #
   #9:
-  #  container:
-  #    simg_name: rgb_orthomosaic_converter.simg
-  #    dockerhub_path: docker://phytooracle/rgb_orthomosaic_converter:latest
-  #  command: singularity run rgb_orthomosaic_converter.simg -t ${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.tif && singularity run slack_notifications.simg -f ${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.png -m "RGB orthomosaic for ${DATE}" -c gantry_data_updates
-  #  distribution_level: local
-  #  file_level: dir
-  #  input_dir: [./bin2tif_out]
-  #  input_file: _left.tif
-  #  inputs: [$DATE/$DATE_ortho_10pct_cubic.tif]
-  #  outputs: [$DATE/$DATE_ortho_10pct_cubic.png]
+  2:
+    container:
+      simg_name: rgb_orthomosaic_converter.simg
+      dockerhub_path: docker://phytooracle/rgb_orthomosaic_converter:latest
+    command: singularity run rgb_orthomosaic_converter.simg -t ${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.tif && singularity run slack_notifications.simg -f ${CWD}/${DATE}/${DATE}_ortho_10pct_cubic.png -m "RGB orthomosaic for ${DATE}" -c gantry_data_updates
+    distribution_level: local
+    file_level: dir
+    input_dir: [./bin2tif_out]
+    input_file: _left.tif
+    inputs: [$DATE/$DATE_ortho_10pct_cubic.tif]
+    outputs: [$DATE/$DATE_ortho_10pct_cubic.png]
 
 workload_manager:
   account: ericlyons
