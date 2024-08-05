@@ -22,7 +22,6 @@ modules:
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME} -s 50000 #mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && 
     distribution_level: wq
     file_level: 
-    alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
     inputs: [gcp_season_11.txt]
@@ -70,10 +69,10 @@ workload_manager:
   job_name: phytooracle_worker_3d
   nodes: 1
   number_worker_array: 300
-  cores_per_worker: 5
+  cores_per_worker: 10
   alt_number_worker_array: 333
   alt_cores_per_worker: 25
-  time_minutes: 1140
+  time_minutes: 1440
   retries: 1
   port: 0
   mem_per_core: 5
