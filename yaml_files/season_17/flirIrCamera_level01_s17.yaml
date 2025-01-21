@@ -17,9 +17,9 @@ tags:
 modules:
   1:
     container: 
-      simg_name: flir_bin_to_tif_s11.simg
-      dockerhub_path: docker://phytooracle/flir_bin_to_tif_s11:latest
-    command:  singularity run flir_bin_to_tif_s11.simg ${FILE} -m ${FLIR_META} -z 0.73 #check with gantry operator
+      simg_name: flir_bin_to_tif_s17.simg
+      dockerhub_path: docker://phytooracle/flir_bin_to_tif_s17:latest
+    command:  singularity run flir_bin_to_tif_s17.simg ${FILE} -m ${FLIR_META} -z 0.73 #check with gantry operator
     distribution_level: local
     file_level:
     # input_dir: [./$RAW_DATA_PATH]
