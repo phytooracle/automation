@@ -19,7 +19,7 @@ modules:
     container: 
       simg_name: 3d_postprocessing.simg
       dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_18_stereoTop_sorghum_clustering.csv -s 18 -d ${DATE} -l ${CWD}/gcp_season_18_bucket_sorghum_sorghum.txt
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_18_stereoTop_sorghum_clustering.csv -s 18 -d ${DATE} -l ${CWD}/gcp_season_18_bucket_sorghum.txt
     distribution_level: wq
     file_level: 
     input_dir: [alignment, west_downsampled]
