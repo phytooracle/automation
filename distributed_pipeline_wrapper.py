@@ -8,7 +8,7 @@ Purpose: PhytoOracle | Scalable, modular phenomic data processing pipelines
 import os
 import sys
 import subprocess as sp
-sp.call(f'{sys.executable} -m pip install --user pyyaml requests', shell=True)
+sp.call(f'{sys.executable} -m pip install --user pyyaml requests numpy', shell=True) # numpy? avoid micromamba
 import argparse
 from genericpath import isfile
 import pdb # pdb.set_trace()
@@ -119,7 +119,6 @@ def get_args():
                         help='Shared filesystem.',
                         action='store_false')
 
-
     parser.add_argument('-t',
                         '--timeout',
                         help='Command timeout in units minute.',
@@ -131,7 +130,6 @@ def get_args():
                         type=int,
                         help='Choose what date to process in the list 0 for the first element',
                         default=99)
-
 
     return parser.parse_args()
 
@@ -167,49 +165,19 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
     '''
     cwd = os.getcwd()
     home = os.path.expanduser('~')
-    
-    # builds from latest stable source if not on a centos system
-    if server_utils.distro_name() != 'CentOS Linux':
-        cctools_file = 'cctools-stable-source'
-        if not os.path.isdir(os.path.join(home, 'cctools')):
-            print(f'Downloading {cctools_file}.')
-            cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
-            print(cctools_url)
-            cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
-            sp.call(cmd1, shell=True)
-            os.chdir(home)
-            cmd2 = f'mkdir non_centos_cctools && tar xzvf {cctools_file}.tar.gz -C non_centos_cctools'
-            sp.call(cmd2, shell = True)
-            os.chdir('non_centos_cctools')
-
-            print('Building cctools from source...')
-
-            os.chdir(glob.glob('./*')[0])
-
-            cmd3 = './configure --prefix $HOME/cctools && make && make install'
-            sp.call(cmd3, shell = True)
-
-
-
-            os.remove(os.path.join(home, f'{cctools_file}.tar.gz'))
-            
-            print(f'Download complete. CCTools is ready!')
-
-        else:
-            print('Required CCTools version already exists.')
-
-        return 'cctools/'
+    distro_name = server_utils.distro_name()
+    print(f'distro name picked up by server_utils: {server_utils.distro_name()}')
 
     # builds from centos specific package if on centos
-    else:
-
-        cctools_file = '-'.join(['cctools', cctools_version, architecture, sys_os])
+    if distro_name == 'CentOS Linux':
+        cctools_dir = 'cctools'
+        cctools_file = '-'.join([cctools_dir, cctools_version, architecture, sys_os])
     
         if not os.path.isdir(os.path.join(home, cctools_file)):
             print(f'Downloading {cctools_file}.')
             cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
-            cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
-            sp.call(cmd1, shell=True)
+            cmd0 = f'cd {home} && wget {cctools_url}.tar.gz'
+            sp.call(cmd0, shell=True)
             os.chdir(home)
             file = tarfile.open(f'{cctools_file}.tar.gz')
             file.extractall('.')
@@ -217,8 +185,7 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
             os.remove(f'{cctools_file}.tar.gz')
 
             try:
-                shutil.move('-'.join(['cctools', cctools_version, architecture, sys_os+'.tar.gz', 'dir']), '-'.join(['cctools', cctools_version, architecture, sys_os]))
-
+                shutil.move('-'.join(['cctools', cctools_version, architecture, sys_os+'.tar.gz', 'dir']), '-'.join([cctools_dir, cctools_version, architecture, sys_os]))
             except:
                 pass
 
@@ -227,8 +194,49 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
 
         else:
             print('Required CCTools version already exists.')
+        
+        return '-'.join([cctools_dir, cctools_version, architecture, sys_os])
 
-        return '-'.join(['cctools', cctools_version, architecture, sys_os])
+    # builds from latest stable source if not on a centos system
+    else:
+        cctools_dir = 'cctools_non_centos'
+        cctools_file = 'cctools-stable-source'
+
+        if not os.path.isdir(os.path.join(home, cctools_dir)):
+            print(f'Downloading {cctools_file}.')
+            cctools_url = ''.join(['http://ccl.cse.nd.edu/software/files/', cctools_file])
+            print(cctools_url)
+            cmd1 = f'cd {home} && wget {cctools_url}.tar.gz'
+            sp.call(cmd1, shell=True)
+            os.chdir(home)
+
+            cmd2 = f'mkdir {cctools_dir} && tar xzvf {cctools_file}.tar.gz -C {cctools_dir}'
+            sp.call(cmd2, shell = True)
+            os.chdir(cctools_dir)
+
+            print('Building cctools from source...')
+
+            os.chdir(glob.glob('./*')[0])
+
+            env = os.environ.copy()
+            env['CFLAGS'] = '-I$CONDA_PREFIX/include'
+            env['LDFLAGS'] = '-I$CONDA_PREFIX/lib'
+            if env['LD_LIBRARY_PATH']:
+                env['LD_LIBRARY_PATH'] = f'$CONDA_PREFIX/lib:{env["LD_LIBRARY_PATH"]}'
+            else:
+                env['LD_LIBRARY_PATH'] = '$CONDA_PREFIX/lib'
+
+            cmd3 = f'./configure --prefix $HOME/{cctools_dir} && make VERBOSE=1 && make install'
+            sp.call(cmd3, env=env, shell = True)
+
+            os.remove(os.path.join(home, f'{cctools_file}.tar.gz'))
+            os.chdir(cwd)
+            print(f'Download complete. CCTools is ready!')
+
+        else:
+            print('Required CCTools version already exists.')
+
+        return '-'.join([cctools_dir, cctools_version, architecture, sys_os])
 
 
 def build_irods_path_to_sensor_from_yaml(yaml_dictionary, args):
@@ -1650,7 +1658,6 @@ def main():
             build_containers(yaml_dictionary)
             sensor = yaml_dictionary["tags"]["sensor"]
             
-   
             if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
                 generate_megastitch_config(cwd, yaml_dictionary)
 
@@ -1743,8 +1750,6 @@ def main():
                 
                 slack_notification(message=f"Workers launched.", date=date)
 
-
-            
             for k, v in yaml_dictionary['modules'].items():
                 
                 if 'input_dir' in v.keys():
