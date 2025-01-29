@@ -8,7 +8,7 @@ Purpose: PhytoOracle | Scalable, modular phenomic data processing pipelines
 import os
 import sys
 import subprocess as sp
-sp.call(f'{sys.executable} -m pip install --user pyyaml requests numpy', shell=True) # numpy? avoid micromamba
+sp.call(f'{sys.executable} -m pip install --user pyyaml requests numpy', shell=True)
 import argparse
 from genericpath import isfile
 import pdb # pdb.set_trace()
@@ -236,7 +236,7 @@ def download_cctools(cctools_version = '7.1.12', architecture = 'x86_64', sys_os
         else:
             print('Required CCTools version already exists.')
 
-        return '-'.join([cctools_dir, cctools_version, architecture, sys_os])
+        return cctools_dir
 
 
 def build_irods_path_to_sensor_from_yaml(yaml_dictionary, args):
@@ -261,7 +261,7 @@ def build_irods_path_to_sensor_from_yaml(yaml_dictionary, args):
     experiment = args.experiment
 
     # If level is greater than level zero, then we need to add
-    # two directories: .../expirment/date
+    # two directories: .../experiment/date
     # for example: level_1/scanner3DTop/sunflower/2222-22-22
     if cyverse_datalevel > 'level_0':
         path = os.path.join(
@@ -334,7 +334,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
     suffix            = yaml_dictionary['paths']['cyverse']['input']['suffix']
 
     all_files_in_dir = server_utils.get_filenames_in_dir_from_cyverse(irods_dl_dir)
-    print(all_files_in_dir)
+    # print(all_files_in_dir)
 
     # Now lets see if our file is in all_files_in_dir
 
@@ -347,6 +347,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
         pattern = (prefix if prefix else "") + date + (suffix if suffix else "")
 
     import pathlib
+    # print(pattern)
     matching_files = [x for x in all_files_in_dir if pathlib.PurePath(x).match(pattern)]
 
     if len(matching_files) < 1:
@@ -381,7 +382,7 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
 
 
 # --------------------------------------------------
-def download_irods_input_file(irods_path):
+def download_irods_input_file(irods_path, args):
     """Download raw dataset from CyVerse DataStore
     
         Input:
@@ -515,10 +516,8 @@ def get_file_list(directory, level, match_string='.ply'):
         files_list = [directory]
         return files_list
 
-
     if len(files_list) == 0:
         print('---------------------------no files found---------------------------------------')
-
 
     return files_list
 
@@ -538,7 +537,6 @@ def write_file_list(input_list, out_path='file.txt'):
     for element in input_list:
         textfile.write(element + "\n")
     textfile.close()
-
 
 
 # --------------------------------------------------
@@ -596,7 +594,7 @@ def get_season_name():
 
 
 # --------------------------------------------------
-def get_model_files(yaml_dictionary):
+def get_model_files(args, yaml_dictionary):
     """Download model weights from CyVerse DataStore
     
     Input:
@@ -614,9 +612,13 @@ def get_model_files(yaml_dictionary):
         
         if 'segmentation' in models.keys():
             seg_model_path = models['segmentation']
+            print(seg_model_path)
             if not os.path.isfile(os.path.basename(seg_model_path)):
                 cmd1 = f'iget -fKPVT {seg_model_path}'
-                sp.call(cmd1, shell=True)
+                if args.hpc:
+                    server_utils.run_filexfer_node_commands([cmd1])
+                else:
+                    sp.call(cmd1, shell=True)
         else:
             seg_model_path = ''
 
@@ -704,8 +706,7 @@ def launch_workers(cctools_path, account, job_name, nodes, time, mem_per_core, m
                 fh.writelines("export CCTOOLS_HOME=${HOME}/"+f"{cctools_path}\n")
                 fh.writelines("export PATH=${CCTOOLS_HOME}/bin:$PATH\n")
                 fh.writelines(f"{worker_type} -T local -M {manager_name} --max-workers {cores_per_worker} --cores 1 -t {worker_timeout} --memory {mem_per_core*cores_per_worker*1000}\n")
-
-    
+        
     if 'total_submission' in yaml_dictionary['workload_manager'].keys():
         num = yaml_dictionary['workload_manager']['total_submission']
         for i in range(0, num):
@@ -1385,6 +1386,8 @@ def get_process_date_list(yaml_dictionary):
 # --------------------------------------------------
 def slack_notification(message, date):
 
+    print(f'Sending message: {message}')
+
     sensor = yaml_dictionary['tags']['sensor']
     if 'slack_notifications' in yaml_dictionary['tags'].keys():
         
@@ -1399,13 +1402,11 @@ def slack_notification(message, date):
             user_host = '@'.join([user, host_name])
 
             description = ''.join(['[', ' '.join([season, sensor, date, user_host]), ']'])
-            
             message = ' | '.join([description, message])
 
             if not os.path.isfile(simg):
                 print(f'Building {simg}.')
                 sp.call(f"singularity build --disable-cache {simg} {dockerhub_path}", shell=True)
-            print('Sending message.')
             sp.call(f'singularity run {simg} -m "{message}" -c "{channel}"', shell=True)
 
 
@@ -1608,6 +1609,7 @@ def get_transformation_files(yaml_dictionary, date):
         if "transformation_files" in input.keys():
             date = extract_date(string=date)
             path = os.path.join(input["transformation_files"], date)
+            # TODO ssh to filexfer node
             print(path)
             sp.call(f"iget -rfKPVT {path}", shell=True)
 
@@ -1638,7 +1640,6 @@ def main():
         args.date = get_process_date_list(original_yaml_dictionary)
 
     for date in args.date:
-        
         os.chdir(cwd)
         
         try:
@@ -1653,14 +1654,15 @@ def main():
                 )
             else:
                 yaml_dictionary = original_yaml_dictionary
+            
             slack_notification(message=f"Starting data processing.", date=date)
 
             build_containers(yaml_dictionary)
             sensor = yaml_dictionary["tags"]["sensor"]
-            
+   
             if (sensor == "stereoTop") or (sensor == 'flirIrCamera'):
                 generate_megastitch_config(cwd, yaml_dictionary)
-
+            
             if args.uploadonly:
                 upload_outputs(date, yaml_dictionary)
                 return
@@ -1671,10 +1673,11 @@ def main():
             server_utils.hpc = args.hpc
 
             global seg_model_name, det_model_name
-            seg_model_name, det_model_name = get_model_files(yaml_dictionary)
+            seg_model_name, det_model_name = get_model_files(args, yaml_dictionary)
             print(f'Segmentation model name: {seg_model_name}')
             get_support_files(yaml_dictionary=yaml_dictionary, date=date)
             get_transformation_files(yaml_dictionary=yaml_dictionary, date=date)
+           
             slack_notification(message=f"Necessary files downloaded.", date=date)
 
             ###############################################
@@ -1715,7 +1718,8 @@ def main():
                 if file_to_dl is None:
                     handle_date_failure(args, date, yaml_dictionary)
                     continue
-                dir_name = download_irods_input_file(file_to_dl)
+                dir_name = download_irods_input_file(file_to_dl, args)
+            
             elif 'input_dir' in yaml_input_keys:
                 print("Using input dir")
                 dir_name = yaml_dictionary['paths']['cyverse']['input']['input_dir']

@@ -33,7 +33,12 @@ def make_dir(dir_path_to_make):
     sp.call(cmd, shell=True)
 
 def get_filenames_in_dir_from_cyverse(irods_dir_path):
-    cyverse_ls = sp.run(["ils", irods_dir_path], stdout=sp.PIPE).stdout
+    global hpc
+    if hpc:
+        cmd = f"ssh filexfer 'ils {irods_dir_path}'"
+        cyverse_ls = sp.run(cmd, shell=True, stdout=sp.PIPE).stdout
+    else:
+        cyverse_ls = sp.run(["ils", irods_dir_path], stdout=sp.PIPE).stdout
     dir_files = [x.strip() for x in cyverse_ls.decode('utf-8').splitlines()][1:]
     return dir_files
 
