@@ -59,18 +59,6 @@ modules:
 
   4:
     container: 
-      simg_name: 3d_segmentation_dashboard_assets.simg
-      dockerhub_path: docker://phytooracle/3d_segmentation_dashboard_assets:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_segmentation_dashboard_assets.simg -i ${CWD}/${PLANT_PATH} -plant ${PLANT_NAME} -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
-    distribution_level: wq
-    file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: combined_multiway_registered.ply
-    inputs: [gcp_season_18_bucket_sorghum.txt]
-    outputs: [individual_plants_out/plant_reports/$PLANT_NAME/combined_multiway_registered.gif]
-
-  5:
-    container: 
       simg_name: sorghum_soil_segmentation.simg
       dockerhub_path: docker://phytooracle/sorghum_soil_segmentation:latest
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/sorghum_soil_segmentation.simg -i ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME}/combined_multiway_registered.ply -o ${CWD}/individual_plants_out/segmentation_pointclouds/${PLANT_NAME} -n ${PLANT_NAME} -s 50000 #mkdir -p individual_plants_out/segmentation_pointclouds/${PLANT_NAME} && 
@@ -83,7 +71,7 @@ modules:
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
 
-  6:
+  5:
     container: 
      simg_name: 3d_neighbor_removal.simg
      dockerhub_path: docker://phytooracle/3d_neighbor_removal:sorghum_entropy
@@ -98,7 +86,7 @@ modules:
     # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply.ply]
     #outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]     
     
-  7:
+  6:
     container: 
       simg_name: 3d_entropy_features.simg
       dockerhub_path: docker://phytooracle/3d_entropy_features:latest
