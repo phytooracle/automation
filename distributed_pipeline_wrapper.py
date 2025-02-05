@@ -308,7 +308,6 @@ def download_irods_input_dir(yaml_dictionary, date, args):
     server_utils.download_files_from_cyverse(files=file_paths, experiment=args.experiment)
 
     # Step (2)
-
     server_utils.untar_files(files_in_dir)
 
     os.chdir('../')
@@ -377,7 +376,6 @@ def find_matching_file_in_irods_dir(yaml_dictionary, date, args, irods_dl_dir):
     
     print(f"get_irods_input_path() found a file: {file_dl_path}")
 
-
     return file_dl_path
 
 
@@ -405,7 +403,7 @@ def download_irods_input_file(irods_path, args):
         if args.hpc: 
             print('>>>>>>Using data transfer node.')
             cwd = os.getcwd()
-            sp.call(f"ssh filexfer 'cd {cwd}' '&& {cmd1}' '&& exit'", shell=True)
+            sp.call(f"ssh filexfer 'cd {cwd} && {cmd1} && exit'", shell=True)
         else: 
             sp.call(cmd1, shell=True)
 
@@ -442,7 +440,7 @@ def download_irods_input_file(irods_path, args):
 
     if not os.path.isdir(dir_name):
         # cmd1 = f'iget -fKPVT {irods_path}'
-        #cmd1 = f'iget -fPVT {irods_path}'
+        # cmd1 = f'iget -fPVT {irods_path}'
 
         if any(x in tarball_filename for x in gzip_extensions):
             cmd2 = f'tar -xzvf {tarball_filename}'
@@ -580,8 +578,6 @@ def get_support_files(yaml_dictionary, date):
             sp.call("git clone https://github.com/ariyanzri/Lettuce_Image_Stitching.git", shell=True)
     
 
-
-
 # --------------------------------------------------
 def get_season_name():
     season_name = yaml_dictionary['tags']['season_name']
@@ -626,7 +622,10 @@ def get_model_files(args, yaml_dictionary):
             det_model_path = models['detection']
             if not os.path.isfile(os.path.basename(det_model_path)):
                 cmd1 = f'iget -fKPVT {det_model_path}'
-                sp.call(cmd1, shell=True)
+                if args.hpc:
+                    server_utils.run_filexfer_node_commands([cmd1])
+                else:
+                    sp.call(cmd1, shell=True)
         else:
             det_model_path = ''
 
@@ -634,7 +633,10 @@ def get_model_files(args, yaml_dictionary):
             lid_model_path = models['lid']
             if not os.path.isfile(os.path.basename(lid_model_path)):
                 cmd1 = f'iget -fKPVT {lid_model_path}'
-                sp.call(cmd1, shell=True)
+                if args.hpc:
+                    server_utils.run_filexfer_node_commands([cmd1])
+                else:
+                    sp.call(cmd1, shell=True)
         else:
             lid_model_path = ''
     else:
@@ -1057,7 +1059,6 @@ def create_pipeline_logs(scan_date):
 
     if os.path.isfile('upload_log.txt'):
         shutil.move('upload_log.txt', os.path.join(cwd, scan_date, 'logs', 'upload_log.txt'))
-
 
 
 # --------------------------------------------------
@@ -1693,7 +1694,7 @@ def main():
             # figure out if yaml has prefix and/or sufix keys...
             cyverse_datalevel = yaml_dictionary['paths']['cyverse']['input']['level']
             irods_sensor_path = build_irods_path_to_sensor_from_yaml(yaml_dictionary, args)
-            
+
             if len(set(['prefix', 'suffix']).intersection(yaml_input_keys)) > 0:
                 print("Found prefix or suffix.  Building irods_path...<>")
                 irods_dl_dir = irods_sensor_path

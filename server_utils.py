@@ -8,6 +8,7 @@ import requests
 
 hpc = False
 
+
 def distro_name():
     pairs = {}
     with open("/etc/os-release") as myfile:
@@ -20,17 +21,20 @@ def distro_name():
     else:
         raise Exception(f"Can't determine distro from /etc/os-release")
 
+
 def run_filexfer_node_commands(cmds):
     global hpc
-    print(':: Using data transfer node.')
-    _a = [f"'&& {x}'" for x in cmds]
+    print(f':: Using data transfer node to download file.')
+    _a = [f"&& {x}" for x in cmds]
     command_string = " ".join(_a)
     cwd = os.getcwd()
-    sp.call(f"ssh -o 'ServerAliveInterval 30' -o 'ServerAliveCountMax 5760' filexfer 'cd {cwd}' {command_string} '&& exit'", shell=True)
+    cmd = f"ssh -o 'ServerAliveInterval 30' -o 'ServerAliveCountMax 5760' filexfer 'cd {cwd} {command_string} && exit'"
+    sp.run(cmd, shell=True)
 
 def make_dir(dir_path_to_make):
     cmd = f'mkdir -p {dir_path_to_make}'
     sp.call(cmd, shell=True)
+
 
 def get_filenames_in_dir_from_cyverse(irods_dir_path):
     global hpc
@@ -41,6 +45,7 @@ def get_filenames_in_dir_from_cyverse(irods_dir_path):
         cyverse_ls = sp.run(["ils", irods_dir_path], stdout=sp.PIPE).stdout
     dir_files = [x.strip() for x in cyverse_ls.decode('utf-8').splitlines()][1:]
     return dir_files
+
 
 def download_file_from_cyverse(irods_path):
     """
@@ -55,13 +60,11 @@ def download_file_from_cyverse(irods_path):
         raise Exception(f"File doesn't exist on cyverse: {irods_path}")
     
     if hpc: 
-        print(f"Using filexfer node to download file")
         run_filexfer_node_commands([cmd])
     else:
-        print(f"Using current node/system to download file")
+        print(f":: Using current node/system to download file")
         sp.call(cmd, shell=True)
-
-    
+   
 
 def download_files_from_cyverse(files, experiment, force_overwrite=False):
     """
@@ -72,9 +75,8 @@ def download_files_from_cyverse(files, experiment, force_overwrite=False):
     * unless force_overwrite is True, in which case download everything
     no matter what.
     """
-
     for file_path in files:
-        print(file_path)
+        # print(file_path)
         filename = os.path.basename(file_path)
 
         print(f"Looking for local copy of {filename}...")
@@ -86,6 +88,7 @@ def download_files_from_cyverse(files, experiment, force_overwrite=False):
             if force_overwrite:
                 print(f"    ... but we're going to overwrite it: {file_path}")
                 download_file_from_cyverse(file_path)
+
 
 def untar_files(local_files, force_overwrite=False):
     """
@@ -117,6 +120,7 @@ def untar_files(local_files, force_overwrite=False):
                 file.extractall(".")
                 file.close()
 
+
 def check_if_file_exists_on_cyverse(irods_path):
     """
     Check if a file was downloaded by checking if it exists in the current
@@ -145,13 +149,13 @@ def check_if_file_exists_on_cyverse(irods_path):
 
     if hpc:
         print(':: Using data transfer node to check if file exists on cyverse.')
-        # run command on filexfer node
-        sp.call(f"ssh filexfer 'cd {cwd}' '&& icd {irods_dir}' '&& ils > filexfer_output.txt' '&& exit'", shell=True)
+        cmd = f"ssh filexfer 'cd {cwd} && icd {irods_dir} && ils > filexfer_output.txt && exit'"
+        sp.run(cmd, shell=True)
 
     else:
         print(':: Using local irods to check if file exists on cyverse.')
-        sp.call(f"cd {cwd} && icd {irods_dir} && ils > filexfer_output.txt", shell=True)
-                    
+        sp.run(f"cd {cwd} && icd {irods_dir} && ils > filexfer_output.txt", shell=True)
+    
     # read output file and check if file exists
     with open("filexfer_output.txt", "r") as f:
         for line in f:
@@ -159,14 +163,6 @@ def check_if_file_exists_on_cyverse(irods_path):
                 found = True
                 break
     
-    sp.call("rm filexfer_output.txt", shell=True)
+    sp.run("rm filexfer_output.txt", shell=True)
 
     return found
-
-
-
-    
-
-    
-   
-
