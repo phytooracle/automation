@@ -47,15 +47,14 @@ def get_filenames_in_dir_from_cyverse(irods_dir_path):
     return dir_files
 
 
-def download_file_from_cyverse(irods_path):
+def download_file_from_cyverse(irods_path, check_exists=False):
     """
     Download the single file given by irods_path to the current working directory.
     """
-
     global hpc
     cmd = f'iget -PVT {os.path.join(irods_path)}'
 
-    if not check_if_file_exists_on_cyverse(irods_path):
+    if check_exists and not check_if_file_exists_on_cyverse(irods_path):
         print(f"ERROR: File doesn't exist on cyverse: {irods_path}")
         raise Exception(f"File doesn't exist on cyverse: {irods_path}")
     
@@ -68,9 +67,10 @@ def download_file_from_cyverse(irods_path):
 
 def download_files_from_cyverse(files, experiment, force_overwrite=False):
     """
-    files: a list of files with full paths to their location on cyverse
+    files: a list of files with full paths to their location on CyVerse.
 
     Download everything in files if it isn't found locally*
+    Note this method assumes the CyVerse paths in files are valid.
 
     * unless force_overwrite is True, in which case download everything
     no matter what.
@@ -122,22 +122,6 @@ def untar_files(local_files, force_overwrite=False):
 
 
 def check_if_file_exists_on_cyverse(irods_path):
-    """
-    Check if a file was downloaded by checking if it exists in the current
-    working directory.
-    """
-
-    """
-    filename = os.path.basename(irods_path)
-    print(f"Checking if file was downloaded: {os.getcwd() + filename}")
-
-    print("check result = ", os.path.isfile(os.getcwd() + filename))
-
-    if os.path.isfile(os.getcwd() + filename):
-        return True
-    else:
-        return False
-    """
     found = False
 
     # parse irods path to get directory and filename
