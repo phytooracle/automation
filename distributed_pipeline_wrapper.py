@@ -407,7 +407,12 @@ def download_irods_input_file(irods_path, args):
         else: 
             sp.call(cmd1, shell=True)
 
-    time.sleep(30)
+    timeout = 300  # Set a reasonable timeout in seconds
+    start_time = time.time()
+    while not os.path.isfile(tarball_filename):
+        if time.time() - start_time > timeout:
+            raise TimeoutError(f"Timeout: {tarball_filename} not found after {timeout} seconds")
+        time.sleep(1)
     #tarball = tarfile.open(tarball_filename, mode='r')
     #print(f"Examining {tarball_filename}, this can take a minute.")
     #dir_name = os.path.commonprefix(tarball.getnames())
