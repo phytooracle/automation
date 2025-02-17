@@ -71,44 +71,16 @@ modules:
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
 
-  5:
-    container: 
-     simg_name: 3d_neighbor_removal.simg
-     dockerhub_path: docker://phytooracle/3d_neighbor_removal:sorghum_entropy
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_neighbor_removal.simg -plant ${PLANT_NAME} -e 0.07 -pod ${CWD}/individual_plants_out/segmentation_pointclouds -fod ${CWD}/individual_plants_out/plant_reports
-    distribution_level: wq
-    file_level: 
-    alternate_worker_settings: True
-    input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: no_soil_full.ply
-    inputs: [gcp_season_18_bucket_sorghum.txt]
-    outputs: []
-    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply.ply]
-    #outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]     
-    
-  6:
-    container: 
-      simg_name: 3d_entropy_features.simg
-      dockerhub_path: docker://phytooracle/3d_entropy_features:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009
-    distribution_level: wq
-    file_level: 
-    input_dir: [individual_plants_out, segmentation_pointclouds]
-    input_file: final.ply
-    inputs: [gcp_season_18_bucket_sorghum.txt]
-    # inputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/final.ply]
-    outputs: [individual_plants_out/3d_volumes_entropy_v009/$PLANT_NAME_volumes_entropy.csv]
-
 
 workload_manager:
-  account: dukepauli
+  account: windfall
   high_priority_settings:
     use: True
     qos_group: user_qos_dukepauli
     partition: high_priority
   standard_settings:
     use: False
-    partition: standard
+    partition: windfall
 
   job_name: phytooracle_worker_3d
   nodes: 1
@@ -128,7 +100,7 @@ paths:
     #detection: contained within the Docker container (sorgum, season 12 onwards)
     #segmentation: contained within the Docker container (sorgum, season 12 onwards)
   pipeline_outpath: [individual_plants_out]
-  outpath_subdirs: [segmentation_pointclouds, plant_reports, 3d_volumes_entropy_v009]
+  outpath_subdirs: [segmentation_pointclouds, plant_reports]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
