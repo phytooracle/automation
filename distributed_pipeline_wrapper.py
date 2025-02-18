@@ -121,7 +121,7 @@ def get_args():
 
     parser.add_argument('-t',
                         '--timeout',
-                        help='Command timeout in units minute.',
+                        help='Command timeout in units hour.',
                         type=float,
                         default=1)
 
