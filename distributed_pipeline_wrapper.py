@@ -1501,7 +1501,7 @@ def generate_megastitch_config(cwd, yaml_dictionary):
             f.write('MINIMUM_NUMBER_OF_MATCHES:15\n')
             f.write('RANSAC_MAX_ITER:1000\n')
             f.write('RANSAC_ERROR_THRESHOLD:5\n')
-            f.write('PERCENTAGE_NEXT_NEIGHBOR_FOR_MATCHES:0.8\n')
+            f.write('PERCENTAGE_NEXT_NEIGHBOR_FOR_MATCHES:0.05\n')
             f.write('OVERLAP_DISCARD_RATIO:0.05\n')
             f.write('TRANSFORMATION_SCALE_DISCARD_THRESHOLD:0.03\n')
             f.write('TRANSFORMATION_ANGLE_DISCARD_THRESHOLD:4\n')
