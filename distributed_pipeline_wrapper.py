@@ -625,6 +625,7 @@ def get_model_files(args, yaml_dictionary):
 
         if 'detection' in models.keys():
             det_model_path = models['detection']
+            print(det_model_path)
             if not os.path.isfile(os.path.basename(det_model_path)):
                 cmd1 = f'iget -fKPVT {det_model_path}'
                 if args.hpc:
@@ -636,6 +637,7 @@ def get_model_files(args, yaml_dictionary):
 
         if 'lid' in models.keys():
             lid_model_path = models['lid']
+            print(lid_model_path)
             if not os.path.isfile(os.path.basename(lid_model_path)):
                 cmd1 = f'iget -fKPVT {lid_model_path}'
                 if args.hpc:
