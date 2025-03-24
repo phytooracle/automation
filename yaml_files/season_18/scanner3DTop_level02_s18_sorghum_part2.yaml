@@ -33,7 +33,7 @@ modules:
   2:
     container: 
       simg_name: 3d_entropy_features.simg
-      dockerhub_path: docker://phytooracle/3d_entropy_features:latest
+      dockerhub_path: docker://phytooracle/3d_entropy_features:sorghum_entropy
     command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_entropy_features.simg -v 0.09 -p ${CWD}/${PLANT_PATH} -f ${PLANT_NAME}_volumes_entropy -o ${CWD}/individual_plants_out/3d_volumes_entropy_v009
     distribution_level: wq
     file_level: 
