@@ -122,6 +122,10 @@ def untar_files(local_files, force_overwrite=False):
 
 
 def check_if_file_exists_on_cyverse(irods_path):
+    """
+    Check if a file was downloaded by checking if it exists in the current
+    working directory.
+    """
     found = False
 
     # parse irods path to get directory and filename
