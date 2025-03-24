@@ -1391,7 +1391,6 @@ def get_process_date_list(yaml_dictionary):
 
 # --------------------------------------------------
 def slack_notification(message, date):
-
     print(f'Sending message: {message}')
 
     sensor = yaml_dictionary['tags']['sensor']
