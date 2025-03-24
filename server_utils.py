@@ -31,6 +31,7 @@ def run_filexfer_node_commands(cmds):
     cmd = f"ssh -o 'ServerAliveInterval 30' -o 'ServerAliveCountMax 5760' filexfer 'cd {cwd} {command_string} && exit'"
     sp.run(cmd, shell=True)
 
+
 def make_dir(dir_path_to_make):
     cmd = f'mkdir -p {dir_path_to_make}'
     sp.call(cmd, shell=True)
@@ -103,7 +104,6 @@ def untar_files(local_files, force_overwrite=False):
     that's not what we find, this function throws an exception.
 
     """
-
     extensions = ['.tar', '.tgz', '.tar.gz']
     
     for filename in local_files:
