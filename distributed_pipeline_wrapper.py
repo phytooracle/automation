@@ -1787,6 +1787,7 @@ def main():
                 slack_notification(message=f"Processing step {k}/{len(yaml_dictionary['modules'])}.", date=date)
 
                 files_list = get_file_list(dir_name, level=v['file_level'], match_string=v['input_file'])
+                print("file list length: ", len(files_list))
                 if len(files_list) < 1:
                     if v['distribution_level'] == 'local':
                         print("No input files specified.  Allowed to continue because distribution level is 'local'")

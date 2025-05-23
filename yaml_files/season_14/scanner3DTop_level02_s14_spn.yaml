@@ -7,6 +7,7 @@ tags:
   sensor: scanner3DTop 
   season: 14
   season_name: season_14_sorghum_yr_2022
+  local_gpu: True
   slack_notifications: 
     use: True
     channel: gantry_data_updates
