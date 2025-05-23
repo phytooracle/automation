@@ -60,7 +60,6 @@ paths:
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/necessary_files/gcp_season_14_bucket.txt]
       level: level_2
-      input_dir: individual_plants_out
       suffix: segmentation_pointclouds.tar
     output: 
       level: level_2
