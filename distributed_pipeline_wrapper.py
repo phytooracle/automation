@@ -1792,10 +1792,17 @@ def main():
                         print("No input files specified.  Allowed to continue because distribution level is 'local'")
                     else:
                         raise ValueError(f"file_list for module #{k} is empty")
-                    
-                write_file_list(files_list)
-                json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=yaml_dictionary['tags']['sensor'], yaml_dictionary=yaml_dictionary, json_out_path=f'wf_file_{k}.json')
-                run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name='_'.join([yaml_dictionary['workload_manager']['manager_name'], user]), retries=yaml_dictionary['workload_manager']['retries'], port=yaml_dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
+
+                local_gpu = yaml_dictionary['tags']['local_gpu']    
+                if local_gpu == True:
+                    print("local_gpu option is: ", local_gpu)
+                    command=v['command']
+                    print("running the command: ", command)
+                    sp.call(command, shell=True)
+                else:
+                    write_file_list(files_list)
+                    json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=yaml_dictionary['tags']['sensor'], yaml_dictionary=yaml_dictionary, json_out_path=f'wf_file_{k}.json')
+                    run_jx2json(json_out_path, cctools_path, batch_type=v['distribution_level'], manager_name='_'.join([yaml_dictionary['workload_manager']['manager_name'], user]), retries=yaml_dictionary['workload_manager']['retries'], port=yaml_dictionary['workload_manager']['port'], out_log=f'dall_{k}.log', cwd=cwd)
 
                 if not args.noclean:
                     print(f"Cleaning directory")
