@@ -17,7 +17,7 @@ tags:
 modules:
   1:
     container: 
-      simg_name: SorghumPartNet_prod.simg
+      simg_name: SorghumPartNet.simg
       dockerhub_path: docker://phytooracle/sorghumpartnet:prod
     command: singularity run --nv -B $(pwd):/mnt --pwd /mnt ${CWD}/SorghumPartNet.simg -p ${CWD}/individual_plants_out/segmentation_pointclouds -o ${CWD}/individual_plants_out/SorghumPartNet -m /groups/dukepauli/shared/models/PlantSegNet/  
     distribution_level: local
