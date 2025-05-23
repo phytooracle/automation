@@ -62,7 +62,7 @@ paths:
       level: level_2
       input_dir: individual_plants_out
       prefix: 
-      suffix: segmentation_pointclouds.tar
+      suffix: __*segmentation_pointclouds.tar
     output: 
       level: level_2
 # Use an interactive node with GPU resources! Example: 
