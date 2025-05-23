@@ -24,8 +24,8 @@ modules:
     file_level: 
     input_dir: [segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
-    inputs: [gcp_season_14_bucket.txt]
-    outputs: [SorghumPartNet]
+    inputs: []
+    outputs: []
 
 workload_manager:
   account: dukepauli
