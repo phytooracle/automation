@@ -42,12 +42,12 @@ workload_manager:
   nodes: 1
   number_worker_array: 1
   cores_per_worker: 1
-  time_minutes: 2880
+  time_minutes: 20
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: scanner3DTop_level02_s14
-  worker_timeout_seconds: 86400
+  manager_name: scanner3DTop_level02_s14_spn
+  worker_timeout_seconds: 3600
 
 paths:
   pipeline_outpath: [individual_plants_out]
