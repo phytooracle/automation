@@ -39,12 +39,10 @@ workload_manager:
     use: False
     partition: windfall
 
-  job_name: phytooracle_worker_3d 
+  job_name: phytooracle_worker_3d_spn 
   nodes: 1
   number_worker_array: 1
-  cores_per_worker: 2
-  alt_number_worker_array: 150
-  alt_cores_per_worker: 10
+  cores_per_worker: 1
   time_minutes: 2880
   retries: 1
   port: 0
