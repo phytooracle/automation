@@ -22,7 +22,6 @@ modules:
     command: singularity run --nv -B $(pwd):/mnt --pwd /mnt ${CWD}/SorghumPartNet.simg -p ${CWD}/segmentation_pointclouds -o ${CWD}/SorghumPartNet -m /groups/dukepauli/shared/models/PlantSegNet/  
     distribution_level: local
     file_level: 
-    alternate_worker_settings: False
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
     inputs: [gcp_season_14_bucket.txt]
