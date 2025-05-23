@@ -19,15 +19,15 @@ modules:
     container: 
       simg_name: SorghumPartNet.simg
       dockerhub_path: docker://phytooracle/sorghumpartnet:prod
-    command: singularity run --nv -B $(pwd):/mnt --pwd /mnt ${CWD}/SorghumPartNet.simg -p ${CWD}/individual_plants_out/segmentation_pointclouds -o ${CWD}/individual_plants_out/SorghumPartNet -m /groups/dukepauli/shared/models/PlantSegNet/  
+    command: singularity run --nv -B $(pwd):/mnt --pwd /mnt ${CWD}/SorghumPartNet.simg -p ${CWD}/segmentation_pointclouds -o ${CWD}/SorghumPartNet -m /groups/dukepauli/shared/models/PlantSegNet/  
     distribution_level: local
     file_level: 
     alternate_worker_settings: False
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
     inputs: [gcp_season_14_bucket.txt]
-    outputs: [individual_plants_out/SorghumPartNet/$PLANT_NAME/$PLANT_NAME_semantic_full.ply, 
-              individual_plants_out/SorghumPartNet/$PLANT_NAME/$PLANT_NAME_instance_full.ply]
+    outputs: [SorghumPartNet/$PLANT_NAME/$PLANT_NAME_semantic_full.ply, 
+              SorghumPartNet/$PLANT_NAME/$PLANT_NAME_instance_full.ply]
 
 workload_manager:
   account: dukepauli
