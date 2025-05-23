@@ -25,8 +25,7 @@ modules:
     input_dir: [segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
     inputs: [gcp_season_14_bucket.txt]
-    outputs: [SorghumPartNet/$PLANT_NAME/$PLANT_NAME_semantic_full.ply, 
-              SorghumPartNet/$PLANT_NAME/$PLANT_NAME_instance_full.ply]
+    outputs: [SorghumPartNet]
 
 workload_manager:
   account: dukepauli
