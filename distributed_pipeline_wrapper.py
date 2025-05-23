@@ -1796,9 +1796,7 @@ def main():
                 local_gpu = yaml_dictionary['tags']['local_gpu']    
                 if local_gpu == True:
                     print("local_gpu option is: ", local_gpu)
-                    print(k)
-                    print(v)
-                    print(v.keys())
+                    print(v.keys().command)
                 else:
                     write_file_list(files_list)
                     json_out_path = generate_makeflow_json(cctools_path=cctools_path, level=v['file_level'], files_list=files_list, command=v['command'], container=v['container']['simg_name'], inputs=v['inputs'], outputs=v['outputs'], date=date, sensor=yaml_dictionary['tags']['sensor'], yaml_dictionary=yaml_dictionary, json_out_path=f'wf_file_{k}.json')
