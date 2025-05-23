@@ -60,7 +60,7 @@ paths:
     input: 
       necessary_files: [/iplant/home/shared/phytooracle/season_14_sorghum_yr_2022/level_0/necessary_files/gcp_season_14_bucket.txt]
       level: level_2
-      suffix: segmentation_pointclouds.tar
+      input_dir: individual_plants_out
     output: 
       level: level_2
 # Use an interactive node with GPU resources! Example: 
