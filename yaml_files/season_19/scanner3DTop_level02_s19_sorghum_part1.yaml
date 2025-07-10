@@ -1,12 +1,12 @@
 ---
 tags:
-  pipeline: season18_scanner3DTop
-  description: season18_postprocessing
-  notes: Post landmark selection processing of Season 18 scanner3DTop data
+  pipeline: season19_scanner3DTop
+  description: season19_postprocessing
+  notes: Post landmark selection processing of Season 19 scanner3DTop data
   runby: Pauli Lab Member
   sensor: scanner3DTop 
-  season: 18
-  season_name: season_18_sorghum_yr_2024
+  season: 19
+  season_name: season_19_sorghum_cotton_yr_2025
   slack_notifications: 
     use: True
     channel: gantry_data_updates
@@ -19,12 +19,12 @@ modules:
     container: 
       simg_name: 3d_postprocessing.simg
       dockerhub_path: docker://phytooracle/3d_postprocessing:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_18_stereoTop_sorghum_clustering.csv -s 18 -d ${DATE} -l ${CWD}/gcp_season_18_bucket_sorghum.txt
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_postprocessing.simg -i ${CWD}/alignment/ -o postprocessing_out -f ${SUBDIR} -t ${CWD}/alignment/transfromation.json -p ${CWD}/season_19_stereoTop_sorghum_clustering.csv -s 19 -d ${DATE} -l ${CWD}/gcp_season_19_bucket_sorghum.txt
     distribution_level: wq
     file_level: 
     input_dir: [alignment, west_downsampled]
     input_file: -west.ply
-    inputs: [gcp_season_18_bucket_sorghum.txt]
+    inputs: [gcp_season_19_bucket_sorghum.txt]
     outputs: [postprocessing_out/east/$SUBDIR-east.ply,
               postprocessing_out/east_downsampled/$SUBDIR-east.ply, 
               postprocessing_out/merged/$SUBDIR-merged.ply,
@@ -36,12 +36,12 @@ modules:
     container: 
       simg_name: 3d_crop_individual_plants.simg
       dockerhub_path: docker://phytooracle/3d_crop_individual_plants:fix_date_search #latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_18_stereoTop_sorghum_clustering.csv -f ${SUBDIR} -o ${CWD}/individual_plants_out -s 18 -d ${DATE}
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_crop_individual_plants.simg -i ${CWD}/postprocessing_out/ -p ${CWD}/season_19_stereoTop_sorghum_clustering.csv -f ${SUBDIR} -o ${CWD}/individual_plants_out -s 19 -d ${DATE}
     distribution_level: wq
     file_level: 
     input_dir: [postprocessing_out, west_downsampled]
     input_file: -west.ply
-    inputs: [gcp_season_18_bucket_sorghum.txt]
+    inputs: [gcp_season_19_bucket_sorghum.txt]
     outputs: []
 
   3: 
@@ -53,7 +53,7 @@ modules:
     file_level: subdir
     input_dir: [individual_plants_out, west]
     input_file: _cropped.ply
-    inputs: [gcp_season_18_bucket_sorghum.txt]
+    inputs: [gcp_season_19_bucket_sorghum.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/combined_multiway_registered.ply,
               individual_plants_out/plant_reports/$PLANT_NAME]
 
@@ -67,7 +67,7 @@ modules:
     alternate_worker_settings: True
     input_dir: [individual_plants_out, segmentation_pointclouds]
     input_file: combined_multiway_registered.ply
-    inputs: [gcp_season_18_bucket_sorghum.txt]
+    inputs: [gcp_season_19_bucket_sorghum.txt]
     outputs: [individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_downsampled.ply, 
               individual_plants_out/segmentation_pointclouds/$PLANT_NAME/$PLANT_NAME_no_soil_full.ply]
 
@@ -92,7 +92,7 @@ workload_manager:
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: scanner3DTop_level02_s18_sorghum
+  manager_name: scanner3DTop_level02_s19_sorghum
   worker_timeout_seconds: 86400 #900
 
 paths:
@@ -104,8 +104,8 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_18_sorghum_yr_2024/level_2/stereoTop/sorghum/season_18_stereoTop_sorghum_clustering.csv,
-                        /iplant/home/shared/phytooracle/season_18_sorghum_yr_2024/level_0/necessary_files/gcp_season_18_bucket_sorghum.txt]
+      necessary_files: [/iplant/home/shared/phytooracle/season_19_sorghum_cotton_yr_2025/level_2/stereoTop/sorghum/season_19_stereoTop_sorghum_clustering.csv,
+                        /iplant/home/shared/phytooracle/season_19_sorghum_cotton_yr_2025/level_0/necessary_files/gcp_season_19_bucket_sorghum.txt]
       level: level_1
       input_dir: alignment
     output: 

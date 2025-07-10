@@ -1,12 +1,12 @@
 ---
 tags:
-  pipeline: season18_ps2Top
+  pipeline: season19_ps2Top
   description: R1
-  notes: Season 18 PSII processing
+  notes: Season 19 PSII processing
   runby: Pauli Lab Member
   sensor: ps2Top
-  season: 18
-  season_name: season_18_sorghum_yr_2024
+  season: 19
+  season_name: season_19_sorghum_cotton_yr_2025
   slack_notifications:
     use: True
     channel: gantry_data_updates
@@ -31,12 +31,12 @@ modules:
     container:
       simg_name: rgb_flir_plot_clip_geojson.simg
       dockerhub_path: docker://phytooracle/rgb_flir_plot_clip_geojson:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt rgb_flir_plot_clip_geojson.simg ${CWD}/${FILE} -sen psii -shp ${CWD}/season18_multi_latlon_geno_sorghum.geojson && tar -cvf ${UUID}.tar plotclip_out/
+    command: singularity run -B $(pwd):/mnt --pwd /mnt rgb_flir_plot_clip_geojson.simg ${CWD}/${FILE} -sen psii -shp ${CWD}/season19_multi_latlon_geno_sorghum.geojson && tar -cvf ${UUID}.tar plotclip_out/
     distribution_level: wq
     file_level:
     input_dir: [bin2tif_out]
     input_file: .tif
-    inputs: [$FILE, season18_multi_latlon_geno_sorghum.geojson]
+    inputs: [$FILE, season19_multi_latlon_geno_sorghum.geojson]
     outputs: [$UUID.tar]
 
   3:
@@ -48,7 +48,7 @@ modules:
     file_level:
     input_dir: [bin2tif_out]
     input_file: .tif
-    inputs: [season18_multi_latlon_geno_sorghum.geojson]
+    inputs: [season19_multi_latlon_geno_sorghum.geojson]
     outputs: []
 
   4:
@@ -95,7 +95,7 @@ workload_manager:
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: ps2Top_level01_s18
+  manager_name: ps2Top_level01_s19
   worker_timeout_seconds: 7200
 
 paths:
@@ -105,7 +105,7 @@ paths:
     basename: /iplant/home/shared/phytooracle/
 
     input:
-      necessary_files: [/iplant/home/shared/phytooracle/season_18_sorghum_yr_2024/level_0/season18_multi_latlon_geno_sorghum.geojson,
+      necessary_files: [/iplant/home/shared/phytooracle/season_19_sorghum_cotton_yr_2025/level_0/season19_multi_latlon_geno_sorghum.geojson,
                         /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/multithresh.json]
       level: level_0
       # input_dir:

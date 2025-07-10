@@ -1,12 +1,12 @@
 ---
 tags:
-  pipeline: season18_scanner3DTop
-  description: testing_season18_preprocessing
-  notes: Processing of Season 18 scanner3DTop data
+  pipeline: season19_scanner3DTop
+  description: testing_season19_preprocessing
+  notes: Processing of Season 19 scanner3DTop data
   runby: Pauli Lab Member
   sensor: scanner3DTop
-  season: 18
-  season_name: season_18_sorghum_yr_2024
+  season: 19
+  season_name: season_19_sorghum_cotton_yr_2025
   slack_notifications: 
     use: True
     channel: gantry_data_updates
@@ -20,11 +20,11 @@ modules:
     container: 
       simg_name: 3d_preprocessing.simg
       dockerhub_path: docker://phytooracle/3d_preprocessing:transformation_gui_integration
-    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_18_bucket_cotton.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR} -ewp ${CWD}/${DATE}/${DATE}_ew_positive_final_transformation.npy -ewn ${CWD}/${DATE}/${DATE}_ew_negative_final_transformation.npy -ns ${CWD}/${DATE}/${DATE}_ns_final_transformation.npy
+    command: singularity run ${CWD}/3d_preprocessing.simg -l ${CWD}/gcp_season_19_bucket_cotton.txt -o ${CWD}/alignment -i ${CWD}/${INPUT_DIR} -ewp ${CWD}/${DATE}/${DATE}_ew_positive_final_transformation.npy -ewn ${CWD}/${DATE}/${DATE}_ew_negative_final_transformation.npy -ns ${CWD}/${DATE}/${DATE}_ns_final_transformation.npy
     distribution_level: wq
     file_level: 
     input_file: -west_0.ply
-    inputs: [gcp_season_18_bucket_cotton.txt]
+    inputs: [gcp_season_19_bucket_cotton.txt]
     outputs: [alignment/east/$SUBDIR__Top-heading-east.ply,
               alignment/east_downsampled/$SUBDIR__Top-heading-east.ply, 
               alignment/merged/$SUBDIR__Top-heading-merged.ply,
@@ -42,7 +42,7 @@ modules:
 #    file_level: dir
 #    input_dir: [./alignment]
 #    input_file: .ply
-#    inputs: [gcp_season_18_bucket_cotton.txt]
+#    inputs: [gcp_season_19_bucket_cotton.txt]
 #    outputs: [combined_view.png]
 
 workload_manager:
@@ -63,7 +63,7 @@ workload_manager:
   retries: 1
   port: 0
   mem_per_core: 5
-  manager_name: scanner3DTop_level01_s18
+  manager_name: scanner3DTop_level01_s19
   worker_timeout_seconds: 86400
 
 paths:
@@ -74,8 +74,8 @@ paths:
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
     input: 
-      necessary_files: [/iplant/home/shared/phytooracle/season_18_sorghum_yr_2024/level_0/necessary_files/gcp_season_18_bucket_cotton.txt]
-      transformation_files: /iplant/home/shared/phytooracle/season_18_sorghum_yr_2024/level_0/scanner3DTop/scanner3DTop_Transformations/
+      necessary_files: [/iplant/home/shared/phytooracle/season_19_sorghum_cotton_yr_2025/level_0/necessary_files/gcp_season_19_bucket_cotton.txt]
+      transformation_files: /iplant/home/shared/phytooracle/season_19_sorghum_cotton_yr_2025/level_0/scanner3DTop/scanner3DTop_Transformations/
       level: level_0
       prefix: scanner3DTop-
       suffix: __*.tar.gz
