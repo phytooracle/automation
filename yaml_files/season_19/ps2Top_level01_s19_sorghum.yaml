@@ -7,6 +7,7 @@ tags:
   sensor: ps2Top
   season: 19
   season_name: season_19_sorghum_cotton_yr_2025
+  local_gpu: False
   slack_notifications:
     use: True
     channel: gantry_data_updates
