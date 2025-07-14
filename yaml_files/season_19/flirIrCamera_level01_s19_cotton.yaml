@@ -112,7 +112,7 @@ modules:
   #  inputs: [$FILE, ./season19_multi_latlon_geno_cotton.geojson, ./model_weights_sorghum_flir.pth]
   #  outputs: []  
 
-  9:
+  #9:
     container: 
       simg_name: rgb_orthomosaic_converter.simg
       dockerhub_path: docker://phytooracle/rgb_orthomosaic_converter:latest
