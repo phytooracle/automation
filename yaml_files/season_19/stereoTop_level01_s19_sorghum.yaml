@@ -58,7 +58,7 @@ modules:
       simg_name: rgb_flir_edit_gps.simg
       dockerhub_path: docker://phytooracle/rgb_flir_edit_gps:latest
     command: singularity run ${CWD}/rgb_flir_edit_gps.simg ${CWD}/${FILE} -c ${CWD}/image_stiching/${DATE}/${DATE}_coordinates_CORRECTED.csv -o edited_tifs
-    distribution_level: wq
+    distribution_level: local
     file_level:
     input_dir: [bin2tif_out]
     input_file: _left.tif
