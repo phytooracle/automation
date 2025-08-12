@@ -1616,15 +1616,10 @@ def get_transformation_files(yaml_dictionary, date):
         if "transformation_files" in input.keys():
             date = extract_date(string=date)
             path = os.path.join(input["transformation_files"], date)
-            global hpc
             print(path)
-            cmd = f"iget -rfKPVT {path}"
-            if hpc: 
-                print("Running Filexfer node commands")
-                run_filexfer_node_commands([cmd])
-            else:
-                print(f":: Using current node/system to download file")
-                sp.call(cmd, shell=True)
+            cmd = f'iget -rfKPVT {path}'
+            print("running ", cmd)
+            sp.call(cmd, shell=True)
 
 
 # --------------------------------------------------
