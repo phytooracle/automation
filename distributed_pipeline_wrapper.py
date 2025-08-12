@@ -1620,7 +1620,6 @@ def get_transformation_files(yaml_dictionary, date):
             command_string = f'iget -rfKPVT {path}'
             cwd = os.getcwd()
             cmd = f"ssh -o 'ServerAliveInterval 30' -o 'ServerAliveCountMax 5760' filexfer 'cd {cwd} && {command_string} && exit'"
-            print("running ", cmd)
             sp.call(cmd, shell=True)
 
 
