@@ -1620,6 +1620,7 @@ def get_transformation_files(yaml_dictionary, date):
             print(path)
             cmd = f"iget -rfKPVT {path}"
             if hpc: 
+                print("Running Filexfer node commands")
                 run_filexfer_node_commands([cmd])
             else:
                 print(f":: Using current node/system to download file")
