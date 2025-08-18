@@ -1795,7 +1795,7 @@ def main():
                     else:
                         raise ValueError(f"file_list for module #{k} is empty")
 
-                local_gpu = yaml_dictionary['tags']['local_gpu']    
+                local_gpu = yaml_dictionary.get('tags', {}).get('local_gpu', False) # Default local_gpu option to False if not present in YAML
                 if local_gpu == True:
                     print("local_gpu option is: ", local_gpu)
                     command=v['command']
