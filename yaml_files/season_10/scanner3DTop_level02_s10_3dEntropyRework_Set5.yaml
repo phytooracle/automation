@@ -41,7 +41,7 @@ workload_manager:
 
   job_name: PO3D_O_S_5_worker
   nodes: 1
-  number_worker_array: 200
+  number_worker_array: 300
   cores_per_worker: 5
   alt_number_worker_array: 333
   alt_cores_per_worker: 25
