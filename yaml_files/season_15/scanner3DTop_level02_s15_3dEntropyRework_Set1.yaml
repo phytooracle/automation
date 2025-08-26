@@ -29,11 +29,11 @@ modules:
     outputs: [individual_plants_out/3d_volumes_entropy_v009_rework/$PLANT_NAME_volumes_entropy.csv]
 
 workload_manager:
-  account: dukepauli
+  account: ericlyons
 
   high_priority_settings:
     use: False
-    qos_group: user_qos_dukepauli
+    qos_group: user_qos_ericlyons
     partition: high_priority
   standard_settings:
     use: True
