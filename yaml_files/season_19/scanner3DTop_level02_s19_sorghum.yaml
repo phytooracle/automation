@@ -65,6 +65,6 @@ paths:
       level: level_1
       input_dir: alignment
       prefix: 
-      suffix: __*merged.tar
+      suffix: [__*merged.tar, *.json]
     output: 
       level: level_2
