@@ -20,16 +20,16 @@ modules:
     container: 
       simg_name: 3d_plotclip.simg
       dockerhub_path: docker://phytooracle/3d_plotclip:latest
-    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_plotclip.simg -i ${CWD}/alignment/ -o ${CWD}/postprocessing_out -t ${CWD}/alignment/transfromation.json -g ${CWD}/season19_multi_latlon_geno_sorghum.geojson -d ${DATE} --dynamiccores && mkdir ${CWD}/${DATE} && mv ${CWD}/postprocessing_out/*.ply ${CWD}/${DATE}
+    command: singularity run -B $(pwd):/mnt --pwd /mnt ${CWD}/3d_plotclip.simg -i ${CWD}/alignment/ -o ${CWD} -t ${CWD}/alignment/transfromation.json -g ${CWD}/season19_multi_latlon_geno_sorghum.geojson -d ${DATE} --dynamiccores && mkdir ${CWD}/${DATE} && mv ${CWD}/*.ply ${CWD}/${DATE}
     distribution_level: local
     file_level: 
     input_dir: [alignment, merged]
     input_file: -merged.ply
     inputs: [transfromation.json,
              season19_multi_latlon_geno_sorghum.geojson]
-    outputs: [postprocessing_out/$DATE_1milMax_merged_geocorrected.ply,
-              postprocessing_out/$DATE_full_merged_geocorrected.ply, 
-              postprocessing_out/final_out/$PLOT.ply]
+    outputs: [$DATE_1milMax_merged_geocorrected.ply,
+              $DATE_full_merged_geocorrected.ply, 
+              final_out/$PLOT.ply]
   
 workload_manager:
   account: dukepauli
@@ -56,7 +56,7 @@ paths:
   #models:
     #detection: contained within the Docker container (sorgum, season 12 onwards)
     #segmentation: contained within the Docker container (sorgum, season 12 onwards)
-  pipeline_outpath: [postprocessing_out]
+  pipeline_outpath: [.]
   outpath_subdirs: [final_out]
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
