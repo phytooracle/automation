@@ -64,5 +64,7 @@ paths:
       necessary_files: [/iplant/home/shared/phytooracle/season_19_sorghum_cotton_yr_2025/level_0/season19_multi_latlon_geno_sorghum.geojson]
       level: level_1
       input_dir: alignment
+      prefix: 
+      suffix: __*merged.tar
     output: 
       level: level_2
