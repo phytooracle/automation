@@ -1801,7 +1801,7 @@ def main():
 
                 if local_only == True:
                     print("local_only option is: ", local_only)
-                    os.environ['DATE'] = args.date  # Set DATE environment variable
+                    os.environ['DATE'] = date  # Set DATE environment variable
                     command=v['command']
                     print("running the command: ", command)
                     sp.call(command, shell=True)
