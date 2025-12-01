@@ -1795,9 +1795,13 @@ def main():
                     else:
                         raise ValueError(f"file_list for module #{k} is empty")
 
-                local_gpu = yaml_dictionary.get('tags', {}).get('local_gpu', False) # Default local_gpu option to False if not present in YAML
-                if local_gpu == True:
-                    print("local_gpu option is: ", local_gpu)
+                # Default local_only option to False if not present in YAML; check local_gpu option if local_only not present
+                tags = yaml_dictionary.get('tags', {})
+                local_only = tags.get('local_only', tags.get('local_gpu', False))
+
+                if local_only == True:
+                    print("local_only option is: ", local_only)
+                    os.environ['DATE'] = args.date  # Set DATE environment variable
                     command=v['command']
                     print("running the command: ", command)
                     sp.call(command, shell=True)
