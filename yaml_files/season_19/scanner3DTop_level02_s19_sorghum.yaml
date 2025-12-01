@@ -27,8 +27,7 @@ modules:
     input_file: -merged.ply
     inputs: [transfromation.json,
              season19_multi_latlon_geno_sorghum.geojson]
-    outputs: [postprocessing_out/*_geocorrected.ply, 
-              postprocessing_out/final_out/$PLOT.ply]
+    outputs: []
   
 workload_manager:
   account: dukepauli
