@@ -2,7 +2,7 @@
 tags:
   pipeline: season14_scanner3DTop
   description: season14_postprocessing
-  notes: Post landmark selection processing of Season 19 scanner3DTop data
+  notes: Post landmark selection processing of Season 14 scanner3DTop data
   runby: Pauli Lab Member
   sensor: scanner3DTop 
   season: 14
