@@ -20,7 +20,7 @@ modules:
     container: 
       simg_name: kmeans-thermal-segmentation.simg
       dockerhub_path: docker://phytooracle/kmeans-thermal-segmentation:testing
-    command: singularity run -B $(pwd):/mnt --pwd /mnt kmeans-thermal-segmentation.simg plotclip_orthos -d ${DATE} -g global -od plot_temps_out_v2 -i plot
+    command: singularity run -B $(pwd):/mnt --pwd /mnt kmeans-thermal-segmentation.simg plotclip_orthos -d ${DATE} -g global -od plot_temps_out -i plot
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
@@ -56,7 +56,7 @@ paths:
     #segmentation: not used (sorghum)
     lid: /iplant/home/shared/phytooracle/season_10_lettuce_yr_2020/level_0/necessary_files/model_weights_2021-01-14_flir_lid_10e.pth
   pipeline_outpath: [.]
-  outpath_subdirs: [plot_temps_out_v2]
+  outpath_subdirs: [plot_temps_out]
   
   cyverse: 
     basename: /iplant/home/shared/phytooracle/
