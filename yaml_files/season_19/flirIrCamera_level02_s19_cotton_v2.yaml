@@ -19,8 +19,8 @@ modules:
   1:
     container: 
       simg_name: kmeans-thermal-segmentation.simg
-      dockerhub_path: docker://phytooracle/kmeans-thermal-segmentation:testing
-    command: singularity run -B $(pwd):/mnt --pwd /mnt kmeans-thermal-segmentation.simg plotclip_orthos -d ${DATE} -g global -od plot_temps_out -i plot
+      dockerhub_path: docker://phytooracle/kmeans-thermal-segmentation:latest
+    command: singularity run -B $(pwd):/mnt --pwd /mnt kmeans-thermal-segmentation.simg plotclip_orthos -d ${DATE} -g global -od plot_temps_out -i plot --enable_range_threshold
     distribution_level: local
     file_level: dir
     input_dir: [./plotclip_orthos]
